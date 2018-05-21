@@ -65,6 +65,7 @@
   "New Subscribers": "Novos Subscribers",
   "Cheers": "Cheers",
   "Spin Wheel": "Roleta",
+  "Spin the wheel to make a decision.": "Spin the wheel to make a decision.",
   "The streamer manually triggers a spin anytime while they are live.": "O streamer manualmente gira uma roleta a qualquer momento enquanto estiver ao vivo.",
   "Allows you to add existing scene as a source": "Permite que você adicione uma cena existente como uma fonte",
   "Stream Label": "Rótulo de Stream",
@@ -130,5 +131,12 @@
   "Ungroup Folder": "Desagrupar Pasta",
   "Group into Scene": "Agrupar em uma Cena",
   "Ungroup Scene": "Desagrupar Cena",
-  "Create Source Projector": "Criar Projetor de Cena"
+  "Create Source Projector": "Criar Projetor de Cena",
+  "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
+  "BrowserSource": "BrowserSource",
+  "NDI source": "NDI source",
+  "Use Google Font": "Use Google Font",
+  "Center Horizontal": "Center Horizontal",
+  "Center Vertical": "Center Vertical",
+  "Unhide All": "Unhide All"
 }

@@ -1,6 +1,6 @@
 {
   "General": "Geral",
-  "Stream": "Stream",
+  "Stream": "Transmissão",
   "Output": "Saída",
   "Audio": "Áudio",
   "Video": "Video",
@@ -17,7 +17,7 @@
   "Upload Cache to Developers": "Enviar a cache para os desenvolvedores",
   "Restart Streamlabels Session": "Reiniciar a sessão do Streamlabels",
   "Run Auto Optimizer": "Executar o Optimizador automático",
-  "Confirm stream title and game before going live": "Confirme o titulo da stream e o jogo antes de iniciar a sua stream",
+  "Confirm stream title and game before going live": "Confirme o titulo da transmissão e o jogo antes de iniciar a mesma",
   "WARNING! You will lose all scenes, sources, and settings. This cannot be undone!": "AVISO! Irá perder todas as cenas, fontes e configurações. Isto não poderá ser desfeito!",
   "Your cache directory has been successfully uploaded.  The file name %{file} has been copied to your clipboard.  Please paste it into discord and tag a developer.": "O seu directório de cache foi enviado com sucesso. O nome do arquivo %{file} foi copiado para a sua aula de transferência. Por favor, cole-o no discord e marque um desenvolvedor.",
   "Streamlabels session has been succesfully restarted!": "A sessão do Streamlabs foi reiniciada com sucesso!",

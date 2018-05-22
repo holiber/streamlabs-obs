@@ -65,7 +65,7 @@
   "New Subscribers": "Új Feliratkozók",
   "Cheers": "Szurkolások",
   "Spin Wheel": "Szerencsekerék",
-  "Spin the wheel to make a decision.": "Spin the wheel to make a decision.",
+  "Spin the wheel to make a decision.": "Forgasd meg a kereket a döntéshez.",
   "The streamer manually triggers a spin anytime while they are live.": "A streamer manuálisan kapcsolja be a pörgetést, mikor adásban van.",
   "Allows you to add existing scene as a source": "Meglévő jelenetet adhatsz hozzá forrásként",
   "Stream Label": "Stream Címkék",
@@ -132,11 +132,11 @@
   "Group into Scene": "Csoportosítás Jelenetekbe",
   "Ungroup Scene": "Jelenetek Csoportosításának Feloldása",
   "Create Source Projector": "Forrás Kivetítő Létrehozása",
-  "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
-  "BrowserSource": "BrowserSource",
-  "NDI source": "NDI source",
-  "Use Google Font": "Use Google Font",
-  "Center Horizontal": "Center Horizontal",
-  "Center Vertical": "Center Vertical",
-  "Unhide All": "Unhide All"
+  "Click \"Add Source\" when you're ready to add it to your scene": "Kattints a \"Forrás Hozzáadása\" gombra amikor kész vagy hozzáadni a jelenetedhez",
+  "BrowserSource": "Böngésző Forrás",
+  "NDI source": "NDI Forrás",
+  "Use Google Font": "Használj Google Fontsot",
+  "Center Horizontal": "Vízszintes Közép",
+  "Center Vertical": "Függőleges Közép",
+  "Unhide All": "Minden mutatása"
 }

@@ -15,7 +15,7 @@
   "Are you sure you want to remove %sceneName%?": "Czy na pewno chcesz usunąć %sceneName%?",
   "Performance Mode": "Tryb wydajności",
   "Create Output Projector": "Stwórz projektor danych wyjściowych",
-  "Studio Mode": "Studio Mode",
+  "Studio Mode": "Tryb Studio",
   "Are you sure you want to remove %{sceneName}?": "Are you sure you want to remove %{sceneName}?",
   "Disable Performance Mode": "Disable Performance Mode",
   "Scene Collections": "Kolekcja scen",
@@ -28,5 +28,5 @@
   "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
   "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
   "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "Wait": "Poczekaj"
 }

@@ -1,6 +1,6 @@
 {
   "Are you sure you want to stop streaming?": "Sei sicuro di voler interrompere la trasmissione?",
-  "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.": "Percorso o URL non valido. Per favore controlla le impostazinoi per confermare che siano corrette.",
+  "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.": "Percorso o URL non valido. Per favore controlla le impostazioni per confermare che siano corrette.",
   "Failed to connect to the streaming server.  Please check your internet connection.": "Impossibile connettersi ai server di streaming. Per favore controlla la tua connessione internet.",
   "Disconnected from the streaming server.  Please check your internet connection.": "Disconnesso dai server di streaming. Per favore controlla la tua connessione internet.",
   "Could not access the specified channel or stream key, please double-check your stream key.  ": "Non si può accedere al canale specificato o alla chiave di streaming, per favore controlla nuovamente la chiave di streaming.  ",
@@ -31,7 +31,7 @@
   "YouTube account not enabled for live streaming": "Account youtube non abilitato per le trasmissioni in diretta",
   "Fix": "Risolvi",
   "I'm set up": "Sono pronto",
-  "END STREAM": "CHIUDI TRASMISSIONE",
+  "END STREAM": "TERMINA TRASMISSIONE",
   "STARTING": "IN AVVIO",
   "ENDING": "IN CHIUSURA",
   "RECONNECTING": "RICONNESSIONE",

@@ -23,10 +23,10 @@
   "Add a new Source to your Scene. Includes widgets.": "Tilføj en ny kilde til din scene. Omfatter også widgets.",
   "Remove Sources from your Scene.": "Fjern kilder fra din scene.",
   "Open the Source Properties.": "Åbn egenskaberne for kilden.",
-  "Add a Group so you can move multiple Sources at the same time.": "Add a Group so you can move multiple Sources at the same time.",
-  "Cloud Backup": "Cloud Backup",
-  "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
-  "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "Add a Group so you can move multiple Sources at the same time.": "Tilføj en gruppe, så du kan flytte flere kilder på samme tid.",
+  "Cloud Backup": "Backup til skyen",
+  "Your media files are currently being synced with the cloud. ": "Dine mediefiler synkroniseres i øjeblikket med skyen. ",
+  "It is recommended that you wait until this finishes before going live.": "Det anbefales, at du venter indtil de er færdige før du går live.",
+  "Go Live Anyway": "Gå live alligevel",
+  "Wait": "Vent"
 }

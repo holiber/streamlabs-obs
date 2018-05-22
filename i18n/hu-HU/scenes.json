@@ -7,7 +7,7 @@
   "Projector:": "Kivetítő:",
   "Projector: Output": "Kivetítő: Kimenet",
   "Manage All": "Összes Kezelése",
-  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.",
+  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "Ez az a hely ahol a Jelenet Gyűjteményeid élnek. A címre kattintva lenyílik egy menü, ahol megnézheted és kezelheted őket.",
   "Are you sure you want to remove %{collectionName}?": "Biztosan eltávolítod a %{collectionName} gyűjteményt?",
   "Create Scene Projector": "Jelenet Kivetítő Létrehozása",
   "Preview is disabled in performance mode": "Teljesítmény módban az előnézet nem érhető el",
@@ -25,8 +25,8 @@
   "Open the Source Properties.": "Forrás Tulajdonságok Megnyitása.",
   "Add a Group so you can move multiple Sources at the same time.": "Adj hozzá egy Csoportot, hogy egyszerre tudj több Forrást is mozgatni.",
   "Cloud Backup": "Felhőalapú Biztonsági Mentés",
-  "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
-  "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
+  "Your media files are currently being synced with the cloud. ": "A média fájljaid jelenleg szinkronizáció alatt vannak a felhővel. ",
+  "It is recommended that you wait until this finishes before going live.": "Az adás indítása előtt ajánlott megvárni, míg ez a művelet befejeződik.",
+  "Go Live Anyway": "Adás Indítása Mindenképpen",
   "Wait": "Várj"
 }

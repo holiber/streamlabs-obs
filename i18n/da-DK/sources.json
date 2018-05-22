@@ -65,7 +65,7 @@
   "New Subscribers": "Nye abonnenter",
   "Cheers": "Cheers",
   "Spin Wheel": "Drej hjulet",
-  "Spin the wheel to make a decision.": "Spin the wheel to make a decision.",
+  "Spin the wheel to make a decision.": "Drej hjulet for at træffe en beslutning.",
   "The streamer manually triggers a spin anytime while they are live.": "Du udløser manuelt et spin når som helst, mens du er live.",
   "Allows you to add existing scene as a source": "Tillader dig at tilføje eksisterende scene som en kilde",
   "Stream Label": "Stream Labels",
@@ -132,11 +132,11 @@
   "Group into Scene": "Grupper i scene",
   "Ungroup Scene": "Opdel scene",
   "Create Source Projector": "Opret kilde projektør",
-  "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
-  "BrowserSource": "BrowserSource",
-  "NDI source": "NDI source",
-  "Use Google Font": "Use Google Font",
-  "Center Horizontal": "Center Horizontal",
-  "Center Vertical": "Center Vertical",
-  "Unhide All": "Unhide All"
+  "Click \"Add Source\" when you're ready to add it to your scene": "Klik på \"Tilføj kilde\", når du er klar til at tilføje det til din scene",
+  "BrowserSource": "BrowserKilde",
+  "NDI source": "NDI kilde",
+  "Use Google Font": "Brug Google skrifttype",
+  "Center Horizontal": "Centre vandret",
+  "Center Vertical": "Centre lodret",
+  "Unhide All": "Vis alle"
 }

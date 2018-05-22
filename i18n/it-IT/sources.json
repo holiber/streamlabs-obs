@@ -65,7 +65,7 @@
   "New Subscribers": "Nuovi Abbonati",
   "Cheers": "Cheers",
   "Spin Wheel": "Gira la Ruota",
-  "Spin the wheel to make a decision.": "Spin the wheel to make a decision.",
+  "Spin the wheel to make a decision.": "Gira la ruota per prendere una decisione.",
   "The streamer manually triggers a spin anytime while they are live.": "Lo streamer fa girare la ruota in qualsiasi momento della trasmissione.",
   "Allows you to add existing scene as a source": "Ti permette di aggiungere una scena esistente come fonte",
   "Stream Label": "Stream Label",
@@ -132,11 +132,11 @@
   "Group into Scene": "Raggruppa in una Scena",
   "Ungroup Scene": "Scomponi Scena",
   "Create Source Projector": "Crea un Proiettore per la Fonte",
-  "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
+  "Click \"Add Source\" when you're ready to add it to your scene": "Fare clic su \"Aggiungi Fonte\" quando si è pronti per aggiungerla alla scena",
   "BrowserSource": "BrowserSource",
-  "NDI source": "NDI source",
-  "Use Google Font": "Use Google Font",
-  "Center Horizontal": "Center Horizontal",
-  "Center Vertical": "Center Vertical",
-  "Unhide All": "Unhide All"
+  "NDI source": "Fonte NDI",
+  "Use Google Font": "Utilizzare Font di google",
+  "Center Horizontal": "Centra orizzontalmente",
+  "Center Vertical": "Centra verticalmente",
+  "Unhide All": "Mostra tutto"
 }

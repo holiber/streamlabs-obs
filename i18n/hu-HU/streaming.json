@@ -41,5 +41,8 @@
   "Go to Youtube Live Dashboard to control your stream": "A streamed irányításához, látogasd meg a YouTube Élő Irányítópultot",
   "Are you sure you want to exit while live?": "Biztosan kilépsz miközben megy az adás?",
   "Enable the preview stream": "Adás előnézetének bekapcsolása",
-  "Disable the preview stream, can help with CPU": "Adás előnézetének kikapcsolása, leveszi a terhet a processzorról"
+  "Disable the preview stream, can help with CPU": "Adás előnézetének kikapcsolása, leveszi a terhet a processzorról",
+  "viewers": "viewers",
+  "Refresh Chat": "Refresh Chat",
+  "Your chat is currently offline": "Your chat is currently offline"
 }

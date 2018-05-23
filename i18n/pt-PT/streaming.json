@@ -42,7 +42,7 @@
   "Are you sure you want to exit while live?": "Tem a certeza que deseja sair enquanto a sua transmissão está activa?",
   "Enable the preview stream": "Activar pré-visualização da transmissão",
   "Disable the preview stream, can help with CPU": "Desactivar a pré-visualização da transmissão, poderá ajudar o processador",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline"
+  "viewers": "espectadores",
+  "Refresh Chat": "Actualizar o chat",
+  "Your chat is currently offline": "O seu chat está actualmente offline"
 }

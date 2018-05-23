@@ -43,6 +43,6 @@
   "Enable the preview stream": "ストリーム・プリビュウーを表示する",
   "Disable the preview stream, can help with CPU": "ストリーム・プリビュウーを非表示する。CPUに負担がかからない",
   "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline"
+  "Refresh Chat": "チャットを更新します。",
+  "Your chat is currently offline": "チャットは今オフラインになっています"
 }

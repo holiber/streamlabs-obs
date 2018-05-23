@@ -9,5 +9,8 @@
   "Mute": "ミュート",
   "Unmute": "ミュート解除します。",
   "Push to Mute": "プッシュしてミュートする。",
-  "Push to Talk": "プッシュして話す。"
+  "Push to Talk": "プッシュして話す。",
+  "Enable Studio Mode": "Enable Studio Mode",
+  "Disable Studio Mode": "Disable Studio Mode",
+  "Transition (Studio Mode)": "Transition (Studio Mode)"
 }

@@ -46,8 +46,8 @@
   "Bilinear (Fastest, but blurry if scaling)": "Bilineáris (Leggyorsabb, homályos lehet méretezésnél)",
   "Bicubic (Sharpened scaling, 16 samples)": "Kettős köbös (Élesített méretezés, 16 minta)",
   "Lanczos (Sharpened scaling, 32 samples)": "Lánczos (Élesített méretezés, 32 minta)",
-  "No elements found. Consider changing the search query.": "No elements found. Consider changing the search query.",
-  "Do not back up my media files in the cloud (requires app restart)": "Do not back up my media files in the cloud (requires app restart)",
+  "No elements found. Consider changing the search query.": "Elem nem található. Próbáld meg más keresési paraméterekkel.",
+  "Do not back up my media files in the cloud (requires app restart)": "Ne mentse a média fájljaimat a felhőbe (újraindítás szükséges)",
   "FPS Type": "FPS Típus",
   "Common FPS Values": "Átlagos FPS Érték",
   "Integer FPS Value": "Egész FPS Érték",
@@ -62,6 +62,6 @@
   "Duration (Seconds)": "Időtartam (Másodperc)",
   "Preserved cutoff point (increase delay) when reconnecting": "Töréspont megőrzése (késleltetés növeléssel) újracsatlakozás esetén",
   "Desktop Audio Device": "Asztali Hangeszköz",
-  "Mic/Auxiliary Device": "Mic/Auxiliary Device",
-  "Recording Path": "Recording Path"
+  "Mic/Auxiliary Device": "Mikrofon/Aux Hangeszköz",
+  "Recording Path": "Felvétel Útvonala"
 }

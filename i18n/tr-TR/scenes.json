@@ -17,7 +17,7 @@
   "Create Output Projector": "Çıkış Projektörü Oluştur",
   "Studio Mode": "Stüdyo Modu",
   "Are you sure you want to remove %{sceneName}?": "%{sceneName} silmek istediğinize emin misiniz?",
-  "Disable Performance Mode": "Performans Modunu Devre dışı bırak",
+  "Disable Performance Mode": "Performans Modunu Etkisizleştir",
   "Scene Collections": "Sahne Koleksiyonları",
   "The building blocks of your scene. Also contains widgets.": "Sahnenizin yapı taşları. Ayrıca eklentileri de içerir.",
   "Add a new Source to your Scene. Includes widgets.": "Sahnenize yeni bir kaynak ekleyin. Eklentileri de içerir.",

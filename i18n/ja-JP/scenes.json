@@ -15,18 +15,18 @@
   "Are you sure you want to remove %sceneName%?": "本当に%sceneName%を排除してもよろしいですか？",
   "Performance Mode": "パフォーマンスモード",
   "Create Output Projector": "アウトプットロジェクターを作成します。",
-  "Studio Mode": "Studio Mode",
+  "Studio Mode": "スタジオ モード",
   "Are you sure you want to remove %{sceneName}?": "Are you sure you want to remove %{sceneName}?",
-  "Disable Performance Mode": "Disable Performance Mode",
+  "Disable Performance Mode": "パフォーマンス モードを無効にします。",
   "Scene Collections": "シーンコレクション",
   "The building blocks of your scene. Also contains widgets.": "The building blocks of your scene. Also contains widgets.",
   "Add a new Source to your Scene. Includes widgets.": "Add a new Source to your Scene. Includes widgets.",
   "Remove Sources from your Scene.": "Remove Sources from your Scene.",
   "Open the Source Properties.": "Open the Source Properties.",
   "Add a Group so you can move multiple Sources at the same time.": "Add a Group so you can move multiple Sources at the same time.",
-  "Cloud Backup": "Cloud Backup",
+  "Cloud Backup": "クラウド バックアップ",
   "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
   "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "Go Live Anyway": "とにかくライブになる",
+  "Wait": "待機する"
 }

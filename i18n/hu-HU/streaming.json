@@ -42,7 +42,7 @@
   "Are you sure you want to exit while live?": "Biztosan kilépsz miközben megy az adás?",
   "Enable the preview stream": "Adás előnézetének bekapcsolása",
   "Disable the preview stream, can help with CPU": "Adás előnézetének kikapcsolása, leveszi a terhet a processzorról",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline"
+  "viewers": "néző",
+  "Refresh Chat": "Chat Frissítése",
+  "Your chat is currently offline": "A chated jelenleg nem elérhető"
 }

@@ -10,7 +10,7 @@
   "Unmute": "Включить звук",
   "Push to Mute": "Нажмите, чтобы заглушить",
   "Push to Talk": "Нажмите, чтобы говорить",
-  "Enable Studio Mode": "Enable Studio Mode",
-  "Disable Studio Mode": "Disable Studio Mode",
-  "Transition (Studio Mode)": "Transition (Studio Mode)"
+  "Enable Studio Mode": "Включить режим Студии",
+  "Disable Studio Mode": "Отключить режим Студии",
+  "Transition (Studio Mode)": "Переход (режим Студии)"
 }

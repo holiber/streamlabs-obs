@@ -41,5 +41,8 @@
   "Go to Youtube Live Dashboard to control your stream": "Vai su Youtube Live Dashboard per controllare la tua trasmissione",
   "Are you sure you want to exit while live?": "Sei sicuro di voler uscire mentre sei ancora in diretta?",
   "Enable the preview stream": "Abilita l'anteprima della trasmissione",
-  "Disable the preview stream, can help with CPU": "Disabilita l'anteprima della trasmissione (potrebbe alleggerire la CPU)"
+  "Disable the preview stream, can help with CPU": "Disabilita l'anteprima della trasmissione (potrebbe alleggerire la CPU)",
+  "viewers": "viewers",
+  "Refresh Chat": "Refresh Chat",
+  "Your chat is currently offline": "Your chat is currently offline"
 }

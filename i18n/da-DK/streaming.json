@@ -41,5 +41,8 @@
   "Go to Youtube Live Dashboard to control your stream": "Gå til YouTube Live Dashboard for at styre din stream",
   "Are you sure you want to exit while live?": "Er du sikker på at du vil afslutte, mens du er live?",
   "Enable the preview stream": "Aktiver forhåndsvisningsstream",
-  "Disable the preview stream, can help with CPU": "Deaktiver preview stream, kan hjælpe med CPU"
+  "Disable the preview stream, can help with CPU": "Deaktiver preview stream, kan hjælpe med CPU",
+  "viewers": "viewers",
+  "Refresh Chat": "Refresh Chat",
+  "Your chat is currently offline": "Your chat is currently offline"
 }

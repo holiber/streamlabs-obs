@@ -24,7 +24,7 @@
   "This action will restart the application. Continue?": "Esta acção irá reiniciar a aplicação. Continuar?",
   "Show confirmation dialog when starting streams": "Mostrar caixa de diálogo de confirmação ao iniciar transmissões",
   "Show confirmation dialog when stopping streams": "Mostrar caixa de diálogo de confirmação quando terminar transmissões",
-  "Automatically record when streaming": "Automatically record when streaming",
+  "Automatically record when streaming": "Gravar automaticamente quando tiver a transmitir",
   "Keep recording when stream stops": "Continuar a gravar quando a transmissão terminar",
   "Source Alignement Snapping": "Alinhamentos com encaixe na cena",
   "Snap Sources to edge of screen": "Ajustar Fontes às bordas do ecrã",

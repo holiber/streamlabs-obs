@@ -9,5 +9,8 @@
   "Mute": "Silenciar",
   "Unmute": "Re-activar áudio",
   "Push to Mute": "Pressionar para Silenciar",
-  "Push to Talk": "Pressione para falar"
+  "Push to Talk": "Pressione para falar",
+  "Enable Studio Mode": "Enable Studio Mode",
+  "Disable Studio Mode": "Disable Studio Mode",
+  "Transition (Studio Mode)": "Transition (Studio Mode)"
 }

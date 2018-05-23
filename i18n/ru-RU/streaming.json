@@ -42,7 +42,7 @@
   "Are you sure you want to exit while live?": "Вы уверены, что хотите выйти во время прямого эфира?",
   "Enable the preview stream": "Включить предварительный просмотр трансляции",
   "Disable the preview stream, can help with CPU": "Отключить предварительный просмотр трансляции, может уменьшить нагрузку на ЦП",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline"
+  "viewers": "зрители",
+  "Refresh Chat": "Обновить чат",
+  "Your chat is currently offline": "В данный момент ваш чат недоступен"
 }

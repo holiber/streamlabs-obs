@@ -132,11 +132,11 @@
   "Group into Scene": "Сгруппировать в сцену",
   "Ungroup Scene": "Разгруппировать сцену",
   "Create Source Projector": "Создать проектор для источника",
-  "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
-  "BrowserSource": "BrowserSource",
-  "NDI source": "NDI source",
-  "Use Google Font": "Use Google Font",
-  "Center Horizontal": "Center Horizontal",
-  "Center Vertical": "Center Vertical",
-  "Unhide All": "Unhide All"
+  "Click \"Add Source\" when you're ready to add it to your scene": "Нажмите кнопку «Добавить Источник», когда вы будете готовы добавить его к вашей сцене",
+  "BrowserSource": "Веб-Источник",
+  "NDI source": "Источник NDI",
+  "Use Google Font": "Использовать шрифт Google",
+  "Center Horizontal": "Центрировать по горизонтали",
+  "Center Vertical": "Центрировать по вертикали",
+  "Unhide All": "Показать все"
 }

@@ -22,8 +22,8 @@
   "Your cache directory has been successfully uploaded.  The file name %{file} has been copied to your clipboard.  Please paste it into discord and tag a developer.": "Katalog pamięci podręcznej został pomyślnie przesłany.  Nazwa pliku %{file} został skopiowany do Schowka. Proszę wklej go na Discorda i powiadom developera.",
   "Streamlabels session has been succesfully restarted!": "Sesja Streamlabels została pomyślnie zrestartowana!",
   "This action will restart the application. Continue?": "Ta akcja spowoduje ponowne uruchomienie aplikacji. Kontynuować?",
-  "Show confirmation dialog when starting streams": "Show confirmation dialog when starting streams",
-  "Show confirmation dialog when stopping streams": "Show confirmation dialog when stopping streams",
+  "Show confirmation dialog when starting streams": "Pokaż okno dialogowe potwierdzenia przy uruchamianiu transmisji",
+  "Show confirmation dialog when stopping streams": "Pokaż okno dialogowe potwierdzenia przy kończeniu transmisji",
   "Automatically record when streaming": "Automatically record when streaming",
   "Keep recording when stream stops": "Keep recording when stream stops",
   "Source Alignement Snapping": "Source Alignement Snapping",
@@ -63,5 +63,5 @@
   "Preserved cutoff point (increase delay) when reconnecting": "Preserved cutoff point (increase delay) when reconnecting",
   "Desktop Audio Device": "Desktop Audio Device",
   "Mic/Auxiliary Device": "Mic/Auxiliary Device",
-  "Recording Path": "Recording Path"
+  "Recording Path": "Ścieżka zapisu nagrań"
 }

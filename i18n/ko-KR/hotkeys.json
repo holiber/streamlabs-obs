@@ -8,8 +8,8 @@
   "Hide %{sourcename}": "%{sourcename} 숨기기",
   "Mute": "음소거",
   "Unmute": "음소거 해제",
-  "Push to Mute": "Push to Mute",
-  "Push to Talk": "Push to Talk",
+  "Push to Mute": "눌러서 음소거",
+  "Push to Talk": "눌러서 말하기",
   "Enable Studio Mode": "Enable Studio Mode",
   "Disable Studio Mode": "Disable Studio Mode",
   "Transition (Studio Mode)": "Transition (Studio Mode)"

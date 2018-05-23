@@ -42,7 +42,7 @@
   "Are you sure you want to exit while live?": "Canlı yayındayken, çıkmak istediğinize emin misiniz?",
   "Enable the preview stream": "Yayını önizlemeyi etkinleştir",
   "Disable the preview stream, can help with CPU": "Yayını önizlemeyi devre dışı bırakmak, CPU'nuza yardımcı olabilir",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline"
+  "viewers": "izleyiciler",
+  "Refresh Chat": "Sohbeti Yenile",
+  "Your chat is currently offline": "Sohbet şu anda çevrimdışı"
 }

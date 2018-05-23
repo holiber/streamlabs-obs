@@ -7,7 +7,7 @@
   "Projector:": "プロジェクター:",
   "Projector: Output": "プロジェクター: アウトプット",
   "Manage All": "全部を管理します。",
-  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.",
+  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "こちらはのシーンコレクションがある場所です。 タイトルをクリックすると、表示および管理できるメニューがドロップダウン表示されます。",
   "Are you sure you want to remove %{collectionName}?": "本当に%{collectionName} を排除してもよろしいですか？",
   "Create Scene Projector": "シーンプロジェクターを作成します。",
   "Preview is disabled in performance mode": "プレビューはパフォーマンスモードで無効になっています。",
@@ -25,8 +25,8 @@
   "Open the Source Properties.": "ソースのプロパティを開きます。",
   "Add a Group so you can move multiple Sources at the same time.": "Add a Group so you can move multiple Sources at the same time.",
   "Cloud Backup": "クラウド バックアップ",
-  "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
-  "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
+  "Your media files are currently being synced with the cloud. ": "メディアファイルが現在クラウドと同期されています。 ",
+  "It is recommended that you wait until this finishes before going live.": "これが終了するまで待ってからライブをすることをお勧めします。",
   "Go Live Anyway": "とにかくライブになる",
   "Wait": "待機する"
 }

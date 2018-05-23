@@ -41,5 +41,8 @@
   "Go to Youtube Live Dashboard to control your stream": "Перейдите в Панель Управления YouTube для управления своей трансляцией",
   "Are you sure you want to exit while live?": "Вы уверены, что хотите выйти во время прямого эфира?",
   "Enable the preview stream": "Включить предварительный просмотр трансляции",
-  "Disable the preview stream, can help with CPU": "Отключить предварительный просмотр трансляции, может уменьшить нагрузку на ЦП"
+  "Disable the preview stream, can help with CPU": "Отключить предварительный просмотр трансляции, может уменьшить нагрузку на ЦП",
+  "viewers": "viewers",
+  "Refresh Chat": "Refresh Chat",
+  "Your chat is currently offline": "Your chat is currently offline"
 }

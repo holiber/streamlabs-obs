@@ -9,5 +9,8 @@
   "Mute": "Némítás",
   "Unmute": "Némítás kikapcsolása",
   "Push to Mute": "Némítás Gombnyomásra",
-  "Push to Talk": "Beszéd Gombnyomásra"
+  "Push to Talk": "Beszéd Gombnyomásra",
+  "Enable Studio Mode": "Enable Studio Mode",
+  "Disable Studio Mode": "Disable Studio Mode",
+  "Transition (Studio Mode)": "Transition (Studio Mode)"
 }

@@ -24,9 +24,9 @@
   "Remove Sources from your Scene.": "Remova Fontes da sua cena.",
   "Open the Source Properties.": "Abrir as propriedades da fonte.",
   "Add a Group so you can move multiple Sources at the same time.": "Adicione um grupo, assim poderá mover múltiplas Fontes ao mesmo tempo.",
-  "Cloud Backup": "Cloud Backup",
-  "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
-  "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "Cloud Backup": "Backup da nuvem",
+  "Your media files are currently being synced with the cloud. ": "Os seus ficheiros estão a ser sincronizados com a nuvem. ",
+  "It is recommended that you wait until this finishes before going live.": "É recomendado que espere até que este processo termine antes de iniciar a sua transmissão.",
+  "Go Live Anyway": "Iniciar transmissão de qualquer modo",
+  "Wait": "Espere"
 }

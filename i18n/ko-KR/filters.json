@@ -10,15 +10,15 @@
   "Apply LUT": "Apply LUT",
   "Sharpen": "Sharpen",
   "Chroma Key": "크로마 키",
-  "Video Delay (Async)": "Video Delay (Async)",
-  "Noise Suppression": "Noise Suppression",
+  "Video Delay (Async)": "비디오 지연 (Async)",
+  "Noise Suppression": "잡음 억제",
   "Noise Gate": "잡음 게이트",
   "Compressor": "압축기",
-  "VST 2.x Plugin": "VST 2.x Plugin",
+  "VST 2.x Plugin": "VST 2.x 플러그인",
   "Face Mask Plugin": "Face Mask Plugin",
-  "Filter type": "Filter type",
-  "Filter name": "Filter name",
-  "Add source filter": "Add source filter",
-  "No filters applied": "No filters applied",
-  "Source filters": "Source filters"
+  "Filter type": "필터 유형",
+  "Filter name": "필터 이름",
+  "Add source filter": "소스 필터 추가",
+  "No filters applied": "적용 된 필터 없음",
+  "Source filters": "소스 필터"
 }

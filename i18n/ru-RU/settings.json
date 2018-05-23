@@ -61,7 +61,7 @@
   "Stream Delay": "Задержка Трансляции",
   "Duration (Seconds)": "Продолжительность (в секундах)",
   "Preserved cutoff point (increase delay) when reconnecting": "Сохранять точку останова при повторном подключении (увеличивает задержку)",
-  "Desktop Audio Device": "Desktop Audio Device",
+  "Desktop Audio Device": "Основное звуковое устройство",
   "Mic/Auxiliary Device": "Микрофон/дополнительное устройство",
   "Recording Path": "Путь для сохранения записи"
 }

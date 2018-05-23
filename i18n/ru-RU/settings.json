@@ -63,5 +63,5 @@
   "Preserved cutoff point (increase delay) when reconnecting": "Сохранять точку останова при повторном подключении (увеличивает задержку)",
   "Desktop Audio Device": "Desktop Audio Device",
   "Mic/Auxiliary Device": "Микрофон/дополнительное устройство",
-  "Recording Path": "Recording Path"
+  "Recording Path": "Путь для сохранения записи"
 }

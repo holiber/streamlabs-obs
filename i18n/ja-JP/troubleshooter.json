@@ -14,7 +14,7 @@
   "Lower your encoder settings (preset)": "エンコーダー設定を下げる（プリセット）",
   "Ensure that you don't have any other applications open that are heavy on your CPU": "Ensure that you don't have any other applications open that are heavy on your CPU",
   "Enable performance mode in the Editor context menu": "Enable performance mode in the Editor context menu",
-  "Streamlabs OBS has detected lagged frames": "Streamlabs OBS has detected lagged frames",
+  "Streamlabs OBS has detected lagged frames": "Streamlabs OBSはラグしたフレームを検出しました",
   "Some frames took too long to get rendered.": "Some frames took too long to get rendered.",
   "Usually the problem is related to your game using up too many GPU resources.": "Usually the problem is related to your game using up too many GPU resources.",
   "When this happens, Streamlabs OBS does not have any resources left over to render frames.": "When this happens, Streamlabs OBS does not have any resources left over to render frames.",

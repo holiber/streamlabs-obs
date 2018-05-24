@@ -31,7 +31,7 @@
   "Snap Sources to other sources": "將來源與其他來源對齊",
   "Stream Type": "串流類型",
   "Output Mode": "輸出模式",
-  "Streaming": "Steaming",
+  "Streaming": "串流中",
   "Enable Advanced Encoder Settings": "啟用進階編碼設定",
   "Enforce streaming service bitrate limits": "強制設定串流位元率上限",
   "Encoder Preset (Higher = Less CPU)": "編碼器配置 （越高 = 越少CPU使用率）",

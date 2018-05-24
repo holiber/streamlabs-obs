@@ -44,5 +44,6 @@
   "Disable the preview stream, can help with CPU": "Adás előnézetének kikapcsolása, leveszi a terhet a processzorról",
   "viewers": "néző",
   "Refresh Chat": "Chat Frissítése",
-  "Your chat is currently offline": "A chated jelenleg nem elérhető"
+  "Your chat is currently offline": "A chated jelenleg nem elérhető",
+  "Set path in Settings > Output.": "Set path in Settings > Output."
 }

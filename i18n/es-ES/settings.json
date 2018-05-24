@@ -36,6 +36,7 @@
   "Enforce streaming service bitrate limits": "Forzar los límites del bitrate al servicio de streaming",
   "Encoder Preset (Higher = Less CPU)": "Preset del Codificador (Higher = Menos CPU)",
   "Generate File Name without Space": "Generar Nombre de Archivo sin Espacios",
+  "Recording": "Recording",
   "Recording Quality": "Calidad de Grabación",
   "Recording Format": "Formato de Grabación",
   "Custom Muxer Settings": "Ajustes Personalizados de Muxer",
@@ -63,5 +64,10 @@
   "Preserved cutoff point (increase delay) when reconnecting": "Preservar punto de corte (incrementar retraso) al reconectar",
   "Desktop Audio Device": "Dispositivo de Audio de Escritorio",
   "Mic/Auxiliary Device": "Micrófono/Dispositivo Auxiliar",
-  "Recording Path": "Ruta de Grabación"
+  "Recording Path": "Ruta de Grabación",
+  "Enable": "Enable",
+  "Default": "Default",
+  "Custom Encoder Settings": "Custom Encoder Settings",
+  "Audio Bitrate": "Audio Bitrate",
+  "Video Bitrate": "Video Bitrate"
 }

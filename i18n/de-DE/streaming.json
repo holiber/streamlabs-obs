@@ -44,5 +44,6 @@
   "Disable the preview stream, can help with CPU": "Vorschau-Stream deaktivieren, kann CPU Auslastung verringern",
   "viewers": "Zuschauer",
   "Refresh Chat": "Chat aktualisieren",
-  "Your chat is currently offline": "Ihr Chat ist derzeit offline"
+  "Your chat is currently offline": "Ihr Chat ist derzeit offline",
+  "Set path in Settings > Output.": "Set path in Settings > Output."
 }

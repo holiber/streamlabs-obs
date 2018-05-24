@@ -58,10 +58,10 @@
   "Disable Windows audio ducking": "Desactivar la oscilación de volumen de Windows",
   "YUV Color Space": "Espacio de Color YUV",
   "YUV Color Range": "Gama de Colores YUV",
-  "Stream Delay": "Stream Delay",
-  "Duration (Seconds)": "Duration (Seconds)",
-  "Preserved cutoff point (increase delay) when reconnecting": "Preserved cutoff point (increase delay) when reconnecting",
-  "Desktop Audio Device": "Desktop Audio Device",
-  "Mic/Auxiliary Device": "Mic/Auxiliary Device",
-  "Recording Path": "Recording Path"
+  "Stream Delay": "Retraso de Emisión",
+  "Duration (Seconds)": "Duración (Segundos)",
+  "Preserved cutoff point (increase delay) when reconnecting": "Preservar punto de corte (incrementar retraso) al reconectar",
+  "Desktop Audio Device": "Dispositivo de Audio de Escritorio",
+  "Mic/Auxiliary Device": "Micrófono/Dispositivo Auxiliar",
+  "Recording Path": "Ruta de Grabación"
 }

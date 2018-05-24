@@ -31,11 +31,12 @@
   "Snap Sources to other sources": "Привязывать Источники к другим Источникам",
   "Stream Type": "Тип Трансляции",
   "Output Mode": "Режим Вывода",
-  "Streaming": "Идет Трансляция",
+  "Streaming": "Streaming",
   "Enable Advanced Encoder Settings": "Включить дополнительные настройки кодировщика",
   "Enforce streaming service bitrate limits": "Принудительно использовать настройки кодировщика службы потоковой передачи",
   "Encoder Preset (Higher = Less CPU)": "Режим кодировщика (Выше = меньше нагрузка на ЦП)",
   "Generate File Name without Space": "Генерировать имя файла без пробелов",
+  "Recording": "Recording",
   "Recording Quality": "Качество записи",
   "Recording Format": "Формат записи",
   "Custom Muxer Settings": "Пользовательские настройки мультиплексора",
@@ -63,5 +64,10 @@
   "Preserved cutoff point (increase delay) when reconnecting": "Сохранять точку останова при повторном подключении (увеличивает задержку)",
   "Desktop Audio Device": "Основное звуковое устройство",
   "Mic/Auxiliary Device": "Микрофон/дополнительное устройство",
-  "Recording Path": "Путь для сохранения записи"
+  "Recording Path": "Путь для сохранения записи",
+  "Enable": "Enable",
+  "Default": "Default",
+  "Custom Encoder Settings": "Custom Encoder Settings",
+  "Audio Bitrate": "Audio Bitrate",
+  "Video Bitrate": "Video Bitrate"
 }

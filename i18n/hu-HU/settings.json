@@ -26,9 +26,9 @@
   "Show confirmation dialog when stopping streams": "Megerősítő párbeszédpanel megjelenítése élő adás leállításakor",
   "Automatically record when streaming": "Felvétel automatikus indítása élő adás esetén",
   "Keep recording when stream stops": "Felvétel folytatása az élő adás leállítása esetén",
-  "Source Alignement Snapping": "Források Igazításának Rögzítése",
+  "Source Alignement Snapping": "Források Igazításának Összepattintása",
   "Snap Sources to edge of screen": "Források Rögzítése a képernyő széléhez",
-  "Snap Sources to other sources": "Források összekapcsolása más forrásokkal",
+  "Snap Sources to other sources": "Források összepattintása más forrásokkal",
   "Stream Type": "Stream Típusa",
   "Output Mode": "Kimeneti Mód",
   "Streaming": "Adás folyamatban",
@@ -67,7 +67,7 @@
   "Recording Path": "Felvétel Útvonala",
   "Enable": "Engedélyezés",
   "Default": "Alapértelmezett",
-  "Custom Encoder Settings": "Egyéni Kódóló Beállítások",
-  "Audio Bitrate": "Audió Bitráta",
+  "Custom Encoder Settings": "Egyéni Kódoló Beállítások",
+  "Audio Bitrate": "Audio Bitráta",
   "Video Bitrate": "Videó Bitráta"
 }

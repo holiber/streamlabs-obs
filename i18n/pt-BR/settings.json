@@ -36,7 +36,7 @@
   "Enforce streaming service bitrate limits": "Impor limites de bitrate do serviço de streaming",
   "Encoder Preset (Higher = Less CPU)": "Predefinição do Encoder (Maior = Menos uso de CPU)",
   "Generate File Name without Space": "Gerar Nome de Arquivo sem Espaços",
-  "Recording": "Recording",
+  "Recording": "Gravando",
   "Recording Quality": "Qualidade da Gravação",
   "Recording Format": "Formato da Gravação",
   "Custom Muxer Settings": "Configurações personalizadas do Muxer",
@@ -65,9 +65,9 @@
   "Desktop Audio Device": "Dispositivo de áudio de área de trabalho",
   "Mic/Auxiliary Device": "Dispositivo de microfone/auxiliar",
   "Recording Path": "Caminho da Gravação",
-  "Enable": "Enable",
-  "Default": "Default",
-  "Custom Encoder Settings": "Custom Encoder Settings",
-  "Audio Bitrate": "Audio Bitrate",
-  "Video Bitrate": "Video Bitrate"
+  "Enable": "Habilitado",
+  "Default": "Padrão",
+  "Custom Encoder Settings": "Configurações personalizadas do Codificador",
+  "Audio Bitrate": "Bitrate de Áudio",
+  "Video Bitrate": "Bitrate de Vídeo"
 }

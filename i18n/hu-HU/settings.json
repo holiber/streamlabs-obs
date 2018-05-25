@@ -28,7 +28,7 @@
   "Keep recording when stream stops": "Felvétel folytatása az élő adás leállítása esetén",
   "Source Alignement Snapping": "Források Igazításának Rögzítése",
   "Snap Sources to edge of screen": "Források Rögzítése a képernyő széléhez",
-  "Snap Sources to other sources": "Források rögzítése más forrásokhoz",
+  "Snap Sources to other sources": "Források összekapcsolása más forrásokkal",
   "Stream Type": "Stream Típusa",
   "Output Mode": "Kimeneti Mód",
   "Streaming": "Adás folyamatban",

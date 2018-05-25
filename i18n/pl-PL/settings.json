@@ -68,6 +68,6 @@
   "Enable": "Włącz",
   "Default": "Domyślne",
   "Custom Encoder Settings": "Niestandardowe ustawienia kodera",
-  "Audio Bitrate": "Audio Bitrate",
-  "Video Bitrate": "Video Bitrate"
+  "Audio Bitrate": "Bitrate Audio",
+  "Video Bitrate": "Bitrate Wideo"
 }

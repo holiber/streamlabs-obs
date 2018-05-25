@@ -46,7 +46,7 @@
   "Downscale Filter": "Leskálázás szűrő",
   "Bilinear (Fastest, but blurry if scaling)": "Bilineáris (Leggyorsabb, homályos lehet méretezésnél)",
   "Bicubic (Sharpened scaling, 16 samples)": "Kettős köbös (Élesített méretezés, 16 minta)",
-  "Lanczos (Sharpened scaling, 32 samples)": "Lánczos (Élesített méretezés, 32 minta)",
+  "Lanczos (Sharpened scaling, 32 samples)": "Lanczos (Élesített méretezés, 32 minta)",
   "No elements found. Consider changing the search query.": "Elem nem található. Próbáld meg más keresési paraméterekkel.",
   "Do not back up my media files in the cloud (requires app restart)": "Ne mentse a média fájljaimat a felhőbe (újraindítás szükséges)",
   "FPS Type": "FPS Típus",

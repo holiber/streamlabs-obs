@@ -8,8 +8,8 @@
   "Hide %{sourcename}": "%{sourcename} ausblenden",
   "Mute": "Stummschalten",
   "Unmute": "Stummschalten aufheben",
-  "Push to Mute": "Push-to-Mute",
-  "Push to Talk": "Push-to-Talk",
+  "Push to Mute": "Drücken um Stummzuschalten",
+  "Push to Talk": "Drücken zum Sprechen",
   "Enable Studio Mode": "Studio-Modus aktivieren",
   "Disable Studio Mode": "Studio-Modus deaktivieren",
   "Transition (Studio Mode)": "Übergang (Studio-Modus)"

@@ -24,7 +24,7 @@
   "This action will restart the application. Continue?": "アプリは再起動します。続行してもよろしいですか？",
   "Show confirmation dialog when starting streams": "Show confirmation dialog when starting streams",
   "Show confirmation dialog when stopping streams": "Show confirmation dialog when stopping streams",
-  "Automatically record when streaming": "Automatically record when streaming",
+  "Automatically record when streaming": "ストリーミング時に自動的に録画",
   "Keep recording when stream stops": "Keep recording when stream stops",
   "Source Alignement Snapping": "Source Alignement Snapping",
   "Snap Sources to edge of screen": "Snap Sources to edge of screen",

@@ -17,9 +17,9 @@
   "Rather do this manually?": "手動による行いますか？",
   "Setup later": "後でセットアップします",
   "Widget Theme installed & activated. Click here to manage your Widget Profiles.": "ウィジェットのテーマがインストールされ、有効化されました。 ウィジェットプロファイルを管理するには、ここをクリックしてください。",
-  "Follow": "Follow",
-  "Subscription": "Subscription",
-  "Donation": "Donation",
+  "Follow": "フォロー",
+  "Subscription": "サブスクリプション",
+  "Donation": "寄付金",
   "Bits": "ビット",
-  "Host": "Host"
+  "Host": "ホスト"
 }

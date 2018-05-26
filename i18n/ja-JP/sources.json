@@ -12,7 +12,7 @@
   "Captures your desktop audio for the purpose of playing sound, such as music or speech.": "録音（音楽・スピーチ）を再生するためデスクトップオーディオをキャプチャーします。",
   "Desktop audio": "デスクトップオーディオ",
   "Add a color to the background of your whole scene or just a part.": "背景に全部的に、または部分的に色を追加します。",
-  "Allows you to add web-based content as a source, such as web pages and Flash SWFs.": "Allows you to add web-based content as a source, such as web pages and Flash SWFs.",
+  "Allows you to add web-based content as a source, such as web pages and Flash SWFs.": "WebページやFlash SWFなど、Webベースのコンテンツをソースとして追加できます。",
   "Websites": "ウェブサイト",
   "Third party widget": "サードパーティ製のウィジェット",
   "Add text to your scene and adjust its style.": "あなたのシーンにテキストを追加し、そのスタイルを調整します。",
@@ -22,7 +22,7 @@
   "Primary monitor": "プライマリー モニター",
   "Secondary monitor": "セカンダリー モニター",
   "Capture a game you're playing on your computer.": "コンピューターで遊んでいるゲームをキャプチャーします。",
-  "Built in works with most modern computer games": "Built in works with most modern computer games",
+  "Built in works with most modern computer games": "ほとんどの最新のコンピュータゲームで動作する",
   "Allow you to capture NDI output streams.": "NDI の出力ストリームをキャプチャ－することができます。",
   "Any device that attaches to a computer for the purpose of capturing sound, such as music or speech.": "Any device that attaches to a computer for the purpose of capturing sound, such as music or speech.",
   "Built in microphones": "内蔵のマイク",
@@ -133,12 +133,12 @@
   "Ungroup Scene": "シーンのグループを解除します。",
   "Create Source Projector": "ソースプロジェクターを作成します。",
   "Click \"Add Source\" when you're ready to add it to your scene": "Click \"Add Source\" when you're ready to add it to your scene",
-  "BrowserSource": "BrowserSource",
+  "BrowserSource": "ブラウザー・ソース",
   "NDI source": "NDI のソース",
   "Use Google Font": "Google のフォントを使う",
   "Center Horizontal": "横方向中央揃え",
   "Center Vertical": "縦方向中央揃え",
   "Unhide All": "すべて再表示します。",
-  "Cloud Backup: All media and sources are backed up in the cloud": "Cloud Backup: All media and sources are backed up in the cloud",
-  "Cloud Backup: Your media and sources are being synced with the cloud": "Cloud Backup: Your media and sources are being synced with the cloud"
+  "Cloud Backup: All media and sources are backed up in the cloud": "クラウド バックアップ: すべてのメディアやソースがクラウド内でバックアップされております",
+  "Cloud Backup: Your media and sources are being synced with the cloud": "クラウドバックアップ：メディアとソースがクラウドと同期されております"
 }

@@ -1,7 +1,7 @@
 {
   "Are you sure you want to stop streaming?": "ストリーミングを停止してもよろしいですか？",
-  "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.": "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.",
-  "Failed to connect to the streaming server.  Please check your internet connection.": "Failed to connect to the streaming server.  Please check your internet connection.",
+  "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.": "パスまたは接続URLが無効です。 設定が有効であることを確認してください。",
+  "Failed to connect to the streaming server.  Please check your internet connection.": "ストリーミングサーバーに接続できませんでした。 インターネット接続を確認してください。",
   "Disconnected from the streaming server.  Please check your internet connection.": "Disconnected from the streaming server.  Please check your internet connection.",
   "Could not access the specified channel or stream key, please double-check your stream key.  ": "Could not access the specified channel or stream key, please double-check your stream key.  ",
   "If it is correct, there may be a problem connecting to the server.": "If it is correct, there may be a problem connecting to the server.",

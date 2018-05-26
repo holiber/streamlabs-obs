@@ -65,9 +65,9 @@
   "Desktop Audio Device": "Desktop-Audio-Gerät",
   "Mic/Auxiliary Device": "MIC/AUX-Gerät",
   "Recording Path": "Aufnahmepfad",
-  "Enable": "Enable",
-  "Default": "Default",
-  "Custom Encoder Settings": "Custom Encoder Settings",
-  "Audio Bitrate": "Audio Bitrate",
-  "Video Bitrate": "Video Bitrate"
+  "Enable": "Aktivieren",
+  "Default": "Standard",
+  "Custom Encoder Settings": "Benutzerdefinierte Encoder-Einstellungen",
+  "Audio Bitrate": "Audio-Bitrate",
+  "Video Bitrate": "Video-Bitrate"
 }

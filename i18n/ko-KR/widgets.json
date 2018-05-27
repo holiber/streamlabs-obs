@@ -16,10 +16,10 @@
   "Add %{widgetscount} Widgets": "Add %{widgetscount} Widgets",
   "Rather do this manually?": "Rather do this manually?",
   "Setup later": "Setup later",
-  "Widget Theme installed & activated. Click here to manage your Widget Profiles.": "Widget Theme installed & activated. Click here to manage your Widget Profiles.",
-  "Follow": "Follow",
-  "Subscription": "Subscription",
-  "Donation": "Donation",
+  "Widget Theme installed & activated. Click here to manage your Widget Profiles.": "위젯 테마 설치하고 활성화. 위제 프로필은 관리하려면 여기를 클릭하세요.",
+  "Follow": "팔로우",
+  "Subscription": "구독",
+  "Donation": "후원",
   "Bits": "Bits",
-  "Host": "Host"
+  "Host": "호스트"
 }

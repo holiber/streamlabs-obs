@@ -1,5 +1,5 @@
 {
-  "Image Mask/Blend": "Mieszaj/Maskuj obraz",
+  "Image Mask/Blend": "Obraz maski/mieszania",
   "Crop/Pad": "Przytnij",
   "Gain": "Wzmocnienie",
   "Color Correction": "Korekcja koloru",
@@ -15,7 +15,7 @@
   "Noise Gate": "Bramka szumów",
   "Compressor": "Kompresor",
   "VST 2.x Plugin": "Wtyczka VST 2.x",
-  "Face Mask Plugin": "Plugin maskowania twarzy",
+  "Face Mask Plugin": "Wtyczka maskowania twarzy",
   "Filter type": "Typ filtra",
   "Filter name": "Nazwa filtru",
   "Add source filter": "Dodaj filtr źródła",

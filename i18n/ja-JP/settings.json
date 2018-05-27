@@ -41,7 +41,7 @@
   "Recording Format": "リコーディングのフォーマット",
   "Custom Muxer Settings": "カスタムのMuxerの設定",
   "Enable Replay Buffer": "再生バッファーを有効にします。",
-  "Base (Canvas) Resolution": "Base (Canvas) Resolution",
+  "Base (Canvas) Resolution": "ベース（キャンバス）解像度",
   "Output (Scaled) Resolution": "Output (Scaled) Resolution",
   "Downscale Filter": "Downscale Filter",
   "Bilinear (Fastest, but blurry if scaling)": "Bilinear (Fastest, but blurry if scaling)",

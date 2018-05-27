@@ -7,12 +7,12 @@
   "What can I do?": "Was kann ich tun?",
   "Check the health of your Internet connection": "Überprüfen Sie Ihre Internetverbindung",
   "Change your ingest server": "Wechseln Sie auf einen anderen Ingest-Server",
-  "If none of these worked, lower your bitrate": "Wenn davon nichts geholfen hat, senken Sie Ihre Bitrate",
+  "If none of these worked, lower your bitrate": "Wenn keine dieser Lösungen geholfen hat, senken Sie Ihre Bitrate",
   "Streamlabs OBS has detected skipped frames": "Streamlabs OBS hat übersprungene Frames erkannt",
   "Some frames have not been encoded.": "Einige Frames wurden nicht encodiert.",
   "This problem is usually due to high CPU usage or unsuitable encoder settings.": "Dieses Problem wird in der Regel durch hohe CPU-Auslastung oder ungeeignete Encoder-Einstellungen verursacht.",
   "Lower your encoder settings (preset)": "Senken Sie Ihre Encoder-Einstellungen (Voreinstellung)",
-  "Ensure that you don't have any other applications open that are heavy on your CPU": "Stellen Sie sicher, dass Sie keine weiteren Programme geöffnet haben, welche Ihre CPU zusätzlich auslastet",
+  "Ensure that you don't have any other applications open that are heavy on your CPU": "Stellen Sie sicher, dass Sie keine weiteren Programme geöffnet haben, welche Ihre CPU zusätzlich auslasten",
   "Enable performance mode in the Editor context menu": "Performance-Modus im Editor Kontextmenü aktivieren",
   "Streamlabs OBS has detected lagged frames": "Streamlabs OBS hat verzögerte Bilder entdeckt",
   "Some frames took too long to get rendered.": "Einige Frames brauchten zu lange um gerendert zu werden.",
@@ -22,5 +22,5 @@
   "Enable VSync in your game": "VSync im Spiel aktivieren",
   "Disable FreeSync or GSync in your Driver": "FreeSync oder GSync im Treiber deaktivieren",
   "Lower graphics settings until you stop lagging frames": "Die Grafikeinstellungen im Spiel so weit herunterstellen, bis die verzögerten Bilder aufhören",
-  "Disable hardware decoding under any media sources(This will slightly increase cpu over gpu)": "Deaktivieren Sie die Hardware-Decodierung bei allen Medien Quellen (Dies erhöht leicht die CPU gegenüber der GPU)"
+  "Disable hardware decoding under any media sources(This will slightly increase cpu over gpu)": "Deaktivieren Sie die Hardware-Decodierung bei allen Medien Quellen (Dies erhöht leicht die CPU-Last gegenüber der GPU-Last)"
 }

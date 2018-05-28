@@ -8,7 +8,7 @@
   "Render Delay": "Délai d'affichage",
   "Color Key": "Couleur d'incrustation",
   "Apply LUT": "Appliquer LUT",
-  "Sharpen": "Sharpen",
+  "Sharpen": "Affiner",
   "Chroma Key": "Chroma Key",
   "Video Delay (Async)": "Décalage vidéo",
   "Noise Suppression": "Suppression du bruit",
@@ -20,5 +20,5 @@
   "Filter name": "Nom du filtre",
   "Add source filter": "Ajouter un filtre a la source",
   "No filters applied": "Aucun filtres est actuellement ajoutés",
-  "Source filters": "Source filters"
+  "Source filters": "Filtres de sources"
 }

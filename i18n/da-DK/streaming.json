@@ -42,8 +42,8 @@
   "Are you sure you want to exit while live?": "Er du sikker på at du vil afslutte, mens du er live?",
   "Enable the preview stream": "Aktiver forhåndsvisningsstream",
   "Disable the preview stream, can help with CPU": "Deaktiver preview stream, kan hjælpe med CPU",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline",
-  "Set path in Settings > Output.": "Set path in Settings > Output."
+  "viewers": "seere",
+  "Refresh Chat": "Opdater chat",
+  "Your chat is currently offline": "Din chat er i øjeblikket offline",
+  "Set path in Settings > Output.": "Sæt stien i indstillinger > Output."
 }

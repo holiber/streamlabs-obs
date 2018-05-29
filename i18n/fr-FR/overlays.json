@@ -1,5 +1,5 @@
 {
-  "Successfully saved %{filename}": "Successfully saved %{filename}",
+  "Successfully saved %{filename}": "%{filename} sauvegardé avec succès",
   "Successfully loaded %{filename}.overlay": "Successfully loaded %{filename}.overlay",
   "This is an experimental feature.  Use at your own risk.": "This is an experimental feature.  Use at your own risk.",
   "Export Overlay File": "Export Overlay File",

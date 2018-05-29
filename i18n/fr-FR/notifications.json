@@ -6,14 +6,14 @@
   "Detect skipped frames": "Surveiller les images ignorées",
   "Skipped frames threshold": "Seuil de détection des images ignorées",
   "Detect lagged frames": "Surveiller les images retardées",
-  "Lagged frames threshold": "Lagged frames threshold",
+  "Lagged frames threshold": "Seuil de détection des images retardées",
   "Detect dropped frames": "Detect dropped frames",
   "Dropped frames threshold": "Dropped frames threshold",
-  "Show Notifications": "Show Notifications",
-  "Restore Defaults": "Restore Defaults",
+  "Show Notifications": "Afficher les notifications",
+  "Restore Defaults": "Restaurer les paramètres par défaut",
   "Troubleshooter Notifications": "Troubleshooter Notifications",
-  "Click to open your Notifications window": "Click to open your Notifications window",
-  "Click to read your unread Notifications": "Click to read your unread Notifications",
-  "New Notifications": "New Notifications",
-  "Log": "Log"
+  "Click to open your Notifications window": "Cliquer pour ouvrir la fenêtre de notifications",
+  "Click to read your unread Notifications": "Cliquer pour lire les notifications non lues",
+  "New Notifications": "Nouvelle notification",
+  "Log": "Historique"
 }

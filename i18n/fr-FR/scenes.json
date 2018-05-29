@@ -26,7 +26,7 @@
   "Add a Group so you can move multiple Sources at the same time.": "Ajoutez un group afin de pouvoir déplacer plusieurs sources en même temps.",
   "Cloud Backup": "Sauvegarde dans le Cloud",
   "Your media files are currently being synced with the cloud. ": "Vos fichiers audio et video sont actuellement synchronisés dans le Cloud. ",
-  "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "It is recommended that you wait until this finishes before going live.": "Il est recommendé d'attendre la fin de la synchronisation avant de commencer la diffusion.",
+  "Go Live Anyway": "Commencer la diffusion quand même",
+  "Wait": "Attendre"
 }

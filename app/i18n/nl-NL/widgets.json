@@ -1,7 +1,7 @@
 {
   "Add Widgets": "Widget toevoegen",
   "Select the Streamlabs widgets you would like to activate for your stream. These will get automatically added to your scene.": "Selecteer de Streamlabs widgets die je wilt gebruiken voor je stream. Deze zullen automatish toegevoegd worden aan je scène.",
-  "Thanks viewers with notification popups": "Thanks viewers with notification popups",
+  "Thanks viewers with notification popups": "Bedankt kijkers met notificatie meldingen",
   "Most recent events into your stream": "Most recent events into your stream",
   "A jar that catches bits, tips, and more": "A jar that catches bits, tips, and more",
   "Your channel's chat in your stream": "Your channel's chat in your stream",
@@ -15,7 +15,7 @@
   "Rolling credits at the end of your stream": "Rolling credits at the end of your stream",
   "Add %{widgetscount} Widgets": "Add %{widgetscount} Widgets",
   "Rather do this manually?": "Rather do this manually?",
-  "Setup later": "Setup later",
+  "Setup later": "Later instellen",
   "Widget Theme installed & activated. Click here to manage your Widget Profiles.": "Widget Theme installed & activated. Click here to manage your Widget Profiles.",
   "Follow": "Follow",
   "Subscription": "Subscription",

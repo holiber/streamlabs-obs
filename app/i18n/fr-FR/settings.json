@@ -1,6 +1,6 @@
 {
   "General": "Général",
-  "Stream": "Stream",
+  "Stream": "Flux de données",
   "Output": "Sortie",
   "Audio": "Audio",
   "Video": "Vidéo",
@@ -56,7 +56,7 @@
   "Process Priority": "Priorité du processus",
   "Color Format": "Format de couleur",
   "Audio Monitoring Device": "Dispositif de surveillance audio",
-  "Disable Windows audio ducking": "Disable Windows audio ducking",
+  "Disable Windows audio ducking": "Désactiver le contrôle Windows sur l'audio",
   "YUV Color Space": "Espace colorimétrique YUV",
   "YUV Color Range": "Gamme de couleurs YUV",
   "Stream Delay": "Retard de flux",

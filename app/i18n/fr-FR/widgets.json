@@ -1,7 +1,7 @@
 {
-  "Add Widgets": "Add Widgets",
+  "Add Widgets": "Ajouter des modules",
   "Select the Streamlabs widgets you would like to activate for your stream. These will get automatically added to your scene.": "Select the Streamlabs widgets you would like to activate for your stream. These will get automatically added to your scene.",
-  "Thanks viewers with notification popups": "Thanks viewers with notification popups",
+  "Thanks viewers with notification popups": "Remercier les spectateurs avec des notifications pop-up",
   "Most recent events into your stream": "Most recent events into your stream",
   "A jar that catches bits, tips, and more": "A jar that catches bits, tips, and more",
   "Your channel's chat in your stream": "Your channel's chat in your stream",
@@ -18,8 +18,8 @@
   "Setup later": "Configurer plus tard",
   "Widget Theme installed & activated. Click here to manage your Widget Profiles.": "Widget Theme installed & activated. Click here to manage your Widget Profiles.",
   "Follow": "Follow",
-  "Subscription": "Subscription",
-  "Donation": "Donation",
+  "Subscription": "Abonnement",
+  "Donation": "Don",
   "Bits": "Bits",
-  "Host": "Host"
+  "Host": "Hébergement"
 }

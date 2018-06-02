@@ -19,7 +19,7 @@
   "Are you sure you want to remove %{sceneName}?": "Etes vous sur de vouloir supprimer %{sceneName}?",
   "Disable Performance Mode": "Désactivé le Mode Performance",
   "Scene Collections": "Collection de scènes",
-  "The building blocks of your scene. Also contains widgets.": "The building blocks of your scene. Also contains widgets.",
+  "The building blocks of your scene. Also contains widgets.": "Les éléments constitutifs de votre scène. Contient également des widgets.",
   "Add a new Source to your Scene. Includes widgets.": "Ajoutez une nouvelle source à votre scène. Certains widgets sont inclus.",
   "Remove Sources from your Scene.": "Supprimez les sources de votre scènes.",
   "Open the Source Properties.": "Ouvrir les propriétés de la source.",

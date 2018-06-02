@@ -62,12 +62,12 @@
   "Stream Delay": "Retard de flux",
   "Duration (Seconds)": "Durée (en secondes)",
   "Preserved cutoff point (increase delay) when reconnecting": "Conserve le point de coupure (augmentation du retard) lors de la reconnexion",
-  "Desktop Audio Device": "Desktop Audio Device",
-  "Mic/Auxiliary Device": "Mic/Auxiliary Device",
-  "Recording Path": "Recording Path",
-  "Enable": "Enable",
-  "Default": "Default",
-  "Custom Encoder Settings": "Custom Encoder Settings",
-  "Audio Bitrate": "Audio Bitrate",
-  "Video Bitrate": "Video Bitrate"
+  "Desktop Audio Device": "Dispositif Audio du Bureau",
+  "Mic/Auxiliary Device": "Mic/Dispositif Auxiliaire",
+  "Recording Path": "Chemin d’enregistrement",
+  "Enable": "Activer",
+  "Default": "Par défaut",
+  "Custom Encoder Settings": "Paramètres de l’encodeur personnalisé",
+  "Audio Bitrate": "Taux d'échantillonnage fixe de l'audio",
+  "Video Bitrate": "Taux d'échantillonnage fixe de la vidéo"
 }

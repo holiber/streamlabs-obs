@@ -12,5 +12,5 @@
   "Volume ( % )": "Volume ( % )",
   "Sync Offset ( ms )": "Décalage de la synchronisation (ms)",
   "Mixer": "Table de mixage",
-  "Monitor audio levels. If the bars are moving you are outputting audio.": "Surveillance des parametres audio. Le mouvement des bars signifient que un signal audio est emit."
+  "Monitor audio levels. If the bars are moving you are outputting audio.": "Surveillance des niveaux audio. Le mouvement des barres signifient qu’un signal audio est emit."
 }

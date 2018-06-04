@@ -18,7 +18,7 @@
   "Face Mask Plugin": "Plugin masque visage",
   "Filter type": "Type du filtre",
   "Filter name": "Nom du filtre",
-  "Add source filter": "Ajouter un filtre a la source",
-  "No filters applied": "Aucun filtres est actuellement ajoutés",
+  "Add source filter": "Ajouter le filtre source",
+  "No filters applied": "Aucun filtre appliqué",
   "Source filters": "Filtres de sources"
 }

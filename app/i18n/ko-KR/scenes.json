@@ -6,7 +6,7 @@
   "There needs to be at least one scene.": "한장면이상이 필요합니다.",
   "Projector:": "프로젝터:",
   "Projector: Output": "프로젝터: 출력",
-  "Manage All": "Manage All",
+  "Manage All": "모두 관리",
   "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.",
   "Are you sure you want to remove %{collectionName}?": "Are you sure you want to remove %{collectionName}?",
   "Create Scene Projector": "Create Scene Projector",

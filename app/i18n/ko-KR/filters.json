@@ -15,10 +15,10 @@
   "Noise Gate": "노이즈 게이트",
   "Compressor": "컴프레서",
   "VST 2.x Plugin": "VST 2.x 플러그인",
-  "Face Mask Plugin": "얼굴 마스크 플러그인",
-  "Filter type": "필터 유형",
+  "Face Mask Plugin": "페이스 마스크 플러그인",
+  "Filter type": "필터 종류",
   "Filter name": "필터 이름",
   "Add source filter": "소스 필터 추가",
-  "No filters applied": "적용 된 필터 없음",
+  "No filters applied": "적용된 필터가 없음",
   "Source filters": "소스 필터"
 }

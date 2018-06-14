@@ -1,9 +1,9 @@
 {
   "General": "일반",
-  "Stream": "스트림",
+  "Stream": "방송",
   "Output": "출력",
-  "Audio": "오디오",
-  "Video": "비디오",
+  "Audio": "소리",
+  "Video": "영상",
   "Hotkeys": "단축키",
   "Advanced": "고급",
   "Overlays": "오버레이",

@@ -11,7 +11,7 @@
   "Appearance": "외관",
   "Remote Control": "원격 제어",
   "Night mode": "야간 모드",
-  "If you are experiencing weird behavior, you can try deleting your cache directory.  This will result in you losing your scene configuration and settings, but can fix some stability issues.": "이상한 동작을 발생 하는 경우 캐시 디렉터리 삭제 시도해보세요.  이 장면 구성 및 설정, 없어집니다. 하지만 몇 가지 안정성 문제를 해결할 수 있습니다.",
+  "If you are experiencing weird behavior, you can try deleting your cache directory.  This will result in you losing your scene configuration and settings, but can fix some stability issues.": "이상한 동작이 발생할 경우. 캐시를 삭제해보세요. 이렇게 할 경우 장면 속성과 설정을 잃겠지만, 안정성 문제를 해결할 수 있습니다.",
   "Show Cache Directory": "캐시 디렉터리 표시",
   "Delete Cache and Restart": "삭제 캐시 및 다시 시작",
   "Upload Cache to Developers": "개발자에게 캐시를 업로드",

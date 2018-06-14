@@ -19,7 +19,7 @@
   "Run Auto Optimizer": "자동 최적화 실행",
   "Confirm stream title and game before going live": "송출하기 전에 방송 제목과 게임 확인하기",
   "WARNING! You will lose all scenes, sources, and settings. This cannot be undone!": "경고! 모든 장면, 소스, 그리고 설정을 잃게됩니다. 되돌릴 수 없습니다!",
-  "Your cache directory has been successfully uploaded.  The file name %{file} has been copied to your clipboard.  Please paste it into discord and tag a developer.": "캐시 디렉토리를 성공적으로 업로드 되었습니다.  파일 이름 %{file} 이 클립보드에 복사 되었습니다.   디스코드에다 붙여넣은 다음에 개발자를 태그 해주세요.",
+  "Your cache directory has been successfully uploaded.  The file name %{file} has been copied to your clipboard.  Please paste it into discord and tag a developer.": "성공적으로 캐시 저장소를 전송했습니다.  파일 이름 %{file}이(가) 클립보드에 복사되었습니다.  Discord에 붙여넣고 개발자를 태그해주세요.",
   "Streamlabels session has been succesfully restarted!": "Streamlabels 세션은 성공적으로 다시 시작 되었습니다!",
   "This action will restart the application. Continue?": "This action will restart the application. Continue?",
   "Show confirmation dialog when starting streams": "Show confirmation dialog when starting streams",

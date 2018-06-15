@@ -17,7 +17,7 @@
   "Upload Cache to Developers": "개발자에게 캐시 보내기",
   "Restart Streamlabels Session": "Streamlabels 세션 재시작",
   "Run Auto Optimizer": "자동 최적화 실행",
-  "Confirm stream title and game before going live": "송출하기 전에 방송 제목과 게임 확인하기",
+  "Confirm stream title and game before going live": "방송하기 전에 방송 제목과 게임 확인하기",
   "WARNING! You will lose all scenes, sources, and settings. This cannot be undone!": "경고! 모든 장면, 소스, 그리고 설정을 잃게됩니다. 되돌릴 수 없습니다!",
   "Your cache directory has been successfully uploaded.  The file name %{file} has been copied to your clipboard.  Please paste it into discord and tag a developer.": "성공적으로 캐시 저장소를 전송했습니다.  파일 이름 %{file}이(가) 클립보드에 복사되었습니다.  Discord에 붙여넣고 개발자를 태그해주세요.",
   "Streamlabels session has been succesfully restarted!": "Streamlabels 세션이 성공적으로 재시작되었습니다!",

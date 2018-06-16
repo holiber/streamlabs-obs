@@ -12,7 +12,7 @@
   "Some frames have not been encoded.": "몇몇 프레임이 인코딩되지 않았습니다.",
   "This problem is usually due to high CPU usage or unsuitable encoder settings.": "이 문제는 일반적으로 맞지 않는 인코더 설정으로 인한 높은 CPU 사용량때문에 일어납니다.",
   "Lower your encoder settings (preset)": "인코더 설정 내리기 (프리셋)",
-  "Ensure that you don't have any other applications open that are heavy on your CPU": "Ensure that you don't have any other applications open that are heavy on your CPU",
+  "Ensure that you don't have any other applications open that are heavy on your CPU": "CPU를 많이 사용하는 다른 프로그램이 열려있지 않은지 확인하기",
   "Enable performance mode in the Editor context menu": "Enable performance mode in the Editor context menu",
   "Streamlabs OBS has detected lagged frames": "Streamlabs OBS has detected lagged frames",
   "Some frames took too long to get rendered.": "Some frames took too long to get rendered.",

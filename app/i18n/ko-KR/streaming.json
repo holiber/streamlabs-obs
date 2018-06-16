@@ -8,7 +8,7 @@
   "There is not sufficient disk space to continue recording.": "다스크에 녹화를 계속할 수 있는 공간이 없습니다.",
   "The output format is either unsupported or does not support more than one audio track.  ": "지원되지 않는 출력 확장자이거나 하나 이상의 사운드 트렉을 지원하지 않습니다.  ",
   "Please check your settings and try again.": "설정을 확인하신 후 다시 시도해보세요.",
-  "An unexpected error occurred:": "예기치 않은 오류가 발생함:",
+  "An unexpected error occurred:": "예기치 않은 오류가 발생했습니다:",
   "Title": "제목",
   "Game": "게임",
   "Do not show this message when going live": "방송 중에는 이 메시지 보지 않기",

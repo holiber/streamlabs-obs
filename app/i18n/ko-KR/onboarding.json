@@ -14,7 +14,7 @@
   "Start": "시작하기",
   "Rather do this manually?": "수동으로 하시겠습니까?",
   "Setup later": "나중에 로그인하기",
-  "Detecting your location ...": "위치 찾는 중 ...",
+  "Detecting your location ...": "현재 위치를 찾는 중 ...",
   "Detected %{continent}": "%{continent} 탐지됨",
   "Performing bandwidth test ...": "대역폭 테스트 중 ...",
   "Testing streaming encoder ...": "송출 인코더 테스트 중 ...",

@@ -37,13 +37,13 @@
   "RECONNECTING": "재연결중",
   "GO LIVE": "방송 시작",
   "Go to Youtube to view your live stream": "YouTube로 들어가서 생방송 보기",
-  "Edit your stream title and description": "Edit your stream title and description",
-  "Go to Youtube Live Dashboard to control your stream": "Go to Youtube Live Dashboard to control your stream",
-  "Are you sure you want to exit while live?": "Are you sure you want to exit while live?",
-  "Enable the preview stream": "Enable the preview stream",
-  "Disable the preview stream, can help with CPU": "Disable the preview stream, can help with CPU",
-  "viewers": "viewers",
-  "Refresh Chat": "Refresh Chat",
-  "Your chat is currently offline": "Your chat is currently offline",
-  "Set path in Settings > Output.": "Set path in Settings > Output."
+  "Edit your stream title and description": "방송 제목과 설명을 수정",
+  "Go to Youtube Live Dashboard to control your stream": "Youtube 실시간 대시보드로 방송을 제어하세요",
+  "Are you sure you want to exit while live?": "정말로 방송 중에 나가시겠습니까?",
+  "Enable the preview stream": "미리보기 활성화",
+  "Disable the preview stream, can help with CPU": "미리보기를 중단하면, CPU에 도움이 됨",
+  "viewers": "시청자",
+  "Refresh Chat": "채팅 새로고침",
+  "Your chat is currently offline": "현재 채팅이 오프라인임",
+  "Set path in Settings > Output.": "설정 > 출력에서 경로를 지정하세요."
 }

@@ -7,7 +7,7 @@
   "Projector:": "프로젝터:",
   "Projector: Output": "프로젝터: 출력",
   "Manage All": "모두 관리하기",
-  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "이곳에서는 장면 모음을 바로 볼 수 있습니다. 텍스트를 클릭하면 보거나 관리할 수 있는 드롭다운 매뉴가 뜹니다.",
+  "This is where your Scene Collections live. Clicking the title will dropdown a menu where you can view & manage.": "이곳에서는 장면 모음을 바로 볼 수 있습니다. 텍스트를 클릭하면 보거나 관리할 수 있는 드롭다운 메뉴가 뜹니다.",
   "Are you sure you want to remove %{collectionName}?": "정말로 %{collectionName} 을(를) 제거하시겠습니까?",
   "Create Scene Projector": "장면 프로젝터 생성",
   "Preview is disabled in performance mode": "성능 모드에서는 미리보기가 비활성화됨",

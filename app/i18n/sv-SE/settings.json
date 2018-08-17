@@ -1,5 +1,5 @@
 {
-  "General": "General",
+  "General": "Allmän",
   "Stream": "Ström",
   "Output": "Utgående data",
   "Audio": "Ljud",
@@ -9,7 +9,7 @@
   "Overlays": "Overlays",
   "Notifications": "Aviseringar",
   "Appearance": "Utseende",
-  "Remote Control": "Remote Control",
+  "Remote Control": "Fjärrkontroll",
   "Night mode": "Nattläge",
   "If you are experiencing weird behavior, you can try deleting your cache directory.  This will result in you losing your scene configuration and settings, but can fix some stability issues.": "If you are experiencing weird behavior, you can try deleting your cache directory.  This will result in you losing your scene configuration and settings, but can fix some stability issues.",
   "Show Cache Directory": "Show Cache Directory",

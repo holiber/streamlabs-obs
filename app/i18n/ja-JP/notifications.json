@@ -12,8 +12,8 @@
   "Show Notifications": "通知を表示",
   "Restore Defaults": "既定値に戻す",
   "Troubleshooter Notifications": "トラブルシューティング通知",
-  "Click to open your Notifications window": "通知ウインドウを開くにはクリックします",
-  "Click to read your unread Notifications": "未読通知を読むにはクリックします",
+  "Click to open your Notifications window": "クリックして通知ウィンドウを開く",
+  "Click to read your unread Notifications": "クリックして未読通知を読む",
   "New Notifications": "新しい通知",
   "Log": "ログ"
 }

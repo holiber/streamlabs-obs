@@ -1,8 +1,8 @@
 {
-  "You don't have any notifications": "You don't have any notifications",
-  "Enable notifications": "Enable notifications",
-  "Enable sound": "Enable sound",
-  "Skipped frames detected:": "Skipped frames detected:",
+  "You don't have any notifications": "Du har inte några aviseringar",
+  "Enable notifications": "Aktivera aviseringar",
+  "Enable sound": "Aktivera ljud",
+  "Skipped frames detected:": "Överhoppade bildrutor:",
   "Detect skipped frames": "Detect skipped frames",
   "Skipped frames threshold": "Skipped frames threshold",
   "Detect lagged frames": "Detect lagged frames",

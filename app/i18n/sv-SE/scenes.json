@@ -19,14 +19,14 @@
   "Are you sure you want to remove %{sceneName}?": "Är du säker på att du vill ta bort %{sceneName}?",
   "Disable Performance Mode": "Inaktivera prestandaläge",
   "Scene Collections": "Scensamlingar",
-  "The building blocks of your scene. Also contains widgets.": "The building blocks of your scene. Also contains widgets.",
-  "Add a new Source to your Scene. Includes widgets.": "Add a new Source to your Scene. Includes widgets.",
-  "Remove Sources from your Scene.": "Remove Sources from your Scene.",
-  "Open the Source Properties.": "Open the Source Properties.",
-  "Add a Group so you can move multiple Sources at the same time.": "Add a Group so you can move multiple Sources at the same time.",
-  "Cloud Backup": "Cloud Backup",
+  "The building blocks of your scene. Also contains widgets.": "Byggstenarna i din scen innehåller även widgetar.",
+  "Add a new Source to your Scene. Includes widgets.": "Lägga till en ny källa till din scen. Innehåller widgetar.",
+  "Remove Sources from your Scene.": "Ta bort källor från din scen.",
+  "Open the Source Properties.": "Öppna egenskaper för källan.",
+  "Add a Group so you can move multiple Sources at the same time.": "Lägga till en grupp så att du kan flytta flera källor samtidigt.",
+  "Cloud Backup": "Molnsäkerhetskopiering",
   "Your media files are currently being synced with the cloud. ": "Your media files are currently being synced with the cloud. ",
   "It is recommended that you wait until this finishes before going live.": "It is recommended that you wait until this finishes before going live.",
-  "Go Live Anyway": "Go Live Anyway",
-  "Wait": "Wait"
+  "Go Live Anyway": "Börja strömma ändå",
+  "Wait": "Vänta"
 }

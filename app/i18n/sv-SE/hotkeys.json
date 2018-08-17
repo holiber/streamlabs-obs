@@ -7,7 +7,7 @@
   "Show %{sourcename}": "Visa %{sourcename}",
   "Hide %{sourcename}": "Dölj %{sourcename}",
   "Mute": "Tysta",
-  "Unmute": "Unmute",
+  "Unmute": "Slå på",
   "Push to Mute": "Tryck för att tysta",
   "Push to Talk": "Tryck för att prata",
   "Enable Studio Mode": "Aktivera Studioläge",

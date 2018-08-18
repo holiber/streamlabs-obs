@@ -9,9 +9,9 @@
     "Display Capture": "Display Capture",
     "Window Capture": "Window Capture",
     "Game Capture": "Game Capture",
-    "Video Capture Device": "Video Capture Device",
-    "Audio Input Capture": "Audio Input Capture",
-    "Audio Output Capture": "Audio Output Capture",
-    "Blackmagic Device": "Blackmagic Device",
-    "NDI Source": "NDI Source"
+    "Video Capture Device": "Videoinspelningsenhet",
+    "Audio Input Capture": "Ljudinspelningsenhet",
+    "Audio Output Capture": "Ljudupppelningsenhet",
+    "Blackmagic Device": "Blackmagic enhet",
+    "NDI Source": "NDI källa"
 }

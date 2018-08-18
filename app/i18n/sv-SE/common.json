@@ -5,7 +5,7 @@
   "Sources": "Källor",
   "Dashboard": "Instrumentpanel",
   "Library": "Bibliotek",
-  "Editor": "Editor",
+  "Editor": "Redaktör",
   "Live": "Live",
   "Bug Report": "Felrapport",
   "Settings": "Inställningar",
@@ -36,6 +36,6 @@
   "Hide": "Dölj",
   "Copy": "Kopiera",
   "Select All": "Markera alla",
-  "Select Option": "Select Option",
+  "Select Option": "Välj alternativ",
   "Browse": "Bläddra"
 }

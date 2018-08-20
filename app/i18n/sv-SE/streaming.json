@@ -1,8 +1,8 @@
 {
   "Are you sure you want to stop streaming?": "Är du säker på att du vill stoppa strömmen?",
   "Invalid Path or Connection URL.  Please check your settings to confirm that they are valid.": "Ogiltig sökväg eller URL för anslutningen.  Kontrollera inställningarna för att bekräfta att de är tillgängliga.",
-  "Failed to connect to the streaming server.  Please check your internet connection.": "Failed to connect to the streaming server.  Please check your internet connection.",
-  "Disconnected from the streaming server.  Please check your internet connection.": "Disconnected from the streaming server.  Please check your internet connection.",
+  "Failed to connect to the streaming server.  Please check your internet connection.": "Det gick inte att ansluta till strömserver.  Vänligen kontrollera din Internetanslutning.",
+  "Disconnected from the streaming server.  Please check your internet connection.": "Frånkopplad från strömservern.  Vänligen kontrollera din Internetanslutning.",
   "Could not access the specified channel or stream key, please double-check your stream key.  ": "Could not access the specified channel or stream key, please double-check your stream key.  ",
   "If it is correct, there may be a problem connecting to the server.": "If it is correct, there may be a problem connecting to the server.",
   "There is not sufficient disk space to continue recording.": "There is not sufficient disk space to continue recording.",

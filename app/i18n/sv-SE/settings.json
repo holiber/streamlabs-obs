@@ -26,7 +26,7 @@
   "Show confirmation dialog when stopping streams": "Visa bekräftelsedialogrutan när du stoppar strömmar",
   "Automatically record when streaming": "Spela in automatiskt när du strömmar",
   "Keep recording when stream stops": "Fortsätt inspelningen när strömmen slutar",
-  "Source Alignement Snapping": "Source Alignement Snapping",
+  "Source Alignement Snapping": "Källorienteringssnäppning",
   "Snap Sources to edge of screen": "Fäst källor till kanten av skärmen",
   "Snap Sources to other sources": "Fäst källor till andra källor",
   "Stream Type": "Strömtyp",

@@ -12,5 +12,7 @@
   "Push to Talk": "눌러서 말하기",
   "Enable Studio Mode": "스튜디오 모드 활성화",
   "Disable Studio Mode": "스튜디오 모드 비활성화",
-  "Transition (Studio Mode)": "전환 (스튜디오 모드)"
+  "Transition (Studio Mode)": "전환 (스튜디오 모드)",
+  "Capture Foreground Window": "Capture Foreground Window",
+  "Deactivate Capture": "Deactivate Capture"
 }

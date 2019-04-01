@@ -1,13 +1,8 @@
 import { Service } from '../service';
-import { nodeObs } from '../obs-api';
+import * as obs from '../../../obs-api';
 import { continentMap } from './continent-map';
 
-export type TConfigEvent =
-  'starting_step' |
-  'progress' |
-  'stopping_step' |
-  'error' |
-  'done';
+export type TConfigEvent = 'starting_step' | 'progress' | 'stopping_step' | 'error' | 'done';
 
 export interface IConfigStep {
   startMethod: string;
@@ -23,48 +18,47 @@ export interface IConfigProgress {
 
 type TConfigProgressCallback = (progress: IConfigProgress) => void;
 
-const steps = {
-
-};
-
 export class AutoConfigService extends Service {
-
   start(cb: TConfigProgressCallback) {
     this.fetchLocation(cb).then(continent => {
-      nodeObs.InitializeAutoConfig(
+      obs.NodeObs.InitializeAutoConfig(
         (progress: IConfigProgress) => {
           this.handleProgress(progress);
           cb(progress);
         },
         {
+          continent,
           service_name: 'Twitch',
-          continent
-        }
+        },
       );
 
-      nodeObs.StartBandwidthTest();
+      obs.NodeObs.StartBandwidthTest();
     });
   }
 
   handleProgress(progress: IConfigProgress) {
     if (progress.event === 'stopping_step') {
       if (progress.description === 'bandwidth_test') {
-        nodeObs.StartStreamEncoderTest();
+        obs.NodeObs.StartStreamEncoderTest();
       } else if (progress.description === 'streamingEncoder_test') {
-        nodeObs.StartRecordingEncoderTest();
+        obs.NodeObs.StartRecordingEncoderTest();
       } else if (progress.description === 'recordingEncoder_test') {
-        nodeObs.StartCheckSettings();
+        obs.NodeObs.StartCheckSettings();
       } else if (progress.description === 'checking_settings') {
-        nodeObs.StartSaveStreamSettings();
+        obs.NodeObs.StartSaveStreamSettings();
       } else if (progress.description === 'saving_service') {
-        nodeObs.StartSaveSettings();
+        obs.NodeObs.StartSaveSettings();
       } else if (progress.description === 'setting_default_settings') {
-        nodeObs.StartSaveStreamSettings();
+        obs.NodeObs.StartSaveStreamSettings();
       }
     }
 
     if (progress.event === 'error') {
-      nodeObs.StartSetDefaultSettings();
+      obs.NodeObs.StartSetDefaultSettings();
+    }
+
+    if (progress.event === 'done') {
+      obs.NodeObs.TerminateAutoConfig();
     }
   }
 
@@ -76,35 +70,36 @@ export class AutoConfigService extends Service {
     cb({
       event: 'starting_step',
       description: 'detecting_location',
-      percentage: 0
+      percentage: 0,
     });
 
-    return fetch(request).then(response => {
-      cb({
-        event: 'stopping_step',
-        description: 'detecting_location',
-        percentage: 100
+    return fetch(request)
+      .then(response => {
+        cb({
+          event: 'stopping_step',
+          description: 'detecting_location',
+          percentage: 100,
+        });
+
+        return response.json();
+      })
+      .then(json => {
+        const continent = this.countryCodeToContinent(json.country_code);
+
+        cb({
+          continent,
+          event: 'stopping_step',
+          description: 'location_found',
+        });
+
+        return continent;
+      })
+      .catch(() => {
+        return 'Other';
       });
-
-      return response.json();
-    }).then(json => {
-      const continent = this.countryCodeToContinent(json.country_code);
-
-      cb({
-        event: 'stopping_step',
-        description: 'location_found',
-        continent
-      });
-
-      return continent;
-    }).catch(() => {
-      return 'Other';
-    });
   }
 
   countryCodeToContinent(code: string) {
     return continentMap[code];
   }
-
-
 }

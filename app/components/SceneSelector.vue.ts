@@ -29,31 +29,34 @@ export default class SceneSelector extends Vue {
 
   searchQuery = '';
 
+  addSceneTooltip = $t('Add a new Scene.');
+  removeSceneTooltip = $t('Remove Scene.');
+  showTransitionsTooltip = $t('Edit Scene Transitions.');
+
   showContextMenu() {
     const menu = new Menu();
     menu.append({
       label: $t('Duplicate'),
-      click: () => this.scenesService.showDuplicateScene(this.scenesService.activeScene.name)
+      click: () => this.scenesService.showDuplicateScene(this.scenesService.activeScene.id),
     });
     menu.append({
       label: $t('Rename'),
-      click: () => this.scenesService.showNameScene({
-        rename: this.scenesService.activeScene.name
-      })
+      click: () =>
+        this.scenesService.showNameScene({
+          rename: this.scenesService.activeScene.id,
+        }),
     });
     menu.append({
       label: $t('Remove'),
-      click: () => this.scenesService.removeScene(this.scenesService.activeScene.id)
+      click: () => this.removeScene(),
     });
     menu.append({
       label: $t('Filters'),
-      click: () => this.sourceFiltersService.showSourceFilters(
-        this.scenesService.activeScene.id
-      )
+      click: () => this.sourceFiltersService.showSourceFilters(this.scenesService.activeScene.id),
     });
     menu.append({
       label: $t('Create Scene Projector'),
-      click: () => this.projectorService.createProjector(this.scenesService.activeScene.id)
+      click: () => this.projectorService.createProjector(this.scenesService.activeScene.id),
     });
     menu.popup();
   }
@@ -72,16 +75,19 @@ export default class SceneSelector extends Vue {
 
   removeScene() {
     const name = this.scenesService.activeScene.name;
-    const ok = electron.remote.dialog.showMessageBox(
+    electron.remote.dialog.showMessageBox(
       electron.remote.getCurrentWindow(),
       {
         type: 'warning',
         message: $t('Are you sure you want to remove %{sceneName}?', { sceneName: name }),
-        buttons: [$t('Cancel'), $t('OK')]
+        buttons: [$t('Cancel'), $t('OK')],
       },
       ok => {
-        if (ok) this.scenesService.removeScene(this.activeSceneId);
-      }
+        if (!ok) return;
+        if (!this.scenesService.removeScene(this.activeSceneId)) {
+          alert($t('There needs to be at least one scene.'));
+        }
+      },
     );
   }
 
@@ -93,7 +99,7 @@ export default class SceneSelector extends Vue {
     return this.scenesService.scenes.map(scene => {
       return {
         name: scene.name,
-        value: scene.id
+        value: scene.id,
       };
     });
   }
@@ -104,7 +110,7 @@ export default class SceneSelector extends Vue {
     if (this.searchQuery) {
       const fuse = new Fuse(list, {
         shouldSort: true,
-        keys: ['name']
+        keys: ['name'],
       });
 
       return fuse.search(this.searchQuery);

@@ -1,18 +1,17 @@
 import {
   ISceneItemActions,
   ISceneItemApi,
-  ISceneItem,
   TSceneNodeApi,
   ISceneItemNode,
-  ISceneItemFolderApi, TSceneNodeModel
+  ISceneItemFolderApi,
+  TSceneNodeModel,
 } from 'services/scenes';
 import { ISourceApi } from 'services/sources';
 
 /**
  * Represents active items and folders for current scene
  */
-export interface ISelectionServiceApi extends ISelection {
-}
+export interface ISelectionServiceApi extends ISelection {}
 
 /**
  * Allows call bulk actions with scene items and folders.
@@ -102,7 +101,7 @@ export interface ISelection extends ISceneItemActions {
   /**
    * Check the item is selected
    */
-  isSelected(nodeOrNodeId: string | TSceneNodeModel): void;
+  isSelected(nodeOrNodeId: string | TSceneNodeModel): boolean;
   /**
    * Returns true if selection contains a single scene item
    */
@@ -141,7 +140,6 @@ export interface ISelection extends ISceneItemActions {
    * @see `SceneNodeApi.setParent()`
    */
   setParent(folderId: string): void;
-
 
   /**
    * Returns a minimal representation of selection

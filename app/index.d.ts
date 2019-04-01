@@ -1,3 +1,7 @@
+/// <reference path="../vendor/toasted.d.ts" />
+/// <reference path="../vendor/urijs.d.ts" />
+///<reference path="./jsx.d.ts"/>
+
 // all global interfaces here
 
 interface Dictionary<TItemType> {
@@ -36,6 +40,12 @@ interface IResource {
   resourceId: string;
 }
 
+interface IRGBColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
 // list of modules without type definitions
 declare module 'raven-js/*';
 declare module 'v-tooltip';
@@ -51,7 +61,16 @@ declare module 'vue-popperjs';
 declare module 'vue-slider-component';
 declare module 'vuedraggable';
 declare module 'font-manager';
+declare module 'vue-codemirror';
 declare module 'recursive-readdir';
+declare module 'vue-toasted';
+declare module 'hyperform';
+declare module 'emojione';
+declare module 'vue-resize';
+declare module 'serve-handler';
+declare module 'v-selectpage';
+declare module '*.m.less';
+declare module 'streamlabs-beaker';
 
 // uncomment to allow TS to import components without type definitions
 // webpack still checks the module existence

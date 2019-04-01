@@ -1,10 +1,16 @@
-import { Service } from '../service';
-import { StatefulService, mutation } from './../stateful-service';
-import { IPlatformService, IPlatformAuth, IChannelInfo, IGame } from '.';
+import { StatefulService, mutation } from '../stateful-service';
+import {
+  IPlatformService,
+  IPlatformAuth,
+  IChannelInfo,
+  IGame,
+  TPlatformCapability,
+  TPlatformCapabilityMap,
+} from '.';
 import { HostsService } from '../hosts';
 import { SettingsService } from '../settings';
 import { Inject } from '../../util/injector';
-import { handleErrors, requiresToken, authorizedHeaders } from '../../util/requests';
+import { handleResponse, requiresToken, authorizedHeaders } from '../../util/requests';
 import { UserService } from '../user';
 import { integer } from 'aws-sdk/clients/cloudfront';
 
@@ -13,10 +19,11 @@ interface IMixerServiceState {
 }
 
 export class MixerService extends StatefulService<IMixerServiceState> implements IPlatformService {
-
   @Inject() hostsService: HostsService;
   @Inject() settingsService: SettingsService;
   @Inject() userService: UserService;
+
+  capabilities = new Set<TPlatformCapability>(['chat', 'viewer-count']);
 
   authWindowOptions: Electron.BrowserWindowConstructorOptions = {
     width: 800,
@@ -86,6 +93,10 @@ export class MixerService extends StatefulService<IMixerServiceState> implements
     });
   }
 
+  fetchUserInfo() {
+    return Promise.resolve({});
+  }
+
   fetchNewToken(): Promise<void> {
     const host = this.hostsService.streamlabs;
     const url = `https://${host}/api/v5/slobs/mixer/refresh`;
@@ -93,21 +104,19 @@ export class MixerService extends StatefulService<IMixerServiceState> implements
     const request = new Request(url, { headers });
 
     return fetch(request)
-      .then(handleErrors)
-      .then(response => response.json())
-      .then(response =>
-        this.userService.updatePlatformToken(response.access_token)
-      );
+      .then(handleResponse)
+      .then(response => this.userService.updatePlatformToken(response.access_token));
   }
 
   @requiresToken()
   fetchRawChannelInfo() {
     const headers = this.getHeaders(true);
-    const request = new Request(`${this.apiBase}channels/${this.mixerUsername}/details`, { headers });
+    const request = new Request(`${this.apiBase}channels/${this.mixerUsername}/details`, {
+      headers,
+    });
 
     return fetch(request)
-      .then(handleErrors)
-      .then(response => response.json())
+      .then(handleResponse)
       .then(json => {
         this.userService.updatePlatformChannelId(json.id);
         return json;
@@ -128,7 +137,7 @@ export class MixerService extends StatefulService<IMixerServiceState> implements
 
       return {
         title: json.name,
-        game: gameTitle
+        game: gameTitle,
       };
     });
   }
@@ -139,39 +148,40 @@ export class MixerService extends StatefulService<IMixerServiceState> implements
     const request = new Request(`${this.apiBase}channels/${this.mixerUsername}`, { headers });
 
     return fetch(request)
-      .then(handleErrors)
-      .then(response => response.json())
+      .then(handleResponse)
       .then(json => json.viewersCurrent);
   }
 
   @requiresToken()
-  putChannelInfo(streamTitle: string, streamGame: string): Promise<boolean> {
+  putChannelInfo({ title, game }: IChannelInfo): Promise<boolean> {
     const headers = this.getHeaders(true);
-    const data = { name: streamTitle };
+    const data = { name: title };
 
-    if (this.state.typeIdMap[streamGame]) {
-      data['typeId'] = this.state.typeIdMap[streamGame];
+    if (this.state.typeIdMap[game]) {
+      data['typeId'] = this.state.typeIdMap[game];
     }
 
     const request = new Request(`${this.apiBase}channels/${this.channelId}`, {
-      method: 'PATCH',
       headers,
-      body: JSON.stringify(data)
+      method: 'PATCH',
+      body: JSON.stringify(data),
     });
 
     return fetch(request)
-      .then(handleErrors)
+      .then(handleResponse)
       .then(() => true);
   }
 
   @requiresToken()
   searchGames(searchString: string): Promise<IGame[]> {
     const headers = this.getHeaders();
-    const request = new Request(`${this.apiBase}types?limit=10&noCount=1&scope=all&query=${searchString}`, { headers });
+    const request = new Request(
+      `${this.apiBase}types?limit=10&noCount=1&scope=all&query=${searchString}`,
+      { headers },
+    );
 
     return fetch(request)
-      .then(handleErrors)
-      .then(response => response.json())
+      .then(handleResponse)
       .then(response => {
         response.forEach((game: any) => {
           this.ADD_GAME_MAPPING(game.name, game.id);
@@ -181,11 +191,21 @@ export class MixerService extends StatefulService<IMixerServiceState> implements
   }
 
   getChatUrl(mode: string): Promise<string> {
-    return new Promise((resolve) => {
-      this.fetchRawChannelInfo()
-        .then(json => {
-          resolve(`https://mixer.com/embed/chat/${json.id}`);
-        });
+    return new Promise(resolve => {
+      this.fetchRawChannelInfo().then(json => {
+        resolve(`https://mixer.com/embed/chat/${json.id}`);
+      });
     });
+  }
+
+  beforeGoLive() {
+    return Promise.resolve();
+  }
+
+  // TODO: dedup
+  supports<T extends TPlatformCapability>(
+    capability: T,
+  ): this is TPlatformCapabilityMap[T] & IPlatformService {
+    return this.capabilities.has(capability);
   }
 }

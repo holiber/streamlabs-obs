@@ -1,14 +1,13 @@
 build: off
 
 install:
-  - ps: Install-Product node 8
-  - git submodule update --init --recursive
-  - yarn install
-  - yarn install-plugins
+  - ps: Install-Product node 10 x64
+  - yarn install --frozen-lockfile --check-files
+  - yarn lint
   - yarn compile:ci
 
 test_script:
-  - yarn test
+  - yarn test-flaky
   # - yarn screentest
   # - 7z a screentest.zip test-dist\screentest\*
   # - ps: $env:warning_ico = ":warning:"

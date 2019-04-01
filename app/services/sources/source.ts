@@ -1,4 +1,3 @@
-
 import {
   ISourceApi,
   TSourceType,
@@ -6,17 +5,15 @@ import {
   SourcesService,
   TPropertiesManager,
   ISourceComparison,
-  PROPERTIES_MANAGER_TYPES
+  PROPERTIES_MANAGER_TYPES,
 } from './index';
 import { mutation, ServiceHelper } from 'services/stateful-service';
 import { Inject } from 'util/injector';
 import { ScenesService } from 'services/scenes';
-import { TFormData } from 'components/shared/forms/Input';
+import { TObsFormData } from 'components/obs/inputs/ObsInput';
 import Utils from 'services/utils';
-import { WidgetType } from 'services/widgets';
 import * as obs from '../../../obs-api';
 import { isEqual } from 'lodash';
-
 
 @ServiceHelper()
 export class Source implements ISourceApi {
@@ -25,14 +22,16 @@ export class Source implements ISourceApi {
   type: TSourceType;
   audio: boolean;
   video: boolean;
+  async: boolean;
   muted: boolean;
   width: number;
   height: number;
   doNotDuplicate: boolean;
   channel?: number;
   resourceId: string;
+  propertiesManagerType: TPropertiesManager;
 
-  sourceState: ISource;
+  state: ISource;
 
   @Inject()
   scenesService: ScenesService;
@@ -42,13 +41,14 @@ export class Source implements ISourceApi {
   }
 
   getModel() {
-    return this.sourceState;
+    return this.state;
   }
 
   updateSettings(settings: Dictionary<any>) {
-    this.getObsInput().update(settings);
+    const obsInputSettings = this.sourcesService.getObsSourceSettings(this.type, settings);
+    this.getObsInput().update(obsInputSettings);
+    this.sourcesService.sourceUpdated.next(this.state);
   }
-
 
   getSettings(): Dictionary<any> {
     return this.getObsInput().settings;
@@ -68,26 +68,31 @@ export class Source implements ISourceApi {
   getComparisonDetails(): ISourceComparison {
     const details: ISourceComparison = {
       type: this.type,
-      propertiesManager: this.getPropertiesManagerType()
+      propertiesManager: this.getPropertiesManagerType(),
     };
+    if (this.getPropertiesManagerType() === 'streamlabels') {
+      details.isStreamlabel = true;
+    }
 
     if (this.getPropertiesManagerType() === 'widget') {
       details.widgetType = this.getPropertiesManagerSettings().widgetType;
     }
 
+    if (this.getPropertiesManagerType() === 'platformApp') {
+      details.appId = this.getPropertiesManagerSettings().appId;
+      details.appSourceId = this.getPropertiesManagerSettings().appSourceId;
+    }
+
     return details;
   }
 
-
   getPropertiesManagerType(): TPropertiesManager {
-    return this.sourcesService.propertiesManagers[this.sourceId].type;
+    return this.propertiesManagerType;
   }
-
 
   getPropertiesManagerSettings(): Dictionary<any> {
     return this.sourcesService.propertiesManagers[this.sourceId].manager.settings;
   }
-
 
   getPropertiesManagerUI(): string {
     return this.sourcesService.propertiesManagers[this.sourceId].manager.customUIComponent;
@@ -103,42 +108,37 @@ export class Source implements ISourceApi {
     oldManager.destroy();
 
     const managerKlass = PROPERTIES_MANAGER_TYPES[type];
-    this.sourcesService.propertiesManagers[this.sourceId].manager =
-      new managerKlass(this.getObsInput(), settings);
+    this.sourcesService.propertiesManagers[this.sourceId].manager = new managerKlass(
+      this.getObsInput(),
+      settings,
+    );
     this.sourcesService.propertiesManagers[this.sourceId].type = type;
+    this.SET_PROPERTIES_MANAGER_TYPE(type);
+    this.sourcesService.sourceUpdated.next(this.getModel());
   }
-
 
   setPropertiesManagerSettings(settings: Dictionary<any>) {
     this.sourcesService.propertiesManagers[this.sourceId].manager.applySettings(settings);
   }
 
-
-  getPropertiesFormData(): TFormData {
+  getPropertiesFormData(): TObsFormData {
     const manager = this.sourcesService.propertiesManagers[this.sourceId].manager;
     return manager.getPropertiesFormData();
   }
 
-
-  setPropertiesFormData(properties: TFormData) {
+  setPropertiesFormData(properties: TObsFormData) {
     const manager = this.sourcesService.propertiesManagers[this.sourceId].manager;
     manager.setPropertiesFormData(properties);
+    this.sourcesService.sourceUpdated.next(this.state);
   }
-
 
   duplicate(): Source {
     if (this.doNotDuplicate) return null;
-    return this.sourcesService.createSource(
-      this.name,
-      this.type,
-      this.getSettings(),
-      {
-        propertiesManager: this.getPropertiesManagerType(),
-        propertiesManagerSettings: this.getPropertiesManagerSettings()
-      }
-    );
+    return this.sourcesService.createSource(this.name, this.type, this.getSettings(), {
+      propertiesManager: this.getPropertiesManagerType(),
+      propertiesManagerSettings: this.getPropertiesManagerSettings(),
+    });
   }
-
 
   remove() {
     this.sourcesService.removeSource(this.sourceId);
@@ -146,13 +146,20 @@ export class Source implements ISourceApi {
 
   setName(newName: string) {
     this.SET_NAME(newName);
-    this.sourcesService.sourceUpdated.next(this.sourceState);
+    this.sourcesService.sourceUpdated.next(this.state);
   }
 
   hasProps(): boolean {
     return this.getObsInput().configurable;
   }
 
+  /**
+   * works only for browser_source
+   */
+  refresh() {
+    const obsInput = this.getObsInput();
+    (obsInput.properties.get('refreshnocache') as obs.IButtonProperty).buttonClicked(obsInput);
+  }
 
   @Inject()
   protected sourcesService: SourcesService;
@@ -162,12 +169,23 @@ export class Source implements ISourceApi {
     // is always up-to-date, and essentially acts
     // as a view into the store.  It also enforces
     // the read-only nature of this data
-    this.sourceState = this.sourcesService.state.sources[sourceId];
-    Utils.applyProxy(this, this.sourcesService.state.sources[sourceId]);
+    const isTemporarySource = !!this.sourcesService.state.temporarySources[sourceId];
+    if (isTemporarySource) {
+      this.state = this.sourcesService.state.temporarySources[sourceId];
+      Utils.applyProxy(this, this.sourcesService.state.temporarySources[sourceId]);
+    } else {
+      this.state = this.sourcesService.state.sources[sourceId];
+      Utils.applyProxy(this, this.sourcesService.state.sources[sourceId]);
+    }
   }
 
   @mutation()
   private SET_NAME(newName: string) {
-    this.sourceState.name = newName;
+    this.state.name = newName;
+  }
+
+  @mutation()
+  private SET_PROPERTIES_MANAGER_TYPE(type: TPropertiesManager) {
+    this.state.propertiesManagerType = type;
   }
 }

@@ -1,21 +1,19 @@
 <template>
-<modal-layout
-    :title="$t('Notifications')"
-    :showControls="false"
->
+<modal-layout :showControls="false">
   <div slot="content">
 
     <h4 v-if="!notificationsCount">
       {{ $t('You don\'t have any notifications') }}
     </h4>
 
-    <div v-for="(notificationsService, groupName) in notificationGroups">
+    <div v-for="(notificationsService, groupName) in notificationGroups" :key="groupName">
       <h4 v-if="notificationsService.length">
-        {{ groupName == 'unread' ? $t('New Notifications') : $('Log') }}
+        {{ groupName === 'unread' ? $t('New Notifications') : $t('Log') }}
       </h4>
       <div
         class="notification"
         v-for="notify in notificationsService"
+        :key="notify.id"
         @click="onNotificationClickHandler(notify.id)"
         :class = "{
           'unread': notify.unread,
@@ -42,17 +40,17 @@
   @import "../../styles/index";
 
 .notification {
-  color: @grey;
+  color: var(--icon);
   padding: 5px 10px;
   margin-bottom: 5px;
   display: grid;
   grid-template-columns: 30px 1fr 130px;
-  background: @day-primary;
-  .border;
+  background: var(--hover);
+  .border();
 
   &.has-action:hover {
-    color: @navy;
-    background: @day-secondary;
+    color: var(--title);
+    background: var(--section);
     cursor: pointer;
   }
 
@@ -61,24 +59,11 @@
   }
 
   .fa-warning {
-    color: @red;
+    color: var(--warning);
   }
 
   .date {
     text-align: right;
-  }
-}
-
-.night-theme {
-  .notification {
-    background: @night-hover;
-    border-color: @night-hover;
-
-    &.has-action:hover {
-      color: @white;
-      border-color: @night-secondary;
-      background: @night-secondary;
-    }
   }
 }
 </style>

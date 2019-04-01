@@ -2,17 +2,11 @@
 
 [![Build status](https://ci.appveyor.com/api/projects/status/xxn8immagev9o1fd/branch/staging?svg=true)](https://ci.appveyor.com/project/Streamlabs/streamlabs-obs)
 
-Simple, powerful, and efficient live streaming software built on Electron.
+Simple, powerful, and efficient live streaming software built on Electron and OBS.
 
 ![Streamlabs OBS](https://cdn.streamlabs.com/slobs/slobs-chatbox.png)
 
 This application currently only supports 64-bit Windows.
-
-## Issues
-
-Please submit all issues here:
-
-https://tracker.streamlabs.com
 
 ## Dependencies
 
@@ -31,52 +25,12 @@ Installation instructions can be found here:
 
 https://yarnpkg.com/en/docs/install
 
-### Visual C++ Compiler
-
-Yarn will install and compile a number of native extensions from
-source.  For yarn to do this, it needs a Visual C++ compiler.  The
-most reliable way to get this is to install:
-
-Visual Studio Community 2015 with Update 3
-
-Make sure you do a custom installation and select Visual C++ from
-the languages section.
-
-### CMake
-
-Some of our native addons require CMake for compilation.  You can
-download it here:
-
-https://cmake.org/download/
-
-Make sure to add CMake to your path. You may have to restart your
-machine before CMake is available.
-
-### Python 2.7
-
-Node-gyp requires python 2.7 available in your path to install some
-native addons.  You can download it here:
-
-https://www.python.org/
-
 ## Installation
-
-First, make sure you have initialized git submodules:
-
-```
-git submodule update --init --recursive
-```
 
 Install all node modules via yarn:
 
 ```
 yarn install
-```
-
-Install OBS plugins:
-
-```
-yarn install-plugins
 ```
 
 Then, compile assets with webpack:
@@ -112,17 +66,6 @@ this would only run in production.
 ## Packaging / Distributing
 
 Currently only Windows x64 packaging is supported.
-
-### Prerequesites
-
-The packager will use whatever version of node-obs you have
-checked out in the slobs directory (at `./node-obs`).  You
-should make sure that node-obs is compiled correctly with 32-bit
-and 64-bit plugins, and works properly with the currently checked
-out version of `streamlabs-obs`.  If you're releasing, that should
-probably be the `master` branch.  You should probably try running
-the app from your dev environment to make sure everything is
-working before you start the release process.
 
 ### Packaging
 
@@ -187,3 +130,9 @@ manual deploy.
 - [ ] Run the packaged version in `dist/win-unpacked` and make sure it runs
 - [ ] Deploy the new version `yarn deploy`
 - [ ] Merge master back into staging
+
+## ❤ OBS Developers
+
+At its core, Streamlabs OBS is powered by the [OBS](https://obsproject.com/)
+engine.  We want to thank all of the developers over at the OBS project for
+their years of tireless hard work, without which Streamlabs OBS wouldn't exist today.

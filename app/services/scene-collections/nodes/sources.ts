@@ -1,15 +1,10 @@
 import { Node } from './node';
 import { HotkeysNode } from './hotkeys';
-import {
-  SourcesService,
-  TSourceType,
-  TPropertiesManager
-} from 'services/sources';
-import { FontLibraryService } from 'services/font-library';
+import { SourcesService, TSourceType, TPropertiesManager } from 'services/sources';
 import { AudioService } from 'services/audio';
 import { Inject } from '../../../util/injector';
 import * as obs from '../../../../obs-api';
-import * as fi from 'node-fontinfo';
+import { ScenesService } from 'services/scenes';
 
 interface ISchema {
   items: ISourceInfo[];
@@ -47,25 +42,35 @@ export interface ISourceInfo {
 }
 
 export class SourcesNode extends Node<ISchema, {}> {
-
   schemaVersion = 3;
 
-  @Inject() private fontLibraryService: FontLibraryService;
   @Inject() private sourcesService: SourcesService;
   @Inject() private audioService: AudioService;
+  @Inject() private scenesService: ScenesService;
 
   getItems() {
-    return this.sourcesService.sources.filter(source => source.type !== 'scene');
+    const linkedSourcesIds = this.scenesService
+      .getSceneItems()
+      .map(sceneItem => sceneItem.sourceId);
+
+    return this.sourcesService.sources.filter(source => {
+      // we store scenes in separated config
+      if (source.type === 'scene') return false;
+
+      // global audio sources must be saved
+      if (source.channel) return true;
+
+      // prevent sources without linked sceneItems to be saved
+      return linkedSourcesIds.includes(source.sourceId);
+    });
   }
 
   save(context: {}): Promise<void> {
-    const items: ISourceInfo[] = [];
     const promises: Promise<ISourceInfo>[] = this.getItems().map(source => {
       return new Promise(resolve => {
         const hotkeys = new HotkeysNode();
 
         return hotkeys.save({ sourceId: source.sourceId }).then(() => {
-
           const audioSource = this.audioService.getSource(source.sourceId);
 
           const obsInput = source.getObsInput();
@@ -75,13 +80,13 @@ export class SourcesNode extends Node<ISchema, {}> {
           obsInput.save();
 
           let data: ISourceInfo = {
+            hotkeys,
             id: source.sourceId,
             name: source.name,
             type: source.type,
             settings: obsInput.settings,
             volume: obsInput.volume,
             channel: source.channel,
-            hotkeys,
             muted: obsInput.muted,
             filters: {
               items: obsInput.filters.map(filter => {
@@ -94,22 +99,30 @@ export class SourcesNode extends Node<ISchema, {}> {
                   name: filter.name,
                   type: filter.id,
                   settings: filter.settings,
-                  enabled: filter.enabled
+                  enabled: filter.enabled,
                 };
-              })
+              }),
             },
             propertiesManager: source.getPropertiesManagerType(),
-            propertiesManagerSettings: source.getPropertiesManagerSettings()
+            propertiesManagerSettings: source.getPropertiesManagerSettings(),
           };
 
-          if (audioSource) data = {
-            ...data,
-            forceMono: audioSource.forceMono,
-            syncOffset: AudioService.msToTimeSpec(audioSource.syncOffset),
-            audioMixers: audioSource.audioMixers,
-            monitoringType: audioSource.monitoringType,
-            mixerHidden: audioSource.mixerHidden
-          };
+          if (audioSource) {
+            data = {
+              ...data,
+              forceMono: audioSource.forceMono,
+              syncOffset: AudioService.msToTimeSpec(audioSource.syncOffset),
+              audioMixers: audioSource.audioMixers,
+              monitoringType: audioSource.monitoringType,
+              mixerHidden: audioSource.mixerHidden,
+            };
+          }
+
+          if (data.propertiesManager === 'replay') {
+            // Don't save the last replay, otherwise it will just play an old
+            // replay when this source is loaded back in.
+            delete data.settings['local_file'];
+          }
 
           resolve(data);
         });
@@ -122,48 +135,6 @@ export class SourcesNode extends Node<ISchema, {}> {
         resolve();
       });
     });
-  }
-
-
-
-  checkTextSourceValidity(item: ISourceInfo) {
-    if (item.type !== 'text_gdiplus') {
-      return;
-    }
-
-    const settings = item.settings;
-
-    if (settings['font']['face'] && (settings['font']['flags'] != null)) {
-      return;
-    }
-
-    /* Defaults */
-    settings['font']['face'] = 'Arial';
-    settings['font']['flags'] = 0;
-
-    /* This should never happen */
-    if (!settings.custom_font) {
-      const source = this.sourcesService.getSource(item.id);
-      source.updateSettings({ font: settings.font });
-      return;
-    }
-
-    const fontInfo = fi.getFontInfo(settings.custom_font);
-
-    if (!fontInfo) {
-      const source = this.sourcesService.getSource(item.id);
-      source.updateSettings({ font: settings.font });
-      return;
-    }
-
-    settings['font']['face'] = fontInfo.family_name;
-
-    settings['font']['flags'] =
-      (fontInfo.italic ? obs.EFontStyle.Italic : 0) |
-      (fontInfo.bold ? obs.EFontStyle.Bold : 0);
-
-    const source = this.sourcesService.getSource(item.id);
-    source.updateSettings({ font: settings.font });
   }
 
   /**
@@ -203,11 +174,15 @@ export class SourcesNode extends Node<ISchema, {}> {
             name: filter.name,
             type: filter.type,
             settings: filter.settings,
-            enabled: (filter.enabled === void 0) ? true : filter.enabled
+            enabled: filter.enabled === void 0 ? true : filter.enabled,
           };
-        })
+        }),
       };
     });
+
+    // This ensures we have bound the source size callback
+    // before creating any sources in OBS.
+    this.sourcesService;
 
     const sources = obs.createSources(sourceCreateData);
     const promises: Promise<void>[] = [];
@@ -215,28 +190,24 @@ export class SourcesNode extends Node<ISchema, {}> {
     sources.forEach((source, index) => {
       const sourceInfo = this.data.items[index];
 
-      this.sourcesService.addSource(
-        source,
-        this.data.items[index].name,
-        {
-          channel: sourceInfo.channel,
-          propertiesManager: sourceInfo.propertiesManager,
-          propertiesManagerSettings: sourceInfo.propertiesManagerSettings || {}
-        }
-      );
+      this.sourcesService.addSource(source, this.data.items[index].name, {
+        channel: sourceInfo.channel,
+        propertiesManager: sourceInfo.propertiesManager,
+        propertiesManagerSettings: sourceInfo.propertiesManagerSettings || {},
+      });
 
       if (source.audioMixers) {
-        this.audioService.getSource(sourceInfo.id).setMul((sourceInfo.volume != null) ? sourceInfo.volume : 1);
+        this.audioService
+          .getSource(sourceInfo.id)
+          .setMul(sourceInfo.volume != null ? sourceInfo.volume : 1);
         this.audioService.getSource(sourceInfo.id).setSettings({
           forceMono: sourceInfo.forceMono,
           syncOffset: sourceInfo.syncOffset ? AudioService.timeSpecToMs(sourceInfo.syncOffset) : 0,
           audioMixers: sourceInfo.audioMixers,
-          monitoringType: sourceInfo.monitoringType
+          monitoringType: sourceInfo.monitoringType,
         });
         this.audioService.getSource(sourceInfo.id).setHidden(!!sourceInfo.mixerHidden);
       }
-
-      this.checkTextSourceValidity(sourceInfo);
 
       if (sourceInfo.hotkeys) {
         promises.push(this.data.items[index].hotkeys.load({ sourceId: sourceInfo.id }));
@@ -248,17 +219,14 @@ export class SourcesNode extends Node<ISchema, {}> {
     });
   }
 
-
   migrate(version: number) {
-
     // migrate audio sources names
     if (version < 3) {
-
       this.data.items.forEach(source => {
-
         const desktopDeviceMatch = /^DesktopAudioDevice(\d)$/.exec(source.name);
         if (desktopDeviceMatch) {
           const index = parseInt(desktopDeviceMatch[1], 10);
+          // tslint:disable-next-line:prefer-template
           source.name = 'Desktop Audio' + (index > 1 ? ' ' + index : '');
           return;
         }
@@ -266,12 +234,11 @@ export class SourcesNode extends Node<ISchema, {}> {
         const auxDeviceMatch = /^AuxAudioDevice(\d)$/.exec(source.name);
         if (auxDeviceMatch) {
           const index = parseInt(auxDeviceMatch[1], 10);
+          // tslint:disable-next-line:prefer-template
           source.name = 'Mic/Aux' + (index > 1 ? ' ' + index : '');
           return;
         }
-
       });
-
     }
   }
 }

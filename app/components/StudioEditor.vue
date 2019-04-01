@@ -12,7 +12,7 @@
     class="studio-editor-display"
     :drawUI="true"
     :paddingSize="10"
-    :sourceId="studioMode ? 'Studio Transition' : void 0"
+    :sourceId="studioMode ? getStudioTransitionName() : void 0"
     @outputResize="onOutputResize"/>
 </div>
 </template>
@@ -25,7 +25,7 @@
 .studio-editor-display-container {
   position: relative;
   flex-grow: 1;
-  background-color: @navy-secondary;
+  background-color: var(--section);
 }
 
 .studio-editor-display {

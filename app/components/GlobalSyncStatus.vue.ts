@@ -2,6 +2,7 @@ import { Component } from 'vue-property-decorator';
 import Vue from 'vue';
 import { Inject } from 'util/injector';
 import { MediaBackupService, EGlobalSyncStatus } from 'services/media-backup';
+import { $t } from 'services/i18n';
 
 @Component({})
 export default class GlobalSyncStatus extends Vue {
@@ -11,17 +12,17 @@ export default class GlobalSyncStatus extends Vue {
     const status = this.mediaBackupService.globalSyncStatus;
 
     return {
-      'fa-cloud': status === EGlobalSyncStatus.Synced,
-      'fa-refresh': status === EGlobalSyncStatus.Syncing,
-      'fa-spin': status === EGlobalSyncStatus.Syncing
+      'icon-cloud-backup-2': status === EGlobalSyncStatus.Synced,
+      'fa-sync-alt': status === EGlobalSyncStatus.Syncing,
+      'fa-spin': status === EGlobalSyncStatus.Syncing,
     };
   }
 
   get syncStatusTooltip() {
     if (this.mediaBackupService.globalSyncStatus === EGlobalSyncStatus.Synced) {
-      return 'Cloud Backup: All media and sources are backed up in the cloud';
+      return $t('Cloud Backup: All media and sources are backed up in the cloud');
     }
 
-    return 'Cloud Backup: Your media and sources are being synced with the cloud';
+    return $t('Cloud Backup: Your media and sources are being synced with the cloud');
   }
 }

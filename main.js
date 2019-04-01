@@ -10,39 +10,66 @@ if (pjson.env === 'production') {
 if (pjson.name === 'slobs-client-preview') {
   process.env.SLOBS_PREVIEW = true;
 }
+if (pjson.name === 'slobs-client-ipc') {
+  process.env.SLOBS_IPC = true;
+}
 process.env.SLOBS_VERSION = pjson.version;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Modules and other Requires
 ////////////////////////////////////////////////////////////////////////////////
-const { app, BrowserWindow, ipcMain, session, crashReporter, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, crashReporter, dialog, webContents } = require('electron');
 const fs = require('fs');
-const { Updater } = require('./updater/Updater.js');
+const bootstrap = require('./updater/bootstrap.js');
 const uuid = require('uuid/v4');
 const rimraf = require('rimraf');
 const path = require('path');
+const semver = require('semver');
 const windowStateKeeper = require('electron-window-state');
-
-app.disableHardwareAcceleration();
+const obs = require('obs-studio-node');
+const pid = require('process').pid;
+const crashHandler = require('crash-handler');
+const electronLog = require('electron-log');
 
 if (process.argv.includes('--clearCacheDir')) {
   rimraf.sync(app.getPath('userData'));
 }
 
+app.disableHardwareAcceleration();
+
+/* Determine the current release channel we're
+ * on based on name. The channel will always be
+ * the premajor identifier, if it exists.
+ * Otherwise, default to latest. */
+const releaseChannel = (() => {
+  const components = semver.prerelease(pjson.version);
+
+  if (components) return components[0];
+  return 'latest';
+})();
+
 ////////////////////////////////////////////////////////////////////////////////
 // Main Program
 ////////////////////////////////////////////////////////////////////////////////
 
+(function setupLogger() {
+  // save logs to the cache directory
+  electronLog.transports.file.file = path.join(app.getPath('userData'), 'log.log');
+  electronLog.transports.file.level = 'info';
+  // Set approximate maximum log size in bytes. When it exceeds,
+  // the archived log will be saved as the log.old.log file
+  electronLog.transports.file.maxSize = 5 * 1024 * 1024;
+})();
+
 function log(...args) {
   if (!process.env.SLOBS_DISABLE_MAIN_LOGGING) {
-    console.log(...args);
+    electronLog.log(...args);
   }
 }
 
 // Windows
 let mainWindow;
 let childWindow;
-let childWindowIsReadyToShow = false;
 
 // Somewhat annoyingly, this is needed so that the child window
 // can differentiate between a user closing it vs the app
@@ -53,26 +80,29 @@ let appShutdownTimeout;
 
 global.indexUrl = 'file://' + __dirname + '/index.html';
 
-
 function openDevTools() {
   childWindow.webContents.openDevTools({ mode: 'undocked' });
   mainWindow.webContents.openDevTools({ mode: 'undocked' });
 }
 
-// Lazy require OBS
-let _obs;
-
-function getObs() {
-  if (!_obs) {
-    _obs = require('obs-studio-node').NodeObs;
-  }
-
-  return _obs;
-}
-
-
 function startApp() {
   const isDevMode = (process.env.NODE_ENV !== 'production') && (process.env.NODE_ENV !== 'test');
+
+  crashHandler.startCrashHandler(app.getAppPath());
+  crashHandler.registerProcess(pid, false);
+
+  { // Initialize obs-studio-server
+    // Set up environment variables for IPC.
+    process.env.SLOBS_IPC_PATH = "slobs-".concat(uuid());
+    process.env.SLOBS_IPC_USERDATA = app.getPath('userData');
+    // Host a new IPC Server and connect to it.
+    obs.IPC.host(process.env.SLOBS_IPC_PATH);
+    obs.NodeObs.SetWorkingDirectory(path.join(
+      app.getAppPath().replace('app.asar', 'app.asar.unpacked'),
+      'node_modules',
+      'obs-studio-node')
+    );
+  }
 
   const bt = require('backtrace-node');
 
@@ -108,10 +138,10 @@ function startApp() {
     crashReporter.start({
       productName: 'streamlabs-obs',
       companyName: 'streamlabs',
+      ignoreSystemCrashHandler: true,
       submitURL:
-        'https://streamlabs.sp.backtrace.io:6098/post?' +
-        'format=minidump&' +
-        'token=e3f92ff3be69381afe2718f94c56da4644567935cc52dec601cf82b3f52a06ce',
+        'https://sentry.io/api/1283430/minidump/' +
+        '?sentry_key=01fc20f909124c8499b4972e9a5253f2',
       extra: {
         version: pjson.version,
         processType: 'main'
@@ -180,8 +210,7 @@ function startApp() {
   mainWindow.on('closed', () => {
     require('node-libuiohook').stopHook();
     session.defaultSession.flushStorageData();
-    getObs().OBS_API_destroyOBS_API();
-    app.quit();
+    session.defaultSession.cookies.flushStore(() => app.quit());
   });
 
   // Pre-initialize the child window
@@ -228,12 +257,7 @@ function startApp() {
   }
 
   ipcMain.on('services-ready', () => {
-    callService('AppService', 'setArgv', process.argv);
     childWindow.loadURL(`${global.indexUrl}?windowId=child`);
-  });
-
-  ipcMain.on('window-childWindowIsReadyToShow', () => {
-    childWindowIsReadyToShow = true;
   });
 
   ipcMain.on('services-request', (event, payload) => {
@@ -266,26 +290,24 @@ function startApp() {
     // devtoolsInstaller.default(devtoolsInstaller.VUEJS_DEVTOOLS);
 
     // setTimeout(() => {
-    //   openDevTools();
+      //openDevTools();
     // }, 10 * 1000);
-
   }
-
-  // Initialize various OBS services
-  getObs().SetWorkingDirectory(
-    path.join(app.getAppPath().replace('app.asar', 'app.asar.unpacked') + 
-              '/node_modules/obs-studio-node'));
-
-  getObs().OBS_API_initAPI('en-US', app.getPath('userData'));
 }
 
 // We use a special cache directory for running tests
 if (process.env.SLOBS_CACHE_DIR) {
   app.setPath('appData', process.env.SLOBS_CACHE_DIR);
+  electronLog.transports.file.file = path.join(
+    process.env.SLOBS_CACHE_DIR,
+    'slobs-client',
+    'log.log'
+  );
 }
 app.setPath('userData', path.join(app.getPath('appData'), 'slobs-client'));
 
 app.setAsDefaultProtocolClient('slobs');
+
 
 // This ensures that only one copy of our app can run at once.
 const shouldQuit = app.makeSingleInstance(argv => {
@@ -311,11 +333,37 @@ if (shouldQuit) {
 }
 
 app.on('ready', () => {
-  if ((process.env.NODE_ENV === 'production') || process.env.SLOBS_FORCE_AUTO_UPDATE) {
-    (new Updater(startApp)).run();
+    if (
+      !process.argv.includes('--skip-update') &&
+      ((process.env.NODE_ENV === 'production') || process.env.SLOBS_FORCE_AUTO_UPDATE)) {
+    const updateInfo = {
+      baseUrl: 'https://slobs-cdn.streamlabs.com',
+      version: pjson.version,
+      exec: process.argv,
+      cwd: process.cwd(),
+      waitPids: [ process.pid ],
+      appDir: path.dirname(app.getPath('exe')),
+      tempDir: path.join(app.getPath('temp'), 'slobs-updater'),
+      cacheDir: app.getPath('userData'),
+      versionFileName: `${releaseChannel}.json`
+    };
+
+    log(updateInfo);
+    bootstrap(updateInfo).then((updating) => {
+      if (updating) {
+        log('Closing for update...');
+        app.exit();
+      } else {
+        startApp();
+      }
+    });
   } else {
     startApp();
   }
+});
+
+app.on('quit', (e, exitCode) => {
+  obs.IPC.disconnect();
 });
 
 ipcMain.on('openDevTools', () => {
@@ -335,6 +383,7 @@ ipcMain.on('window-showChildWindow', (event, windowOptions) => {
       const childX = (bounds.x + (bounds.width / 2)) - (windowOptions.size.width / 2);
       const childY = (bounds.y + (bounds.height / 2)) - (windowOptions.size.height / 2);
 
+      childWindow.show();
       childWindow.restore();
       childWindow.setMinimumSize(windowOptions.size.width, windowOptions.size.height);
 
@@ -356,19 +405,6 @@ ipcMain.on('window-showChildWindow', (event, windowOptions) => {
 
     childWindow.focus();
   }
-
-
-  // show the child window when it will be ready
-  new Promise(resolve => {
-    if (childWindowIsReadyToShow) {
-      resolve();
-      return;
-    }
-    ipcMain.once('window-childWindowIsReadyToShow', () => resolve());
-  }).then(() => {
-    // The child window will show itself when rendered
-    childWindow.send('window-setContents', windowOptions);
-  });
 
 });
 
@@ -426,88 +462,10 @@ ipcMain.on('vuex-mutation', (event, mutation) => {
   }
 });
 
-
-// Virtual node OBS calls:
-//
-// These are methods that appear upstream to be OBS
-// API calls, but are actually Javascript functions.
-// These should be used sparingly, and are used to
-// ensure atomic operation of a handful of calls.
-const nodeObsVirtualMethods = {
-
-  OBS_test_callbackProxy(num, cb) {
-    setTimeout(() => {
-      cb(num + 1);
-    }, 5000);
-  }
-
-};
-
-// These are called constantly and dirty up the logs.
-// They can be commented out of this list on the rare
-// occasional that they are useful in the log output.
-const filteredObsApiMethods = [
-  'OBS_content_getSourceSize',
-  'OBS_content_getSourceFlags',
-  'OBS_API_getPerformanceStatistics'
-];
-
-// Proxy node OBS calls
-ipcMain.on('obs-apiCall', (event, data) => {
-  let retVal;
-  const shouldLog = !filteredObsApiMethods.includes(data.method);
-
-  if (shouldLog) log('OBS API CALL', data);
-
-  const mappedArgs = data.args.map(arg => {
-    const isCallbackPlaceholder = (typeof arg === 'object') && arg && arg.__obsCallback;
-
-    if (isCallbackPlaceholder) {
-      return (...args) => {
-        if (!event.sender.isDestroyed()) {
-          event.sender.send('obs-apiCallback', {
-            id: arg.id,
-            args
-          });
-        }
-      };
-    }
-
-    return arg;
-  });
-
-  if (nodeObsVirtualMethods[data.method]) {
-    retVal = nodeObsVirtualMethods[data.method].apply(null, mappedArgs);
-  } else {
-    retVal = getObs()[data.method](...mappedArgs);
-  }
-
-  if (shouldLog) log('OBS RETURN VALUE', retVal);
-
-  // electron ipc doesn't like returning undefined, so
-  // we return null instead.
-  if (retVal == null) {
-    retVal = null;
-  }
-
-  event.returnValue = retVal;
-});
-
-// Used for guaranteeing unique ids for objects in the vuex store
-ipcMain.on('getUniqueId', event => {
-  event.returnValue = uuid();
-});
-
 ipcMain.on('restartApp', () => {
   app.relaunch();
   // Closing the main window starts the shut down sequence
   mainWindow.close();
-});
-
-ipcMain.on('requestSourceAttributes', (e, names) => {
-  const sizes = require('obs-studio-node').getSourcesSize(names);
-
-  e.sender.send('notifySourceAttributes', sizes);
 });
 
 ipcMain.on('streamlabels-writeFile', (e, info) => {
@@ -516,4 +474,29 @@ ipcMain.on('streamlabels-writeFile', (e, info) => {
       console.log('Streamlabels: Error writing file', err);
     }
   });
+});
+
+/* The following 2 methods need to live in the main process
+   because events bound using the remote module are not
+   executed synchronously and therefore default actions
+   cannot be prevented. */
+ipcMain.on('webContents-preventNavigation', (e, id) => {
+  webContents.fromId(id).on('will-navigate', e => {
+    e.preventDefault();
+  });
+});
+
+ipcMain.on('webContents-preventPopup', (e, id) => {
+  webContents.fromId(id).on('new-window', e => {
+    e.preventDefault();
+  });
+});
+
+ipcMain.on('getMainWindowWebContentsId', e => {
+  e.returnValue = mainWindow.webContents.id;
+});
+
+ipcMain.on('requestPerformanceStats', e => {
+  const stats = app.getAppMetrics();
+  e.sender.send('performanceStatsResponse', stats);
 });

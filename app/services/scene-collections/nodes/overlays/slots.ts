@@ -1,5 +1,5 @@
 import { ArrayNode } from '../array-node';
-import { SceneItem, Scene, TSceneNode, TSceneNodeType } from 'services/scenes';
+import { SceneItem, Scene, TSceneNode, ScenesService } from 'services/scenes';
 import { VideoService } from 'services/video';
 import { SourcesService } from 'services/sources';
 import { SourceFiltersService, TSourceFilterType } from 'services/source-filters';
@@ -10,8 +10,10 @@ import { WebcamNode } from './webcam';
 import { VideoNode } from './video';
 import { StreamlabelNode } from './streamlabel';
 import { WidgetNode } from './widget';
+import { SceneSourceNode } from './scene';
 import { AudioService } from 'services/audio';
 import * as obs from '../../../../../obs-api';
+import { WidgetType } from '../../../widgets';
 
 type TContent =
   | ImageNode
@@ -19,7 +21,8 @@ type TContent =
   | WebcamNode
   | VideoNode
   | StreamlabelNode
-  | WidgetNode;
+  | WidgetNode
+  | SceneSourceNode;
 
 interface IFilterInfo {
   name: string;
@@ -68,6 +71,7 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
   @Inject() videoService: VideoService;
   @Inject() sourceFiltersService: SourceFiltersService;
   @Inject() sourcesService: SourcesService;
+  @Inject() scenesService: ScenesService;
   @Inject() audioService: AudioService;
 
   getItems(context: IContext) {
@@ -78,13 +82,12 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
   }
 
   async saveItem(sceneNode: TSceneNode, context: IContext): Promise<TSlotSchema> {
-
     if (sceneNode.isFolder()) {
       return {
         id: sceneNode.id,
         sceneNodeType: 'folder',
         name: sceneNode.name,
-        childrenIds: sceneNode.childrenIds || []
+        childrenIds: sceneNode.childrenIds || [],
       };
     }
 
@@ -104,9 +107,9 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
         return {
           name: filter.name,
           type: filter.id,
-          settings: filter.settings
+          settings: filter.settings,
         };
-      })
+      }),
     };
 
     if (sceneNode.getObsInput().audioMixers) {
@@ -150,6 +153,12 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
       await content.save({ sceneItem: sceneNode, assetsPath: context.assetsPath });
       return { ...details, content } as IItemSchema;
     }
+
+    if (sceneNode.type === 'scene') {
+      const content = new SceneSourceNode();
+      await content.save({ sceneItem: sceneNode, assetsPath: context.assetsPath });
+      return { ...details, content } as IItemSchema;
+    }
   }
 
   async loadItem(obj: TSlotSchema, context: IContext): Promise<void> {
@@ -168,9 +177,14 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
       });
 
       if (existingWebcam) {
-        sceneItem = context.scene.addSource(existingWebcam.sourceId, { id });
+        sceneItem = context.scene.addSource(existingWebcam.sourceId, { id, select: false });
       } else {
-        sceneItem = context.scene.createAndAddSource(obj.name, 'dshow_input', {}, { id });
+        sceneItem = context.scene.createAndAddSource(
+          obj.name,
+          'dshow_input',
+          {},
+          { id, select: false },
+        );
       }
 
       // Avoid overwriting the crop for webcams
@@ -181,29 +195,74 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
       await obj.content.load({
         sceneItem,
         assetsPath: context.assetsPath,
-        existing: existingWebcam !== void 0
+        existing: existingWebcam !== void 0,
       });
 
       return;
     }
 
+    let existing = false;
+
     if (obj.content instanceof ImageNode) {
-      sceneItem = context.scene.createAndAddSource(obj.name, 'image_source', {}, { id });
+      sceneItem = context.scene.createAndAddSource(
+        obj.name,
+        'image_source',
+        {},
+        { id, select: false },
+      );
     } else if (obj.content instanceof TextNode) {
-      sceneItem = context.scene.createAndAddSource(obj.name, 'text_gdiplus', {}, { id });
+      sceneItem = context.scene.createAndAddSource(
+        obj.name,
+        'text_gdiplus',
+        {},
+        { id, select: false },
+      );
     } else if (obj.content instanceof VideoNode) {
-      sceneItem = context.scene.createAndAddSource(obj.name, 'ffmpeg_source', {}, { id });
+      sceneItem = context.scene.createAndAddSource(
+        obj.name,
+        'ffmpeg_source',
+        {},
+        { id, select: false },
+      );
     } else if (obj.content instanceof StreamlabelNode) {
-      sceneItem = context.scene.createAndAddSource(obj.name, 'text_gdiplus', {}, { id });
+      sceneItem = context.scene.createAndAddSource(
+        obj.name,
+        'text_gdiplus',
+        {},
+        { id, select: false },
+      );
     } else if (obj.content instanceof WidgetNode) {
-      sceneItem = context.scene.createAndAddSource(obj.name, 'browser_source', {}, { id });
+      // Check for already existing widgets of the same type instead
+      const widgetType = obj.content.data.type;
+
+      this.sourcesService.sources.forEach(source => {
+        if (source.getPropertiesManagerType() === 'widget') {
+          const type: WidgetType = source.getPropertiesManagerSettings().widgetType;
+
+          if (widgetType === type) {
+            sceneItem = context.scene.addSource(source.sourceId, { id, select: false });
+            existing = true;
+          }
+        }
+      });
+
+      if (!sceneItem) {
+        sceneItem = context.scene.createAndAddSource(
+          obj.name,
+          'browser_source',
+          {},
+          { id, select: false },
+        );
+      }
+    } else if (obj.content instanceof SceneSourceNode) {
+      const sceneId = obj.content.data.sceneId;
+      sceneItem = context.scene.addSource(sceneId, { select: false });
     }
 
     this.adjustTransform(sceneItem, obj);
-    await obj.content.load({ sceneItem, assetsPath: context.assetsPath });
+    if (!existing) await obj.content.load({ sceneItem, assetsPath: context.assetsPath });
 
     if (sceneItem.getObsInput().audioMixers) {
-      console.log('loading mixer hidden');
       this.audioService.getSource(sceneItem.sourceId).setHidden(obj.mixerHidden);
     }
 
@@ -213,7 +272,7 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
           sceneItem.sourceId,
           filter.type as TSourceFilterType,
           filter.name,
-          filter.settings
+          filter.settings,
         );
       });
     }
@@ -227,10 +286,10 @@ export class SlotsNode extends ArrayNode<TSlotSchema, IContext, TSceneNode> {
       },
       scale: {
         x: obj.scaleX * this.videoService.baseWidth,
-        y: obj.scaleY * this.videoService.baseHeight
+        y: obj.scaleY * this.videoService.baseHeight,
       },
       crop: obj.crop,
-      rotation: obj.rotation
+      rotation: obj.rotation,
     });
   }
 }

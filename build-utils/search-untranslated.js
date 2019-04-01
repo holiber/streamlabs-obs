@@ -11,7 +11,7 @@ const recursive = require('recursive-readdir');
   const dictionary = {};
 
   // load dictionary
-  const dictionaryFiles = await recursive('./i18n/en-US', ['*.txt']);
+  const dictionaryFiles = await recursive('./app/i18n/en-US', ['*.txt']);
   dictionaryFiles.forEach(filePath => {
     let fileDictionary;
     try {
@@ -33,7 +33,7 @@ const recursive = require('recursive-readdir');
 
     const fileContent = fs.readFileSync(filePath).toString();
     let match;
-    while (match = searchExp.exec(fileContent)) {
+    while ((match = searchExp.exec(fileContent))) {
       let string = match[1];
       string = string.replace('\\', '');
       if (!foundStrings.includes(string)) foundStrings.push(string);
@@ -52,7 +52,7 @@ const recursive = require('recursive-readdir');
     const missedStringsMap = {};
     missedStrings.forEach(missedString => {
       missedStringsMap[missedString] = missedString;
-    })
+    });
 
     console.log(JSON.stringify(missedStringsMap, null, 4));
   });

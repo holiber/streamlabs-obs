@@ -4,18 +4,19 @@ import { Inject } from '../../util/injector';
 import ModalLayout from '../ModalLayout.vue';
 import NavMenu from '../shared/NavMenu.vue';
 import NavItem from '../shared/NavItem.vue';
-import GenericFormGroups from '../shared/forms/GenericFormGroups.vue';
+import GenericFormGroups from 'components/obs/inputs/GenericFormGroups.vue';
 import { WindowsService } from '../../services/windows';
 import { ISettingsServiceApi, ISettingsSubCategory } from '../../services/settings';
-import windowMixin from '../mixins/window';
 import ExtraSettings from '../ExtraSettings.vue';
-import ApiSettings from '../ApiSettings.vue';
+import DeveloperSettings from '../DeveloperSettings.vue';
+import InstalledApps from '../InstalledApps.vue';
 import Hotkeys from '../Hotkeys.vue';
 import OverlaySettings from 'components/OverlaySettings.vue';
 import NotificationsSettings from 'components/NotificationsSettings.vue';
 import AppearanceSettings from 'components/AppearanceSettings.vue';
 import ExperimentalSettings from 'components/ExperimentalSettings.vue';
 import RemoteControlSettings from 'components/RemoteControlSettings.vue';
+import LanguageSettings from 'components/LanguageSettings.vue';
 
 @Component({
   components: {
@@ -25,42 +26,51 @@ import RemoteControlSettings from 'components/RemoteControlSettings.vue';
     NavItem,
     ExtraSettings,
     Hotkeys,
-    ApiSettings,
+    DeveloperSettings,
     OverlaySettings,
     NotificationsSettings,
     AppearanceSettings,
     RemoteControlSettings,
     ExperimentalSettings,
+    LanguageSettings,
+    InstalledApps,
   },
-  mixins: [windowMixin]
 })
-export default class SceneTransitions extends Vue {
+export default class Settings extends Vue {
   @Inject() settingsService: ISettingsServiceApi;
   @Inject() windowsService: WindowsService;
 
-  settingsData = this.settingsService.getSettingsFormData(this.categoryName);
+  $refs: { settingsContainer: HTMLElement };
+
+  categoryName: string = 'General';
+  settingsData: ISettingsSubCategory[] = [];
   icons: Dictionary<string> = {
-    General: 'fa fa-th-large',
-    Stream: 'fa fa-globe',
-    Output: 'fa fa-microchip',
-    Video: 'fa fa-film',
-    Audio: 'fa fa-volume-up',
-    Hotkeys: 'fa fa-keyboard-o',
-    Advanced: 'fa fa-cogs',
-    API: 'fa fa-file-code-o',
+    General: 'icon-overview',
+    Stream: 'fas fa-globe',
+    Output: 'fas fa-microchip',
+    Video: 'fas fa-film',
+    Audio: 'icon-audio',
+    Hotkeys: 'icon-settings',
+    Advanced: 'fas fa-cogs',
+    Developer: 'far fa-file-code',
     'Scene Collections': 'icon-themes',
-    Notifications: 'fa fa-warning',
-    Appearance: 'fa fa-television',
-    'Remote Control': 'fa fa-play-circle',
-    Experimental: 'fa fa-flask'
+    Notifications: 'icon-notifications',
+    Appearance: 'icon-settings-3-1',
+    'Remote Control': 'fas fa-play-circle',
+    Experimental: 'fas fa-flask',
+    'Installed Apps': 'icon-store',
   };
 
-  get categoryName() {
-    return this.windowsService.state.child.queryParams.categoryName || 'General';
+  mounted() {
+    this.categoryName = this.getInitialCategoryName();
+    this.settingsData = this.settingsService.getSettingsFormData(this.categoryName);
   }
 
-  set categoryName(name) {
-    this.settingsService.showSettings(name);
+  getInitialCategoryName() {
+    if (this.windowsService.state.child.queryParams) {
+      return this.windowsService.state.child.queryParams.categoryName || 'General';
+    }
+    return 'General';
   }
 
   get categoryNames() {
@@ -79,6 +89,6 @@ export default class SceneTransitions extends Vue {
   @Watch('categoryName')
   onCategoryNameChangedHandler(categoryName: string) {
     this.settingsData = this.settingsService.getSettingsFormData(categoryName);
+    this.$refs.settingsContainer.scrollTop = 0;
   }
-
 }

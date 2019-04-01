@@ -5,15 +5,48 @@ import { SourcesService } from 'services/sources';
 import { ScenesService, ISceneItemNode, TSceneNode } from 'services/scenes';
 import { SelectionService } from 'services/selection/selection';
 import { EditMenu } from '../util/menus/EditMenu';
-import SlVueTree, {
-  ISlTreeNode,
-  ISlTreeNodeModel,
-  ICursorPosition
-} from 'sl-vue-tree';
+import SlVueTree, { ISlTreeNode, ISlTreeNodeModel, ICursorPosition } from 'sl-vue-tree';
+import { WidgetType } from 'services/widgets';
 import { $t } from 'services/i18n';
 
+const widgetIconMap = {
+  [WidgetType.AlertBox]: 'fas fa-bell',
+  [WidgetType.StreamBoss]: 'fas fa-gavel',
+  [WidgetType.EventList]: 'fas fa-th-list',
+  [WidgetType.TipJar]: 'fas fa-beer',
+  [WidgetType.DonationTicker]: 'fas fa-ellipsis-h',
+  [WidgetType.ChatBox]: 'fas fa-comments',
+  [WidgetType.ViewerCount]: 'fas fa-eye',
+  [WidgetType.SpinWheel]: 'fas fa-chart-pie',
+  [WidgetType.Credits]: 'fas fa-align-center',
+  [WidgetType.SponsorBanner]: 'fas fa-heart',
+  [WidgetType.DonationGoal]: 'fas fa-calendar',
+  [WidgetType.BitGoal]: 'fas fa-calendar',
+  [WidgetType.FollowerGoal]: 'fas fa-calendar',
+  [WidgetType.SubGoal]: 'fas fa-calendar',
+  [WidgetType.MediaShare]: 'icon-share',
+};
+
+const sourceIconMap = {
+  ffmpeg_source: 'far fa-file-video',
+  text_gdiplus: 'fas fa-font',
+  text_ft2_source: 'fas fa-font',
+  image_source: 'icon-image',
+  slideshow: 'icon-image',
+  dshow_input: 'icon-webcam',
+  wasapi_input_capture: 'icon-mic',
+  wasapi_output_capture: 'icon-audio',
+  monitor_capture: 'fas fa-desktop',
+  browser_source: 'fas fa-globe',
+  game_capture: 'fas fa-gamepad',
+  scene: 'far fa-object-group',
+  color_source: 'fas fa-fill',
+  openvr_capture: 'fab fa-simplybuilt fa-rotate-180',
+  liv_capture: 'fab fa-simplybuilt fa-rotate-180',
+};
+
 @Component({
-  components: { SlVueTree }
+  components: { SlVueTree },
 })
 export default class SourceSelector extends Vue {
   @Inject() private scenesService: ScenesService;
@@ -35,9 +68,7 @@ export default class SourceSelector extends Vue {
 
   get nodes(): ISlTreeNodeModel<ISceneItemNode>[] {
     // recursive function for transform SceneNode[] to ISlTreeNodeModel[]
-    const getSlVueTreeNodes = (
-      sceneNodes: TSceneNode[]
-    ): ISlTreeNodeModel<ISceneItemNode>[] => {
+    const getSlVueTreeNodes = (sceneNodes: TSceneNode[]): ISlTreeNodeModel<ISceneItemNode>[] => {
       return sceneNodes.map(sceneNode => {
         return {
           title: sceneNode.name,
@@ -45,14 +76,27 @@ export default class SourceSelector extends Vue {
           isLeaf: sceneNode.isItem(),
           isExpanded: this.expandedFoldersIds.indexOf(sceneNode.id) !== -1,
           data: sceneNode.getModel(),
-          children: sceneNode.isFolder()
-            ? getSlVueTreeNodes(sceneNode.getNodes())
-            : null
+          children: sceneNode.isFolder() ? getSlVueTreeNodes(sceneNode.getNodes()) : null,
         };
       });
     };
 
     return getSlVueTreeNodes(this.scene.getRootNodes());
+  }
+
+  determineIcon(isLeaf: boolean, sourceId: string) {
+    if (!isLeaf) {
+      return 'fa fa-folder';
+    }
+    const sourceDetails = this.sourcesService.getSource(sourceId).getComparisonDetails();
+    if (sourceDetails.isStreamlabel) {
+      return 'fas fa-file-alt';
+    }
+    // We want simple equality here to also check for undefined
+    if (sourceDetails.widgetType != null) {
+      return widgetIconMap[sourceDetails.widgetType];
+    }
+    return sourceIconMap[sourceDetails.type] || 'fas fa-file';
   }
 
   addSource() {
@@ -76,10 +120,11 @@ export default class SourceSelector extends Vue {
 
   showContextMenu(sceneNodeId?: string, event?: MouseEvent) {
     const sceneNode = this.scene.getNode(sceneNodeId);
+    if (!sceneNode.isSelected()) sceneNode.select();
     const menuOptions = sceneNode
       ? {
           selectedSceneId: this.scene.id,
-          showSceneItemMenu: true
+          showSceneItemMenu: true,
         }
       : { selectedSceneId: this.scene.id };
 
@@ -107,11 +152,9 @@ export default class SourceSelector extends Vue {
 
   handleSort(
     treeNodesToMove: ISlTreeNode<ISceneItemNode>[],
-    position: ICursorPosition<TSceneNode>
+    position: ICursorPosition<TSceneNode>,
   ) {
-    const nodesToMove = this.scene.getSelection(
-      treeNodesToMove.map(node => node.data.id)
-    );
+    const nodesToMove = this.scene.getSelection(treeNodesToMove.map(node => node.data.id));
 
     const destNode = this.scene.getNode(position.node.data.id);
 
@@ -133,10 +176,7 @@ export default class SourceSelector extends Vue {
   toggleFolder(treeNode: ISlTreeNode<ISceneItemNode>) {
     const nodeId = treeNode.data.id;
     if (treeNode.isExpanded) {
-      this.expandedFoldersIds.splice(
-        this.expandedFoldersIds.indexOf(nodeId),
-        1
-      );
+      this.expandedFoldersIds.splice(this.expandedFoldersIds.indexOf(nodeId), 1);
     } else {
       this.expandedFoldersIds.push(nodeId);
     }
@@ -167,7 +207,7 @@ export default class SourceSelector extends Vue {
 
     return {
       'icon-view': visible,
-      'icon-hide': !visible
+      'icon-hide': !visible,
     };
   }
 
@@ -177,7 +217,7 @@ export default class SourceSelector extends Vue {
 
     return {
       'icon-lock': locked,
-      'icon-unlock': !locked
+      'icon-unlock': !locked,
     };
   }
 

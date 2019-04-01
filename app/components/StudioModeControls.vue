@@ -4,7 +4,7 @@
     Edit
   </span>
   <button
-    class="button button--semi-opac"
+    class="button button--default"
     @click="studioModeTransition">
     Transition
     <i class="fa fa-arrow-down" v-if="stacked" />
@@ -25,8 +25,8 @@
   height: 60px;
   display: flex;
   align-items: center;
-  color: @night-text;
-  background-color: @navy-secondary;
+  color: var(--paragraph);
+  background-color: var(--link-active);
 
   &.stacked {
     flex-direction: column;

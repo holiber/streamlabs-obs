@@ -7,8 +7,8 @@
     </div>
     <div
       v-else>
-      <a class="link link--uppercase" @click="login">
-        <i class="fa fa-sign-in"/> {{ $t('Login') }}
+      <a class="link" @click="login">
+        <i class="fas fa-sign-in-alt"/> {{ $t('Login') }}
       </a>
     </div>
   </div>
@@ -17,13 +17,17 @@
 <script lang="ts" src="./Login.vue.ts"></script>
 
 <style lang="less" scoped>
-@import "../styles/index";
+@import '../styles/index';
 
 .user__name {
-  .semibold;
+  .weight(@medium);
 
-  @media(max-width: 1450px) {
+  @media (max-width: 1600px) {
     display: none;
   }
+}
+
+.fa-sign-in-alt {
+  .margin-right();
 }
 </style>

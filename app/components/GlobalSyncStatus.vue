@@ -2,7 +2,7 @@
 <div
   class="global-sync-status"
   v-tooltip="syncStatusTooltip">
-  <i class="sync-icon fa" :class="syncIcon" />
+  <i class="fas" :class="syncIcon" />
 </div>
 </template>
 
@@ -18,11 +18,11 @@
     content: '|';
     padding-right: 12px;
     opacity: .5;
-    color: @grey;
+    color: var(--icon);
   }
 }
 
-.sync-icon {
-  font-size: 16px;
+.icon-cloud-backup-2 {
+  color: var(--icon);
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
 <modal-layout
-  :title="$t('Manage Scene Collections')"
   :show-cancel="false"
   :done-handler="close">
   <div slot="content">
@@ -36,13 +35,5 @@
 
 .input-wrapper--search {
   width: 50%;
-}
-
-.night-theme {
-  .manage-scene-collections--new {
-    &:hover {
-      background: @night-hover;
-    }
-  }
 }
 </style>

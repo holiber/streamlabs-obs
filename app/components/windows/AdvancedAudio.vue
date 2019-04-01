@@ -1,31 +1,38 @@
 <template>
 <modal-layout
-  :showControls="false"
-  :title="$t('Advanced Audio Settings')">
+  :show-controls="false"
+>
 
   <div slot="content">
 
 
     <table>
+      <thead>
+        <tr>
+          <th>{{ $t('Name') }}</th>
+          <th>{{ $t('Volume ( % )') }}</th>
+          <th>{{ $t('Downmix to Mono') }}</th>
+          <th>{{ $t('Sync Offset ( ms )') }}</th>
+          <th>{{ $t('Audio Monitoring') }}</th>
+          <th>{{ $t('Tracks') }}</th>
+        </tr>
+      </thead>
 
-      <tr>
-        <th>{{ $t('Name') }}</th>
-        <th>{{ $t('Volume ( % )') }}</th>
-        <th>{{ $t('Downmix to Mono') }}</th>
-        <th>{{ $t('Sync Offset ( ms )') }}</th>
-        <th>{{ $t('Audio Monitoring') }}</th>
-        <th>{{ $t('Tracks') }}</th>
-      </tr>
-
-      <tr v-for="audioSource in audioSources">
+      <tr v-for="audioSource in audioSources" :key="audioSource.name">
         <td>{{ audioSource.name }}</td>
-        <td v-for="formInput in audioSource.getSettingsForm()" :class="'column-' + formInput.name">
-          <component
-              v-if="propertyComponentForType(formInput.type)"
-              :is="propertyComponentForType(formInput.type)"
-              :value="formInput"
-              @input="value => onInputHandler(audioSource, formInput.name, value.value)"
-          />
+        <td
+          v-for="formInput in audioSource.getSettingsForm()"
+          :key="`${audioSource.name}${formInput.name}`"
+          :class="'column-' + formInput.name"
+        >
+          <div class="advanced-audio-input">
+            <component
+                v-if="propertyComponentForType(formInput.type)"
+                :is="propertyComponentForType(formInput.type)"
+                :value="formInput"
+                @input="value => onInputHandler(audioSource, formInput.name, value.value)"
+            />
+          </div>
         </td>
       </tr>
 
@@ -53,8 +60,16 @@ tr {
   }
 }
 
-th,
-td {
-  text-align: left;
+.advanced-audio-input {
+  .alignable-input {
+    margin-bottom: 0;
+
+    /deep/ .row {
+      justify-content: flex-end;
+    }
+  }
+  .alignable-input /deep/ .input-body {
+    width: 100%;
+  }
 }
 </style>

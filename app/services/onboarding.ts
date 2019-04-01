@@ -2,7 +2,7 @@ import { StatefulService, mutation } from './stateful-service';
 import { NavigationService } from './navigation';
 import { UserService } from './user';
 import { Inject } from '../util/injector';
-import electron from 'electron';
+import { BrandDeviceService } from 'services/auto-config/brand-device';
 
 type TOnboardingStep =
   | 'Connect'
@@ -10,6 +10,7 @@ type TOnboardingStep =
   | 'OptimizeA'
   | 'OptimizeB'
   | 'OptimizeC'
+  | 'OptimizeBrandDevice'
   | 'SceneCollectionsImport'
   | 'ObsImport';
 
@@ -17,7 +18,7 @@ interface IOnboardingOptions {
   isLogin: boolean; // When logging into a new account after onboarding
   isOptimize: boolean; // When re-running the optimizer after onboarding
   isSecurityUpgrade: boolean; // When logging in, display a special message
-                              // about our security upgrade.
+  // about our security upgrade.
 }
 
 interface IOnboardingServiceState {
@@ -40,7 +41,7 @@ interface IOnboardingStep {
 const ONBOARDING_STEPS: Dictionary<IOnboardingStep> = {
   Connect: {
     isEligible: () => true,
-    next: 'SceneCollectionsImport'
+    next: 'SceneCollectionsImport',
   },
 
   SceneCollectionsImport: {
@@ -48,15 +49,14 @@ const ONBOARDING_STEPS: Dictionary<IOnboardingStep> = {
       if (service.options.isSecurityUpgrade) return false;
       return service.userService.isLoggedIn();
     },
-    next: 'ObsImport'
+    next: 'ObsImport',
   },
 
   ObsImport: {
     isEligible: service => {
-      if (service.options.isLogin) return false;
-      return true;
+      return !service.options.isLogin;
     },
-    next: 'SelectWidgets'
+    next: 'SelectWidgets',
   },
 
   SelectWidgets: {
@@ -64,51 +64,48 @@ const ONBOARDING_STEPS: Dictionary<IOnboardingStep> = {
       if (service.options.isLogin) return false;
       return service.userService.isLoggedIn();
     },
-    next: 'OptimizeA'
+    next: 'OptimizeBrandDevice',
+  },
+
+  OptimizeBrandDevice: {
+    isEligible: service => {
+      return !service.options.isLogin;
+    },
+    next: 'OptimizeA',
   },
 
   OptimizeA: {
     isEligible: service => {
       if (service.options.isLogin) return false;
+      if (service.completedSteps.includes('OptimizeBrandDevice')) return false;
       return service.isTwitchAuthed;
     },
-    next: 'OptimizeB'
+    next: 'OptimizeB',
   },
 
   OptimizeB: {
     isEligible: service => {
       return service.completedSteps.includes('OptimizeA');
-    }
-  }
+    },
+  },
 };
 
-export class OnboardingService extends StatefulService<
-  IOnboardingServiceState
-> {
+export class OnboardingService extends StatefulService<IOnboardingServiceState> {
   static initialState: IOnboardingServiceState = {
     options: {
       isLogin: false,
       isOptimize: false,
-      isSecurityUpgrade: false
+      isSecurityUpgrade: false,
     },
     currentStep: null,
-    completedSteps: []
+    completedSteps: [],
   };
 
   localStorageKey = 'UserHasBeenOnboarded';
 
   @Inject() navigationService: NavigationService;
   @Inject() userService: UserService;
-
-  init() {
-    // This is used for faking authentication in tests.  We have
-    // to do this because Twitch adds a captcha when we try to
-    // actually log in from integration tests.
-    electron.ipcRenderer.on('testing-fakeAuth', () => {
-      this.COMPLETE_STEP('Connect');
-      this.SET_CURRENT_STEP('ObsImport');
-    });
-  }
+  @Inject() brandDeviceService: BrandDeviceService;
 
   @mutation()
   SET_CURRENT_STEP(step: TOnboardingStep) {
@@ -162,7 +159,7 @@ export class OnboardingService extends StatefulService<
       isLogin: false,
       isOptimize: false,
       isSecurityUpgrade: false,
-      ...options
+      ...options,
     };
 
     const step = options.isOptimize ? 'OptimizeA' : 'Connect';
@@ -180,10 +177,7 @@ export class OnboardingService extends StatefulService<
   }
 
   get isTwitchAuthed() {
-    return (
-      this.userService.isLoggedIn() &&
-      this.userService.platform.type === 'twitch'
-    );
+    return this.userService.isLoggedIn() && this.userService.platform.type === 'twitch';
   }
 
   private goToNextStep(step: TOnboardingStep) {

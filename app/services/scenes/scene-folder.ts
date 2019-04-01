@@ -1,34 +1,24 @@
 import { ScenesService, Scene } from './index';
-import { merge, uniq } from 'lodash';
+import { merge } from 'lodash';
 import { mutation, ServiceHelper } from '../stateful-service';
 import Utils from '../utils';
 import { Inject } from 'util/injector';
 import { Selection, SelectionService } from 'services/selection';
-import {
-  ISceneItemFolderApi,
-  ISceneItemNode,
-  TSceneNodeType,
-  SceneItem,
-  ISceneHierarchy,
-  TSceneNode
-} from 'services/scenes';
-
+import { ISceneItemFolderApi, SceneItem, ISceneHierarchy, TSceneNode } from 'services/scenes';
 
 import { SceneItemNode } from './scene-node';
 import { ISceneItemFolder } from './scenes-api';
 
 @ServiceHelper()
 export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderApi {
-
   name: string;
 
-  private sceneFolderState: ISceneItemFolder;
+  protected readonly state: ISceneItemFolder;
 
   @Inject() protected scenesService: ScenesService;
   @Inject() protected selectionService: SelectionService;
 
   constructor(sceneId: string, id: string) {
-
     super();
 
     this.id = id;
@@ -38,11 +28,13 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
     });
 
     Utils.applyProxy(this, state);
-    this.sceneFolderState = state as ISceneItemFolder;
+    this.state = state as ISceneItemFolder;
   }
 
   add(sceneNodeId: string) {
-    this.getScene().getNode(sceneNodeId).setParent(this.id);
+    this.getScene()
+      .getNode(sceneNodeId)
+      .setParent(this.id);
   }
 
   ungroup() {
@@ -70,7 +62,6 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
   getFolders(): SceneItemFolder[] {
     return this.getNodes().filter(node => node.sceneNodeType === 'folder') as SceneItemFolder[];
   }
-
 
   getScene(): Scene {
     return this.scenesService.getScene(this.sceneId);
@@ -101,31 +92,37 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
     return nodes.map(node => {
       return {
         ...node.getModel(),
-        children: node.sceneNodeType === 'folder' ?
-          (node as SceneItemFolder).getHierarchy() :
-          []
+        children: node.sceneNodeType === 'folder' ? (node as SceneItemFolder).getHierarchy() : [],
       };
     });
   }
 
-  getNestedNodes(): TSceneNode[] {
+  getNestedNodes(traversedNodesIds: string[] = []): TSceneNode[] {
+    // tslint:disable-next-line:no-parameter-reassignment TODO
+    traversedNodesIds = [].concat(traversedNodesIds);
     const nodes: TSceneNode[] = [];
     this.getNodes().forEach(node => {
+      if (traversedNodesIds.includes(node.id)) {
+        // TODO: find the use-case that causes loops in folders structure
+        console.error(`Loop in folders structure detected', ${this.name} -> ${node.name}`);
+        return;
+      }
       nodes.push(node);
+      traversedNodesIds.push(node.id);
       if (node.sceneNodeType !== 'folder') return;
-      nodes.push(...((node as SceneItemFolder).getNestedNodes()));
+      nodes.push(...(node as SceneItemFolder).getNestedNodes(traversedNodesIds));
     });
     return nodes;
   }
 
   getNestedItems(): SceneItem[] {
-    return this.getNestedNodes()
-      .filter(node => node.sceneNodeType === 'item') as SceneItem[];
+    return this.getNestedNodes().filter(node => node.sceneNodeType === 'item') as SceneItem[];
   }
 
   getNestedFolders(): SceneItemFolder[] {
-    return this.getNestedNodes()
-      .filter(node => node.sceneNodeType === 'folder') as SceneItemFolder[];
+    return this.getNestedNodes().filter(
+      node => node.sceneNodeType === 'folder',
+    ) as SceneItemFolder[];
   }
 
   getNestedNodesIds(): string[] {
@@ -141,7 +138,7 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
   }
 
   setName(name: string) {
-    this.UPDATE({ id: this.id, name });
+    this.UPDATE({ name, id: this.id });
   }
 
   remove() {
@@ -149,14 +146,14 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
   }
 
   getModel(): ISceneItemFolder {
-    return this.sceneFolderState;
+    return this.state;
   }
 
   /**
    * for internal usage only
    */
   recalculateChildrenOrder() {
-    this.sceneFolderState.childrenIds = this.childrenIds;
+    this.state.childrenIds = this.childrenIds;
     const childrenCount = this.childrenIds.length;
     const nodeInd = this.getNodeIndex();
     const foundChildren: TSceneNode[] = [];
@@ -170,17 +167,13 @@ export class SceneItemFolder extends SceneItemNode implements ISceneItemFolderAp
     this.SET_CHILDREN_ORDER(foundChildren.map(child => child.id));
   }
 
-  protected get state() {
-    return this.sceneFolderState;
-  }
-
   @mutation()
   private UPDATE(patch: TPatch<ISceneItemFolder>) {
-    merge(this.sceneFolderState, patch);
+    merge(this.state, patch);
   }
 
   @mutation()
   private SET_CHILDREN_ORDER(childrenIds: string[]) {
-    this.sceneFolderState.childrenIds = childrenIds;
+    this.state.childrenIds = childrenIds;
   }
 }

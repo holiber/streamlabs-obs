@@ -11,11 +11,12 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const ProgressBar = require('progress');
 const yml = require('js-yaml');
+const cp = require('child_process');
 
 /**
  * CONFIGURATION
  */
-const s3Bucket = 'streamlabs-obs';
+const s3Buckets = [ 'streamlabs-obs', 'slobs-cdn.streamlabs.com' ];
 const sentryOrg = 'streamlabs-obs';
 const sentryProject = 'streamlabs-obs';
 
@@ -28,12 +29,12 @@ function error(msg) {
   sh.echo(colors.red(`ERROR: ${msg}`));
 }
 
-function executeCmd(cmd) {
+function executeCmd(cmd, exit = true) {
   const result = sh.exec(cmd);
 
   if (result.code !== 0) {
     error(`Command Failed >>> ${cmd}`);
-    sh.exit(1);
+    if (exit) sh.exit(1);
   }
 }
 
@@ -60,13 +61,70 @@ function checkEnv(varName) {
   }
 }
 
-async function uploadS3File(name, filePath) {
+async function callSubmodule(moduleName, args) {
+  if (!Array.isArray(args)) args = [];
+
+  return new Promise((resolve, reject) => {
+    const submodule = cp.fork(moduleName, args);
+
+    submodule.on('close', (code) => {
+      if (code !== 0) {
+        reject(code);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+/* We can change the release script to export a function instead.
+ * I already made this into a separate script so I think this is fine */
+async function actualUploadUpdateFiles(bucket, version, appDir) {
+  return callSubmodule(
+    'bin/release-uploader.js',
+    [
+      '--s3-bucket', bucket,
+      '--access-key', process.env['AWS_ACCESS_KEY_ID'],
+      '--secret-access-key', process.env['AWS_SECRET_ACCESS_KEY'],
+      '--version', version,
+      '--release-dir', appDir,
+    ]
+  );
+}
+
+async function actualSetLatestVersion(bucket, version, fileName) {
+  return callSubmodule(
+    'bin/set-latest.js',
+    [
+      '--s3-bucket', bucket,
+      '--access-key', process.env['AWS_ACCESS_KEY_ID'],
+      '--secret-access-key', process.env['AWS_SECRET_ACCESS_KEY'],
+      '--version', version,
+      '--version-file', fileName
+    ]
+  );
+}
+
+async function actualSetChance(bucket, version, chance) {
+  return callSubmodule(
+    'bin/set-chance.js',
+    [
+      '--s3-bucket', bucket,
+      '--access-key', process.env['AWS_ACCESS_KEY_ID'],
+      '--secret-access-key', process.env['AWS_SECRET_ACCESS_KEY'],
+      '--version', version,
+      '--chance', chance
+    ]
+  );
+}
+
+async function actualUploadS3File(bucket, name, filepath) {
   info(`Starting upload of ${name}...`);
 
-  const stream = fs.createReadStream(filePath);
+  const stream = fs.createReadStream(filepath);
   const upload = new AWS.S3.ManagedUpload({
     params: {
-      Bucket: s3Bucket,
+      Bucket: bucket,
       Key: name,
       ACL: 'public-read',
       Body: stream
@@ -92,6 +150,32 @@ async function uploadS3File(name, filePath) {
   }
 }
 
+/* Wrapper functions to upload to multiple s3 buckets */
+
+async function uploadUpdateFiles(version, appDir) {
+  for (const bucket of s3Buckets) {
+    await actualUploadUpdateFiles(bucket, version, appDir);
+  }
+}
+
+async function setLatestVersion(version, fileName) {
+  for (const bucket of s3Buckets) {
+    await actualSetLatestVersion(bucket, version, fileName);
+  }
+}
+
+async function setChance(version, chance) {
+  for (const bucket of s3Buckets) {
+    await actualSetChance(bucket, version, chance);
+  }
+}
+
+async function uploadS3File(name, filePath) {
+  for (const bucket of s3Buckets) {
+    await actualUploadS3File(bucket, name, filePath);
+  }
+}
+
 /**
  * This is the main function of the script
  */
@@ -106,10 +190,11 @@ async function runScript() {
   // for releasing.
   checkEnv('AWS_ACCESS_KEY_ID');
   checkEnv('AWS_SECRET_ACCESS_KEY');
-  checkEnv('CSC_LINK');
-  checkEnv('CSC_KEY_PASSWORD');
   checkEnv('SENTRY_AUTH_TOKEN');
 
+  /* Technically speaking, we allow any number of
+   * channels. Maybe in the future, we allow custom
+   * options here? */
   const isPreview = (await inq.prompt({
     type: 'list',
     name: 'releaseType',
@@ -181,17 +266,14 @@ async function runScript() {
     executeCmd(`git merge ${sourceBranch}`);
   }
 
-  info('Ensuring submodules are up to date...');
-  executeCmd('git submodule update --init --recursive');
-
   info('Removing old packages...');
   sh.rm('-rf', 'node_modules');
 
   info('Installing fresh packages...');
   executeCmd('yarn install');
 
-  info('Installing OBS plugins...');
-  executeCmd('yarn install-plugins');
+  info('Signing binaries...');
+  executeCmd('yarn signbinaries');
 
   info('Compiling assets...');
   executeCmd('yarn compile:production');
@@ -228,6 +310,13 @@ async function runScript() {
     choices: versionOptions
   })).newVersion;
 
+  const channel = (() => {
+    const components = semver.prerelease(newVersion);
+
+    if (components) return components[0];
+    return 'latest';
+  })();
+
   if (!await confirm(`Are you sure you want to package version ${newVersion}?`)) sh.exit(0);
 
   pjson.version = newVersion;
@@ -245,6 +334,12 @@ async function runScript() {
   info('can continue with the deploy.');
 
   if (!await confirm('Are you ready to deploy?')) sh.exit(0);
+
+  const chance = (await inq.prompt({
+    type: 'input',
+    name: 'chance',
+    message: 'What percentage of the userbase would you like to recieve the update?'
+  })).chance;
 
   info('Committing changes...');
   executeCmd('git add -A');
@@ -285,18 +380,28 @@ async function runScript() {
   }
 
   info(`Disovered ${installerFileName}`);
-
   info('Uploading publishing artifacts...');
+
+    /* Use the separate release-uploader script to upload our
+   * win-unpacked content. */
+
+  await uploadUpdateFiles(newVersion, path.resolve('dist', 'win-unpacked'));
   await uploadS3File(installerFileName, installerFilePath);
   await uploadS3File(channelFileName, channelFilePath);
 
-  info('Finalizing release with sentry...');
-  sentryCli(`finalize "${newVersion}`);
+  console.log('Setting latest version...');
+  await setLatestVersion(newVersion, channel);
+
+  console.log('Setting chance...');
+  await setChance(newVersion, chance);
 
   info(`Merging ${targetBranch} back into staging...`);
-  executeCmd(`git checkout staging`);
-  executeCmd(`git merge ${targetBranch}`);
-  executeCmd('git push origin HEAD');
+  executeCmd(`git checkout staging`, false);
+  executeCmd(`git merge ${targetBranch}`, false);
+  executeCmd('git push origin HEAD', false);
+
+  info('Finalizing release with sentry...');
+  sentryCli(`finalize "${newVersion}`);
 
   info(`Version ${newVersion} released successfully!`);
 }

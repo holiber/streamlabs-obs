@@ -1,12 +1,12 @@
 import { Service } from './service';
 import { SettingsService } from './settings';
-import { nodeObs } from './obs-api';
+import * as obs from '../../obs-api';
 import electron from 'electron';
 import { Inject } from '../util/injector';
 import Utils from './utils';
 import { WindowsService } from './windows';
 import { ScalableRectangle } from '../util/ScalableRectangle';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 import { SelectionService } from 'services/selection';
 
 const { remote } = electron;
@@ -16,6 +16,9 @@ const DISPLAY_ELEMENT_POLLING_INTERVAL = 500;
 export interface IDisplayOptions {
   sourceId?: string;
   paddingSize?: number;
+  electronWindowId?: number;
+  slobsWindowId?: string;
+  paddingColor?: IRGBColor;
 }
 
 export class Display {
@@ -26,57 +29,63 @@ export class Display {
 
   outputRegionCallbacks: Function[];
   outputRegion: IRectangle;
+  isDestroyed = false;
 
   trackingInterval: number;
   currentPosition: IRectangle = {
     x: 0,
     y: 0,
     width: 0,
-    height: 0
+    height: 0,
   };
 
-  windowId: string;
+  electronWindowId: number;
+  slobsWindowId: string;
 
-  private selectionSubscription: Subscription;
+  private readonly selectionSubscription: Subscription;
 
   sourceId: string;
 
+  boundDestroy: any;
+  boundClose: any;
+  displayDestroyed: boolean;
+
   constructor(public name: string, options: IDisplayOptions = {}) {
-    this.windowId = Utils.isChildWindow() ? 'child' : 'main';
-
     this.sourceId = options.sourceId;
+    this.electronWindowId = options.electronWindowId || remote.getCurrentWindow().id;
+    this.slobsWindowId = options.slobsWindowId || Utils.getCurrentUrlParams().windowId;
 
-    if (this.sourceId) {
-      nodeObs.OBS_content_createSourcePreviewDisplay(
-        remote.getCurrentWindow().getNativeWindowHandle(),
-        this.sourceId,
-        name
-      );
-    } else {
-      nodeObs.OBS_content_createDisplay(
-        remote.getCurrentWindow().getNativeWindowHandle(),
-        name
-      );
-    }
+    const electronWindow = remote.BrowserWindow.fromId(this.electronWindowId);
 
-    this.selectionSubscription = this.selectionService.updated.subscribe(() => {
-      this.switchGridlines(this.selectionService.getSize() <= 1);
+    this.videoService.createOBSDisplay(this.electronWindowId, name, this.sourceId);
+
+    this.displayDestroyed = false;
+
+    this.selectionSubscription = this.selectionService.updated.subscribe(state => {
+      this.switchGridlines(state.selectedIds.length <= 1);
     });
 
-    nodeObs.OBS_content_setPaddingColor(name, 11, 22, 28);
+    if (options.paddingColor) {
+      this.videoService.setOBSDisplayPaddingColor(
+        name,
+        options.paddingColor.r,
+        options.paddingColor.g,
+        options.paddingColor.b,
+      );
+    } else {
+      this.videoService.setOBSDisplayPaddingColor(name, 11, 22, 28);
+    }
 
     if (options.paddingSize != null) {
-      nodeObs.OBS_content_setPaddingSize(name, options.paddingSize);
+      this.videoService.setOBSDisplayPaddingSize(name, options.paddingSize);
     }
 
     this.outputRegionCallbacks = [];
 
-    this.boundDestroy = this.destroy.bind(this);
+    this.boundClose = this.remoteClose.bind(this);
 
-    remote.getCurrentWindow().on('close', this.boundDestroy);
+    electronWindow.on('close', this.boundClose);
   }
-
-  boundDestroy: any;
 
   /**
    * Will keep the display positioned on top of the passed HTML element
@@ -88,11 +97,12 @@ export class Display {
     const trackingFun = () => {
       const rect = this.getScaledRectangle(element.getBoundingClientRect());
 
-      if ((rect.x !== this.currentPosition.x) ||
-        (rect.y !== this.currentPosition.y) ||
-        (rect.width !== this.currentPosition.width) ||
-        (rect.height !== this.currentPosition.height)) {
-
+      if (
+        rect.x !== this.currentPosition.x ||
+        rect.y !== this.currentPosition.y ||
+        rect.width !== this.currentPosition.width ||
+        rect.height !== this.currentPosition.height
+      ) {
         this.move(rect.x, rect.y);
         this.resize(rect.width, rect.height);
       }
@@ -103,34 +113,43 @@ export class Display {
   }
 
   getScaledRectangle(rect: ClientRect): IRectangle {
-    const factor: number = this.windowsService.state[this.windowId].scaleFactor;
+    const factor: number = this.windowsService.state[this.slobsWindowId].scaleFactor;
 
     return {
       x: rect.left * factor,
       y: rect.top * factor,
       width: rect.width * factor,
-      height: rect.height * factor
+      height: rect.height * factor,
     };
   }
 
   move(x: number, y: number) {
     this.currentPosition.x = x;
     this.currentPosition.y = y;
-    nodeObs.OBS_content_moveDisplay(this.name, x, y);
+    this.videoService.moveOBSDisplay(this.name, x, y);
   }
 
   resize(width: number, height: number) {
     this.currentPosition.width = width;
     this.currentPosition.height = height;
-    nodeObs.OBS_content_resizeDisplay(this.name, width, height);
+    this.videoService.resizeOBSDisplay(this.name, width, height);
     if (this.outputRegionCallbacks.length) this.refreshOutputRegion();
   }
 
-  destroy() {
-    remote.getCurrentWindow().removeListener('close', this.boundDestroy);
-    nodeObs.OBS_content_destroyDisplay(this.name);
+  remoteClose() {
+    this.outputRegionCallbacks = [];
     if (this.trackingInterval) clearInterval(this.trackingInterval);
     if (this.selectionSubscription) this.selectionSubscription.unsubscribe();
+    if (!this.displayDestroyed) {
+      this.videoService.destroyOBSDisplay(this.name);
+      this.displayDestroyed = true;
+    }
+  }
+
+  destroy() {
+    const win = remote.BrowserWindow.fromId(this.electronWindowId);
+    if (win) win.removeListener('close', this.boundClose);
+    this.remoteClose();
   }
 
   onOutputResize(cb: (region: IRectangle) => void) {
@@ -138,12 +157,12 @@ export class Display {
   }
 
   refreshOutputRegion() {
-    const position = nodeObs.OBS_content_getDisplayPreviewOffset(this.name);
-    const size = nodeObs.OBS_content_getDisplayPreviewSize(this.name);
+    const position = this.videoService.getOBSDisplayPreviewOffset(this.name);
+    const size = this.videoService.getOBSDisplayPreviewSize(this.name);
 
     this.outputRegion = {
       ...position,
-      ...size
+      ...size,
     };
 
     this.outputRegionCallbacks.forEach(cb => {
@@ -151,44 +170,38 @@ export class Display {
     });
   }
 
+  drawingUI = true;
+
   setShoulddrawUI(drawUI: boolean) {
-    nodeObs.OBS_content_setShouldDrawUI(this.name, drawUI);
+    this.drawingUI = drawUI;
+    this.videoService.setOBSDisplayShouldDrawUI(this.name, drawUI);
   }
 
   switchGridlines(enabled: boolean) {
-    nodeObs.OBS_content_setDrawGuideLines(this.name, enabled);
+    // This function does nothing if we aren't drawing the UI
+    if (!this.drawingUI) return;
+    this.videoService.setOBSDisplayDrawGuideLines(this.name, enabled);
   }
 }
 
 export class VideoService extends Service {
-
-  @Inject()
-  settingsService: SettingsService;
-
-  activeDisplays: Dictionary<Display> = {};
+  @Inject() settingsService: SettingsService;
 
   init() {
     this.settingsService.loadSettingsIntoStore();
-
-    // Watch for changes to the base resolution.
-    // This seems super freaking hacky.
-    this.settingsService.store.watch(state => {
-      return state.SettingsService.Video.Base;
-    }, () => {
-      // This gives the setting time to propagate
-      setTimeout(() => {
-        Object.values(this.activeDisplays).forEach(display => {
-          display.refreshOutputRegion();
-        });
-      }, 1000);
-    });
   }
 
   // Generates a random string:
   // https://gist.github.com/6174/6062387
   getRandomDisplayId() {
-    return Math.random().toString(36).substring(2, 15) +
-      Math.random().toString(36).substring(2, 15);
+    return (
+      Math.random()
+        .toString(36)
+        .substring(2, 15) +
+      Math.random()
+        .toString(36)
+        .substring(2, 15)
+    );
   }
 
   getScreenRectangle() {
@@ -196,7 +209,7 @@ export class VideoService extends Service {
       x: 0,
       y: 0,
       width: this.baseWidth,
-      height: this.baseHeight
+      height: this.baseHeight,
     });
   }
 
@@ -215,8 +228,60 @@ export class VideoService extends Service {
 
     return {
       width,
-      height
+      height,
     };
   }
 
+  /**
+   * @warning DO NOT USE THIS METHOD. Use the Display class instead
+   */
+  createOBSDisplay(electronWindowId: number, name: string, sourceId?: string) {
+    const electronWindow = remote.BrowserWindow.fromId(electronWindowId);
+
+    if (sourceId) {
+      obs.NodeObs.OBS_content_createSourcePreviewDisplay(
+        electronWindow.getNativeWindowHandle(),
+        sourceId,
+        name,
+      );
+    } else {
+      obs.NodeObs.OBS_content_createDisplay(electronWindow.getNativeWindowHandle(), name);
+    }
+  }
+
+  setOBSDisplayPaddingColor(name: string, r: number, g: number, b: number) {
+    obs.NodeObs.OBS_content_setPaddingColor(name, r, g, b);
+  }
+
+  setOBSDisplayPaddingSize(name: string, size: number) {
+    obs.NodeObs.OBS_content_setPaddingSize(name, size);
+  }
+
+  moveOBSDisplay(name: string, x: number, y: number) {
+    obs.NodeObs.OBS_content_moveDisplay(name, x, y);
+  }
+
+  resizeOBSDisplay(name: string, width: number, height: number) {
+    obs.NodeObs.OBS_content_resizeDisplay(name, width, height);
+  }
+
+  destroyOBSDisplay(name: string) {
+    obs.NodeObs.OBS_content_destroyDisplay(name);
+  }
+
+  getOBSDisplayPreviewOffset(name: string): IVec2 {
+    return obs.NodeObs.OBS_content_getDisplayPreviewOffset(name);
+  }
+
+  getOBSDisplayPreviewSize(name: string): { width: number; height: number } {
+    return obs.NodeObs.OBS_content_getDisplayPreviewSize(name);
+  }
+
+  setOBSDisplayShouldDrawUI(name: string, drawUI: boolean) {
+    obs.NodeObs.OBS_content_setShouldDrawUI(name, drawUI);
+  }
+
+  setOBSDisplayDrawGuideLines(name: string, drawGuideLines: boolean) {
+    obs.NodeObs.OBS_content_setDrawGuideLines(name, drawGuideLines);
+  }
 }

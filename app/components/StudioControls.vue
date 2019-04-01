@@ -14,18 +14,23 @@
 .studio-controls {
   height: 240px;
   width: 100%;
-  padding: 20px 10px;
+  .padding-h-sides();
+  margin: 0;
 }
 </style>
 
 <style lang="less">
 @import "../styles/index";
 
+.studio-controls {
+  position: relative;
+}
+
 .studio-controls-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0 10px;
+  .padding-h-sides();
   position: relative;
 }
 
@@ -33,33 +38,20 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 10px;
+  .margin-bottom();
   justify-content: space-between;
   flex: 0 0 20px;
 }
 
 .studio-controls__label {
+  color: var(--title);
   margin-bottom: 0;
-  .semibold;
-  color: @day-title;
 }
 
 .studio-controls-selector {
-  background: @day-secondary;
-  .border;
-  .radius;
+  background: var(--section);
+  .radius();
   flex-grow: 1;
   overflow-y: auto;
-}
-
-.night-theme {
-  .studio-controls-selector {
-    background: @navy-secondary;
-    border-color: @navy-secondary;
-  }
-
-  .studio-controls__label {
-    color: @white;
-  }
 }
 </style>

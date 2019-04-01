@@ -1,27 +1,23 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import { Inject } from '../util/injector';
-import GenericForm from './shared/forms/GenericForm.vue';
-import { TFormData, TObsValue } from './shared/forms/Input';
+import GenericForm from 'components/obs/inputs/GenericForm.vue';
+import { TObsFormData, TObsValue } from 'components/obs/inputs/ObsInput';
 import { ICustomizationServiceApi } from 'services/customization';
-import LanguageSettings from 'components/LanguageSettings.vue';
 
 @Component({
-  components: { GenericForm, LanguageSettings }
+  components: { GenericForm },
 })
 export default class ExperimentalSettings extends Vue {
-
   @Inject() private customizationService: ICustomizationServiceApi;
 
-  settingsFormData: TFormData = null;
-
+  settingsFormData: TObsFormData = null;
 
   created() {
     this.settingsFormData = this.customizationService.getExperimentalSettingsFormData();
   }
 
-
-  saveSettings(formData: TFormData) {
+  saveSettings(formData: TObsFormData) {
     const settings: Dictionary<TObsValue> = {};
     formData.forEach(formInput => {
       settings[formInput.name] = formInput.value;
@@ -29,5 +25,4 @@ export default class ExperimentalSettings extends Vue {
     this.customizationService.setSettings({ experimental: settings });
     this.settingsFormData = this.customizationService.getExperimentalSettingsFormData();
   }
-
 }

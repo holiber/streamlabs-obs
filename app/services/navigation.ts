@@ -1,12 +1,18 @@
 import { StatefulService, mutation } from './stateful-service';
+import { Subject } from 'rxjs';
 
-type TAppPage =
+export type TAppPage =
   | 'Studio'
   | 'Dashboard'
   | 'Live'
   | 'Onboarding'
   | 'BrowseOverlays'
-  | 'PatchNotes';
+  | 'PatchNotes'
+  | 'Chatbot'
+  | 'DesignSystem'
+  | 'PlatformAppMainPage'
+  | 'PlatformAppStore'
+  | 'Help';
 
 interface INavigationState {
   currentPage: TAppPage;
@@ -16,11 +22,14 @@ interface INavigationState {
 export class NavigationService extends StatefulService<INavigationState> {
   static initialState: INavigationState = {
     currentPage: 'Studio',
-    params: {}
+    params: {},
   };
+
+  navigated = new Subject<INavigationState>();
 
   navigate(page: TAppPage, params: Dictionary<string> = {}) {
     this.NAVIGATE(page, params);
+    this.navigated.next(this.state);
   }
 
   @mutation()

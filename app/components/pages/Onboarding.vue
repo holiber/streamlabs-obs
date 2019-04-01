@@ -10,7 +10,7 @@
 @import "../../styles/index";
 
 .onboarding {
-  background-color: @onboarding-bg;
+  background-color: var(--background);
 }
 </style>
 
@@ -27,10 +27,7 @@
   .button--lg {
     width: 300px;
     padding: 0 0;
-    font-size: 12px;
-    letter-spacing: 1px;
-    font-weight: normal;
-    margin-top: 15px;
+    .margin-top(2);
   }
 }
 
@@ -56,7 +53,7 @@
 .onboarding-step--full {
   width: 100%;
   position: absolute;
-  top: 0px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -69,27 +66,30 @@
 }
 
 .onboarding-title {
-  color: @white;
+  color: var(--white);
   font-size: 22px;
-  margin-bottom: 20px;
-  letter-spacing: .5px;
+  .margin-bottom(3);
 }
 
 .onboarding-title--sm {
   font-size: 15px;
-  .semibold;
-  color: @white;
+  .weight(@medium);
+  color: var(--white);
 }
 
 .onboarding-desc {
-  color: @grey;
-  margin-bottom: 20px;
-  padding: 0 20px;
+  color: var(--paragraph);
+  .margin-bottom(3);
+  padding: 0 16px;
 }
 
 .setup-later {
-  margin-top: 20px;
-  color: @grey;
+  .margin-top(3);
+  color: var(--paragraph);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 
   span {
     display: block;
@@ -98,9 +98,11 @@
 
   a {
     text-decoration: underline;
-    transition: all 275ms;
+    .transition();
+    color: var(--paragraph);
+
     &:hover {
-      color: @white;
+      color: var(--link-active);
     }
   }
 }
@@ -108,12 +110,12 @@
 .running-setup-container {
   width: 100%;
   padding: 30px;
-  color: @white;
-  background-color: @night-primary;
-  margin-bottom: 20px;
+  color: var(--background);
+  background-color: var(--section);
+  .margin-bottom(2);
   height: 270px;
   position: relative;
-  .radius;
+  .radius();
 
   &.optimizing {
     .running-setup-row {
@@ -147,11 +149,11 @@
 }
 
 .running-setup-row--complete {
-  color: @teal-bright;
+  color: var(--paragraph);
 }
 
 .running-setup-percent {
-  color: @grey;
+  color: var(--paragraph);
 }
 
 .running-setup__deco {
@@ -159,7 +161,7 @@
   top: 0;
   height: 240px;
   width: auto;
-  margin: 15px 0;
+  margin: 16px 0;
 
   img {
     height: 100%;

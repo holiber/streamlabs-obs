@@ -1,15 +1,13 @@
 import { IPatchNotes } from '.';
 
 export const notes: IPatchNotes = {
-  version: '0.9.0',
-  title: 'Studio Mode',
+  version: '0.11.12',
+  title: 'Replay Buffer & Smart Video Encoding',
+  showChest: false,
   notes: [
-    'Studio Mode: This feature allows you make changes to your scenes in the background, and switch ' +
-      'to them on your stream when you are ready.  Click the "Studio Mode" button in the top right to get started!',
-    'Removing a scene will now ask for confirmation',
-    'Fixed an issue where right clicking a selection of multiple sources would not work',
-    'Fixed an issue where copy/pasting would not preserve folder structure',
-    'Made a number of minor visual tweaks throughout the app',
-    'The library has been renamed to "Themes"'
-  ]
+    'The replay buffer will continously record the latest moments of your stream, and can be saved ' +
+      'with the press of a hotkey. You can enable this feature in the Advanced Settings tab.',
+    'Added our game-aware video encoding optimizations to reduce the CPU/GPU usage and improve ' +
+      'the video quality of your streams. Currently 65 games are supported and it works with most encoders.',
+  ],
 };

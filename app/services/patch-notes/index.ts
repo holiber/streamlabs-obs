@@ -14,14 +14,14 @@ export interface IPatchNotes {
   version: string;
   title: string;
   notes: string[];
+  showChest: boolean;
 }
 
 export class PatchNotesService extends PersistentStatefulService<IPatchNotesState> {
-
   @Inject() navigationService: NavigationService;
 
   static defaultState: IPatchNotesState = {
-    lastVersionSeen: null
+    lastVersionSeen: null,
   };
 
   init() {
@@ -46,6 +46,7 @@ export class PatchNotesService extends PersistentStatefulService<IPatchNotesStat
 
     // We do not show patch notes for preview
     if (Util.isPreview()) return;
+    if (Util.isIpc()) return;
 
     const currentVersion = electron.remote.process.env.SLOBS_VERSION;
 
@@ -70,5 +71,4 @@ export class PatchNotesService extends PersistentStatefulService<IPatchNotesStat
   private SET_LAST_VERSION_SEEN(version: string) {
     this.state.lastVersionSeen = version;
   }
-
 }

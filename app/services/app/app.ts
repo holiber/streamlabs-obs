@@ -1,4 +1,5 @@
-import { StatefulService, mutation } from 'services/stateful-service';
+import uuid from 'uuid/v4';
+import { mutation, StatefulService } from 'services/stateful-service';
 import { OnboardingService } from 'services/onboarding';
 import { HotkeysService } from 'services/hotkeys';
 import { UserService } from 'services/user';
@@ -11,8 +12,8 @@ import { ScenesService } from 'services/scenes';
 import { VideoService } from 'services/video';
 import { StreamInfoService } from 'services/stream-info';
 import { track } from 'services/usage-statistics';
-import { IpcServerService } from 'services/ipc-server';
-import { TcpServerService } from 'services/tcp-server';
+import { IpcServerService } from 'services/api/ipc-server';
+import { TcpServerService } from 'services/api/tcp-server';
 import { StreamlabelsService } from 'services/streamlabels';
 import { PerformanceMonitorService } from 'services/performance-monitor';
 import { SceneCollectionsService } from 'services/scene-collections';
@@ -20,6 +21,20 @@ import { FileManagerService } from 'services/file-manager';
 import { PatchNotesService } from 'services/patch-notes';
 import { ProtocolLinksService } from 'services/protocol-links';
 import { WindowsService } from 'services/windows';
+import * as obs from '../../../obs-api';
+import { EVideoCodes } from 'obs-studio-node/module';
+import { FacemasksService } from 'services/facemasks';
+import { OutageNotificationsService } from 'services/outage-notifications';
+import { CrashReporterService } from 'services/crash-reporter';
+import { PlatformAppsService } from 'services/platform-apps';
+import { AnnouncementsService } from 'services/announcements';
+import { ObsUserPluginsService } from 'services/obs-user-plugins';
+import { IncrementalRolloutService } from 'services/incremental-rollout';
+import { $t } from '../i18n';
+import { RunInLoadingMode } from './app-decorators';
+import { CustomizationService } from 'services/customization';
+
+const crashHandler = window['require']('crash-handler');
 
 interface IAppState {
   loading: boolean;
@@ -39,10 +54,13 @@ export class AppService extends StatefulService<IAppState> {
   @Inject() streamInfoService: StreamInfoService;
   @Inject() patchNotesService: PatchNotesService;
   @Inject() windowsService: WindowsService;
+  @Inject() facemasksService: FacemasksService;
+  @Inject() outageNotificationsService: OutageNotificationsService;
+  @Inject() platformAppsService: PlatformAppsService;
 
   static initialState: IAppState = {
     loading: true,
-    argv: []
+    argv: electron.remote.process.argv,
   };
 
   private autosaveInterval: number;
@@ -57,72 +75,179 @@ export class AppService extends StatefulService<IAppState> {
   @Inject() private performanceMonitorService: PerformanceMonitorService;
   @Inject() private fileManagerService: FileManagerService;
   @Inject() private protocolLinksService: ProtocolLinksService;
+  @Inject() private crashReporterService: CrashReporterService;
+  @Inject() private announcementsService: AnnouncementsService;
+  @Inject() private obsUserPluginsService: ObsUserPluginsService;
+  @Inject() private incrementalRolloutService: IncrementalRolloutService;
+  @Inject() private customizationService: CustomizationService;
+  private loadingPromises: Dictionary<Promise<any>> = {};
+
+  private pid = require('process').pid;
 
   @track('app_start')
-  load() {
-    this.START_LOADING();
+  @RunInLoadingMode()
+  async load() {
+    crashHandler.registerProcess(this.pid, false);
+
+    await this.obsUserPluginsService.initialize();
+
+    // Initialize OBS
+    const apiResult = obs.NodeObs.OBS_API_initAPI(
+      'en-US',
+      electron.remote.process.env.SLOBS_IPC_USERDATA,
+      electron.remote.process.env.SLOBS_VERSION,
+    );
+
+    if (apiResult !== EVideoCodes.Success) {
+      const message = apiInitErrorResultToMessage(apiResult);
+      showDialog(message);
+
+      crashHandler.unregisterProcess(this.pid);
+      electron.ipcRenderer.send('shutdownComplete');
+
+      return;
+    }
 
     // We want to start this as early as possible so that any
     // exceptions raised while loading the configuration are
     // associated with the user in sentry.
-    this.userService;
+    await this.userService.initialize();
 
-    this.sceneCollectionsService.initialize().then(() => {
-      const onboarded = this.onboardingService.startOnboardingIfRequired();
+    // Second, we want to start the crash reporter service.  We do this
+    // after the user service because we want crashes to be associated
+    // with a particular user if possible.
+    this.crashReporterService.beginStartup();
 
-      electron.ipcRenderer.on('shutdown', () => {
-        electron.ipcRenderer.send('acknowledgeShutdown');
-        this.shutdownHandler();
-      });
+    // Initialize any apps before loading the scene collection.  This allows
+    // the apps to already be in place when their sources are created.
+    await this.platformAppsService.initialize();
 
-      this.shortcutsService;
-      this.streamlabelsService;
+    await this.sceneCollectionsService.initialize();
+
+    const onboarded = this.onboardingService.startOnboardingIfRequired();
+
+    electron.ipcRenderer.on('shutdown', () => {
+      electron.ipcRenderer.send('acknowledgeShutdown');
+      this.shutdownHandler();
+    });
+
+    // Eager load services
+    const _ = [
+      this.facemasksService,
+
+      this.incrementalRolloutService,
+      this.shortcutsService,
+      this.streamlabelsService,
 
       // Pre-fetch stream info
-      this.streamInfoService;
+      this.streamInfoService,
+    ];
 
-      this.performanceMonitorService.start();
+    this.performanceMonitorService.start();
 
-      this.ipcServerService.listen();
-      this.tcpServerService.listen();
+    this.ipcServerService.listen();
+    this.tcpServerService.listen();
 
-      this.patchNotesService.showPatchNotesIfRequired(onboarded);
+    this.patchNotesService.showPatchNotesIfRequired(onboarded);
+    this.announcementsService.updateBanner();
 
-      this.FINISH_LOADING();
-    });
-  }
+    const _outageService = this.outageNotificationsService;
 
-  /**
-   * the main process sends argv string here
-   */
-  setArgv(argv: string[]) {
-    this.SET_ARGV(argv);
-    this.protocolLinksService.start(argv);
+    this.crashReporterService.endStartup();
+
+    this.protocolLinksService.start(this.state.argv);
   }
 
   @track('app_close')
   private shutdownHandler() {
     this.START_LOADING();
+    obs.NodeObs.StopCrashHandler();
+
+    this.crashReporterService.beginShutdown();
 
     this.ipcServerService.stopListening();
     this.tcpServerService.stopListening();
 
     window.setTimeout(async () => {
+      await this.userService.flushUserSession();
       await this.sceneCollectionsService.deinitialize();
       this.performanceMonitorService.stop();
-      this.transitionsService.reset();
+      this.transitionsService.shutdown();
       this.windowsService.closeAllOneOffs();
       await this.fileManagerService.flushAll();
+      obs.NodeObs.RemoveSourceCallback();
+      obs.NodeObs.OBS_service_removeCallback();
+      obs.IPC.disconnect();
+      this.crashReporterService.endShutdown();
       electron.ipcRenderer.send('shutdownComplete');
     }, 300);
   }
 
-  startLoading() {
-    this.START_LOADING();
-  }
+  /**
+   * Show loading, block the nav-buttons and disable autosaving
+   * If called several times - unlock the screen only after the last function/promise has been finished
+   * Should be called for any scene-collections loading operations
+   * @see RunInLoadingMode decorator
+   */
+  async runInLoadingMode(fn: () => Promise<any> | void) {
+    if (!this.state.loading) {
+      this.customizationService.setSettings({ hideStyleBlockingElements: true });
+      this.START_LOADING();
 
-  finishLoading() {
+      // The scene collections window is the only one we don't close when
+      // switching scene collections, because it results in poor UX.
+      if (this.windowsService.state.child.componentName !== 'ManageSceneCollections') {
+        this.windowsService.closeChildWindow();
+      }
+
+      // wait until all one-offs windows like Projectors will be closed
+      await this.windowsService.closeAllOneOffs();
+
+      // This is kind of ugly, but it gives the browser time to paint before
+      // we do long blocking operations with OBS.
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      await this.sceneCollectionsService.disableAutoSave();
+    }
+
+    let error: Error = null;
+    let result: any = null;
+
+    try {
+      result = fn();
+    } catch (e) {
+      error = null;
+    }
+
+    let returningValue = result;
+    if (result instanceof Promise) {
+      const promiseId = uuid();
+      this.loadingPromises[promiseId] = result;
+      try {
+        returningValue = await result;
+      } catch (e) {
+        error = e;
+      }
+      delete this.loadingPromises[promiseId];
+    }
+
+    if (Object.keys(this.loadingPromises).length > 0) {
+      // some loading operations are still in progress
+      // don't stop the loading mode
+      if (error) throw error;
+      return returningValue;
+    }
+
+    this.tcpServerService.startRequestsHandling();
+    this.sceneCollectionsService.enableAutoSave();
     this.FINISH_LOADING();
+    // Set timeout to allow transition animation to play
+    setTimeout(
+      () => this.customizationService.setSettings({ hideStyleBlockingElements: false }),
+      500,
+    );
+    if (error) throw error;
+    return returningValue;
   }
 
   @mutation()
@@ -140,3 +265,21 @@ export class AppService extends StatefulService<IAppState> {
     this.state.argv = argv;
   }
 }
+
+export const apiInitErrorResultToMessage = (resultCode: EVideoCodes) => {
+  switch (resultCode) {
+    case EVideoCodes.NotSupported: {
+      return $t('OBSInit.NotSupportedError');
+    }
+    case EVideoCodes.ModuleNotFound: {
+      return $t('OBSInit.ModuleNotFoundError');
+    }
+    default: {
+      return $t('OBSInit.UnknownError');
+    }
+  }
+};
+
+const showDialog = (message: string): void => {
+  electron.remote.dialog.showErrorBox($t('OBSInit.ErrorTitle'), message);
+};

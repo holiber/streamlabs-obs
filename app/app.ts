@@ -6,26 +6,39 @@ window['eval'] = global.eval = () => {
 
 import 'reflect-metadata';
 import Vue from 'vue';
-import URI from 'urijs';
 
 import { createStore } from './store';
-import { ObsApiService } from './services/obs-api';
-import { IWindowOptions, WindowsService } from './services/windows';
+import { WindowsService } from './services/windows';
 import { AppService } from './services/app';
-import { ServicesManager } from './services-manager';
 import Utils from './services/utils';
 import electron from 'electron';
-import Raven from 'raven-js';
-import RavenVue from 'raven-js/plugins/vue';
-import RavenConsole from 'raven-js/plugins/console';
+import * as Sentry from '@sentry/browser';
 import VTooltip from 'v-tooltip';
+import Toasted from 'vue-toasted';
 import VueI18n from 'vue-i18n';
+import VModal from 'vue-js-modal';
+import VeeValidate from 'vee-validate';
+import ChildWindow from 'components/windows/ChildWindow.vue';
+import OneOffWindow from 'components/windows/OneOffWindow.vue';
+import electronLog from 'electron-log';
 
 const { ipcRenderer, remote } = electron;
-
 const slobsVersion = remote.process.env.SLOBS_VERSION;
 const isProduction = process.env.NODE_ENV === 'production';
+const isPreview = !!remote.process.env.SLOBS_PREVIEW;
 
+if (Utils.isMainWindow()) {
+  window['obs'] = window['require']('obs-studio-node');
+
+  {
+    // Set up things for IPC
+    // Connect to the IPC Server
+    window['obs'].IPC.connect(remote.process.env.SLOBS_IPC_PATH);
+    document.addEventListener('close', e => {
+      window['obs'].IPC.disconnect();
+    });
+  }
+}
 
 // This is the development DSN
 let sentryDsn = 'https://8f444a81edd446b69ce75421d5e91d4d@sentry.io/252950';
@@ -37,21 +50,25 @@ if (isProduction) {
   electron.crashReporter.start({
     productName: 'streamlabs-obs',
     companyName: 'streamlabs',
+    ignoreSystemCrashHandler: true,
     submitURL:
-      'https://streamlabs.sp.backtrace.io:6098/post?' +
-      'format=minidump&' +
-      'token=e3f92ff3be69381afe2718f94c56da4644567935cc52dec601cf82b3f52a06ce',
+      'https://sentry.io/api/1283430/minidump/?sentry_key=01fc20f909124c8499b4972e9a5253f2',
     extra: {
       version: slobsVersion,
-      processType: 'renderer'
-    }
+      processType: 'renderer',
+    },
   });
 }
 
-if (isProduction || process.env.SLOBS_REPORT_TO_SENTRY) {
-  Raven.config(sentryDsn, {
+if (
+  (isProduction || process.env.SLOBS_REPORT_TO_SENTRY) &&
+  !electron.remote.process.env.SLOBS_IPC
+) {
+  Sentry.init({
+    dsn: sentryDsn,
     release: slobsVersion,
-    dataCallback: data => {
+    sampleRate: isPreview ? 1.0 : 0.1,
+    beforeSend: event => {
       // Because our URLs are local files and not publicly
       // accessible URLs, we simply truncate and send only
       // the filename.  Unfortunately sentry's electron support
@@ -62,96 +79,113 @@ if (isProduction || process.env.SLOBS_REPORT_TO_SENTRY) {
         return splitArray[splitArray.length - 1];
       };
 
-      if (data.exception) {
-        data.exception.values[0].stacktrace.frames.forEach((frame: any) => {
+      if (event.exception) {
+        event.exception.values[0].stacktrace.frames.forEach(frame => {
           frame.filename = normalize(frame.filename);
         });
-
-        data.culprit = data.exception.values[0].stacktrace.frames[0].filename;
       }
 
-      return data;
-    }
-  })
-    .addPlugin(RavenVue, Vue)
-    .addPlugin(RavenConsole, console, { levels: ['error'] })
-    .install();
+      return event;
+    },
+    integrations: [new Sentry.Integrations.Vue({ Vue })],
+  });
+
+  const oldConsoleError = console.error;
+
+  console.error = (msg: string, ...params: any[]) => {
+    oldConsoleError(msg, ...params);
+
+    Sentry.withScope(scope => {
+      if (params[0] instanceof Error) {
+        scope.setExtra('exception', params[0].stack);
+      }
+
+      scope.setExtra('console-args', JSON.stringify(params, null, 2));
+      Sentry.captureMessage(msg, Sentry.Severity.Error);
+    });
+  };
 }
 
-require('./app.less');
+require('./app.g.less');
+require('./themes.g.less');
 
 // Initiates tooltips and sets their parent wrapper
 Vue.use(VTooltip);
 VTooltip.options.defaultContainer = '#mainWrapper';
+Vue.use(Toasted);
+Vue.use(VeeValidate); // form validations
+Vue.use(VModal);
 
 // Disable chrome default drag/drop behavior
 document.addEventListener('dragover', event => event.preventDefault());
+document.addEventListener('dragenter', event => event.preventDefault());
 document.addEventListener('drop', event => event.preventDefault());
 
 document.addEventListener('DOMContentLoaded', () => {
-  const storePromise = createStore();
-  const servicesManager: ServicesManager = ServicesManager.instance;
-  const windowsService: WindowsService = WindowsService.instance;
-  const i18nService: I18nService = I18nService.instance;
-  const obsApiService = ObsApiService.instance;
-  const windowId = Utils.getCurrentUrlParams().windowId;
-
-  if (Utils.isMainWindow()) {
-    ipcRenderer.on('closeWindow', () => windowsService.closeMainWindow());
-    AppService.instance.load();
-  } else {
-    if (Utils.isChildWindow()) {
-      ipcRenderer.on('closeWindow', () => windowsService.closeChildWindow());
+  createStore().then(async store => {
+    // handle closeWindow event from the main process
+    const windowsService: WindowsService = WindowsService.instance;
+    if (Utils.isMainWindow()) {
+      ipcRenderer.on('closeWindow', () => windowsService.closeMainWindow());
+      AppService.instance.load();
+    } else {
+      if (Utils.isChildWindow()) {
+        ipcRenderer.on('closeWindow', () => windowsService.closeChildWindow());
+      }
     }
-    servicesManager.listenMessages();
-  }
 
-  window['obs'] = obsApiService.nodeObs;
-
-  storePromise.then(async store => {
-
+    // setup VueI18n plugin
     Vue.use(VueI18n);
-
-    await i18nService.load();
-
+    const i18nService: I18nService = I18nService.instance;
+    await i18nService.load(); // load translations from a disk
     const i18n = new VueI18n({
       locale: i18nService.state.locale,
       fallbackLocale: i18nService.getFallbackLocale(),
-      messages: i18nService.getLoadedDictionaries()
+      messages: i18nService.getLoadedDictionaries(),
+      silentTranslationWarn: true,
     });
-
     I18nService.setVuei18nInstance(i18n);
 
+    // create a root Vue component
+    const windowId = Utils.getCurrentUrlParams().windowId;
     const vm = new Vue({
-      el: '#app',
       i18n,
       store,
+      el: '#app',
       render: h => {
-        const componentName = windowsService.state[windowId].componentName;
-
-        return h(windowsService.components[componentName]);
-      }
+        if (windowId === 'child') return h(ChildWindow);
+        if (windowId === 'main') {
+          const componentName = windowsService.state[windowId].componentName;
+          return h(windowsService.components[componentName]);
+        }
+        return h(OneOffWindow);
+      },
     });
-
   });
-
-  // Used for replacing the contents of this window with
-  // a new top level component
-  ipcRenderer.on(
-    'window-setContents',
-    (event: Electron.Event, options: IWindowOptions) => {
-      windowsService.updateChildWindowOptions(options);
-
-      // This is purely for developer convencience.  Changing the URL
-      // to match the current contents, as well as pulling the options
-      // from the URL, allows child windows to be refreshed without
-      // losing their contents.
-      const newOptions: any = Object.assign({ windowId: 'child' }, options);
-      const newURL: string = URI(window.location.href)
-        .query(newOptions)
-        .toString();
-
-      window.history.replaceState({}, '', newURL);
-    }
-  );
 });
+
+// EVENT LOGGING
+
+const consoleError = console.error;
+console.error = function(...args: any[]) {
+  logError(args[0]);
+  consoleError.call(console, ...args);
+};
+
+function logError(error: Error | string) {
+  let message = '';
+  let stack = '';
+
+  if (error instanceof Error) {
+    message = error.message;
+    stack = error.stack;
+  } else if (typeof error === 'string') {
+    message = error;
+  }
+
+  // send error to the main process via IPC
+  electronLog.error(`Error from ${Utils.getWindowId()} window:
+    ${message}
+    ${stack}
+  `);
+}

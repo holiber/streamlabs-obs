@@ -1,13 +1,10 @@
 <template>
   <div>
     <div class="section">
-      <language-settings/>
+      <div class="section-content">
+        <GenericForm v-model="settingsFormData" @input="saveSettings" />
+      </div>
     </div>
-
-    <!--<div class="section">-->
-      <!--<GenericForm v-model="settingsFormData" @input="saveSettings" />-->
-    <!--</div>-->
-
   </div>
 </template>
 

@@ -20,11 +20,12 @@
   <div class="notifications__container flex--grow" ref="notificationsContainer">
     <div
       v-for="notify in notifications"
+      :key="`${notify.message}${notify.date}`"
       class="notification"
       v-show="showExtendedNotifications"
       @click="onNotificationClickHandler(notify.id)"
       :class="{
-        'info': notify.type == 'INFO',
+        'info': notify.type === 'INFO',
         'warning': notify.type == 'WARNING',
         'has-action': notify.action && !notify.outdated,
         'outdated': notify.outdated,
@@ -41,7 +42,7 @@
 <script lang="ts" src="./NotificationsArea.vue.ts"></script>
 
 <style lang="less" scoped>
-@import "../styles/index";
+@import '../styles/index';
 
 .notifications-area {
   overflow: hidden;
@@ -58,31 +59,30 @@
 
 .notification {
   height: 30px;
+  max-width: 100%;
   line-height: 30px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border-radius: 3px;
+  .padding-left();
+  .padding-right();
+  .radius();
   white-space: nowrap;
   overflow: hidden;
-  margin-left: 10px;
+  text-overflow: ellipsis;
   position: absolute;
-  left: 20px;
   animation: notify-appears 0.3s;
 
-
   &.info {
-    background-color: fade(@grey, 15%);
-    color: @grey;
+    background-color: var(--icon-semi);
+    color: var(--icon);
   }
 
   &.warning {
     background-color: fade(@red, 20%);
-    color: @red;
+    color: var(--warning);
   }
 
   &.success {
     background-color: fade(@teal, 20%);
-    color: @teal;
+    color: var(--teal);
   }
 
   &.has-action {
@@ -97,12 +97,13 @@
 .notifications__counter {
   cursor: pointer;
   white-space: nowrap;
+  margin-right: 10px;
 
   &:before {
     content: '|';
     padding-right: 12px;
-    opacity: .5;
-    color: @grey;
+    opacity: 0.5;
+    color: var(--icon);
   }
 
   .fa {
@@ -111,21 +112,31 @@
 }
 
 .notifications__counter--warning {
-  color: @red;
+  color: var(--warning);
 
   .fa {
-    color: @red;
+    color: var(--warning);
   }
 }
 
 @keyframes notify-appears {
-  from {opacity: 0; top: 50px}
-  to {opacity: 1; top: 0 }
+  from {
+    opacity: 0;
+    top: 50px;
+  }
+  to {
+    opacity: 1;
+    top: 0;
+  }
 }
 
 @keyframes notify-disappears {
-  from {opacity: 1}
-  to {opacity: 0; display: none}
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    display: none;
+  }
 }
-
 </style>

@@ -1,7 +1,7 @@
 import { PropertiesManager } from './properties-manager';
 import { Inject } from 'util/injector';
 import { MediaBackupService } from 'services/media-backup';
-import * as input from 'components/shared/forms/Input';
+import * as input from 'components/obs/inputs/ObsInput';
 import * as fi from 'node-fontinfo';
 import { FontLibraryService } from 'services/font-library';
 import { EFontStyle } from 'obs-studio-node';
@@ -39,9 +39,10 @@ export class DefaultManager extends PropertiesManager {
     this.downloadGoogleFont();
   }
 
-  setPropertiesFormData(properties: input.TFormData) {
+  setPropertiesFormData(properties: input.TObsFormData) {
     super.setPropertiesFormData(properties);
     if (this.obsSource.settings[this.mediaBackupFileSetting] !== this.currentMediaPath) {
+      this.currentMediaPath = this.obsSource.settings[this.mediaBackupFileSetting];
       this.uploadNewMediaFile();
     }
   }
@@ -58,6 +59,8 @@ export class DefaultManager extends PropertiesManager {
       this.mediaBackupFileSetting = 'local_file';
     } else if (this.obsSource.id === 'image_source') {
       this.mediaBackupFileSetting = 'file';
+    } else if (this.obsSource.id === 'obs_stinger_transition') {
+      this.mediaBackupFileSetting = 'path';
     } else {
       return;
     }
@@ -66,16 +69,18 @@ export class DefaultManager extends PropertiesManager {
     this.currentMediaPath = this.obsSource.settings[this.mediaBackupFileSetting];
 
     if (this.settings.mediaBackup.serverId && this.settings.mediaBackup.originalPath) {
-      this.mediaBackupService.syncFile(
-        this.settings.mediaBackup.localId,
-        this.settings.mediaBackup.serverId,
-        this.settings.mediaBackup.originalPath
-      ).then(file => {
-        if (file) {
-          this.currentMediaPath = file.filePath;
-          this.obsSource.update({ [this.mediaBackupFileSetting]: file.filePath });
-        }
-      });
+      this.mediaBackupService
+        .syncFile(
+          this.settings.mediaBackup.localId,
+          this.settings.mediaBackup.serverId,
+          this.settings.mediaBackup.originalPath,
+        )
+        .then(file => {
+          if (file && !this.destroyed) {
+            this.currentMediaPath = file.filePath;
+            this.obsSource.update({ [this.mediaBackupFileSetting]: file.filePath });
+          }
+        });
     } else {
       this.uploadNewMediaFile();
     }
@@ -83,16 +88,24 @@ export class DefaultManager extends PropertiesManager {
 
   uploadNewMediaFile() {
     if (!this.mediaBackupFileSetting) return;
+    if (!this.obsSource.settings[this.mediaBackupFileSetting]) return;
 
-    this.mediaBackupService.createNewFile(
-      this.settings.mediaBackup.localId,
-      this.obsSource.settings[this.mediaBackupFileSetting]
-    ).then(file => {
-      if (file) {
-        this.settings.mediaBackup.serverId = file.serverId;
-        this.settings.mediaBackup.originalPath = this.obsSource.settings[this.mediaBackupFileSetting];
-      }
-    });
+    this.settings.mediaBackup.serverId = null;
+    this.settings.mediaBackup.originalPath = null;
+
+    this.mediaBackupService
+      .createNewFile(
+        this.settings.mediaBackup.localId,
+        this.obsSource.settings[this.mediaBackupFileSetting],
+      )
+      .then(file => {
+        if (file) {
+          this.settings.mediaBackup.serverId = file.serverId;
+          this.settings.mediaBackup.originalPath = this.obsSource.settings[
+            this.mediaBackupFileSetting
+          ];
+        }
+      });
   }
 
   ensureMediaBackupId() {
@@ -115,16 +128,20 @@ export class DefaultManager extends PropertiesManager {
 
     const filename = path.parse(settings['custom_font']).base;
 
-    const fontPath =
-      await this.fontLibraryService.downloadFont(filename);
+    const fontPath = await this.fontLibraryService.downloadFont(filename);
+
+    // Make sure this wasn't destroyed while fetching the font
+    if (this.destroyed) return;
 
     const fontInfo = fi.getFontInfo(fontPath);
 
     if (!fontInfo) {
-      // Fall back to Arial
+      // Fallback to Arial
       newSettings['custom_font'] = null;
-      newSettings['font']['face'] = 'Arial';
-      newSettings['font']['flags'] = 0;
+      newSettings['font'] = {
+        face: 'Arial',
+        flags: 0,
+      };
       this.obsSource.update(newSettings);
       return;
     }
@@ -134,10 +151,8 @@ export class DefaultManager extends PropertiesManager {
     newSettings['font'] = newSettings['font'] || {};
     newSettings['font']['face'] = fontInfo.family_name;
     newSettings['font']['flags'] =
-      (fontInfo.italic ? EFontStyle.Italic : 0) |
-      (fontInfo.bold ? EFontStyle.Bold : 0);
+      (fontInfo.italic ? EFontStyle.Italic : 0) | (fontInfo.bold ? EFontStyle.Bold : 0);
 
     this.obsSource.update(newSettings);
   }
-
 }

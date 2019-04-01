@@ -1,176 +1,212 @@
-button,
 .button {
-  .transition;
+  .transition();
+  .radius();
+  .weight(@medium);
+  .text-transform();
+  .padding-h-sides();
+  .padding-v-sides(@0);
 
-  &:focus, &:visited {
+  border: 1px solid transparent;
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  height: 32px;
+  line-height: 30px;
+
+  &:focus,
+  &:visited {
     outline: none;
+  }
+
+  &.is-disabled,
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  span,
+  i {
+    .margin-right();
+  }
+}
+
+.button--default {
+  background-color: var(--button);
+  color: var(--paragraph);
+
+  &:hover {
+    background-color: var(--button-hover);
+    color: var(--title);
+  }
+
+  &:focus {
+    background-color: var(--button);
+    color: var(--title);
+  }
+
+  &.is-disabled,
+  &:disabled {
+    &:hover {
+      background-color: var(--button);
+      color: var(--title);
+    }
   }
 }
 
 .button--action {
-  background-color: @teal;
-  color: @white;
+  background-color: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
 
   &:hover {
     background-color: lighten(@teal, 4%);
+    color: var(--white);
   }
 
   &:focus {
-    background-color: @teal;
+    background-color: var(--teal);
+  }
+
+  &.is-disabled,
+  &:disabled {
+    &:hover {
+      background-color: var(--teal);
+    }
   }
 }
 
 .button--trans {
   background: transparent;
-  color: @grey;
+  color: @dark-5;
+  border-color: transparent;
 
-  .fa,
-  i {
-    color: @grey;
-    .transition;
-  }
-
-  &:hover, &:focus {
-    color: @navy;
+  &:hover,
+  &:focus {
+    color: @dark-2;
     background: transparent;
 
-    .fa,
     i {
-      color: @navy;
+      color: inherit;
     }
   }
 }
 
-.button--semi-opac {
-  background: rgba(255, 255, 255, .1);
+.button--warn {
+  background-color: var(--warning);
 
-  &:hover {
-    background: rgba(255, 255, 255, .14);
-  }
-
-  &:focus {
-    background: rgba(255, 255, 255, .1);
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--warning-hover);
   }
 }
 
-.button--100 {
-  width: 100%;
-}
-
-.icon-btn {
+.icon-button {
   font-size: 14px;
   cursor: pointer;
   margin-left: 10px;
-  .icon-hover;
+  .icon-hover();
 
   &:first-child {
     margin-left: inherit;
   }
 }
 
-.icon-btn--sm {
-  font-size: 13px;
-}
-
-.icon-btn--lg {
+.icon-button--lg {
   font-size: 15px;
 }
 
-.back-arrow {
-  font-size: 16px;
-  margin-right: 20px;
-  .transition;
-}
-
-.back-arrow--light {
-  color: @grey;
-
-  &:hover {
-    color: @white;
-  }
-}
-
-.button-container {
-  display: flex;
-  justify-content: center;
-  align-content: center;
-}
-
-.button--twitch,
-.button--yt,
-.button--mixer {
-  width: 48%;
-}
-
 .square-button {
-  .radius;
-  .transition;
+  .radius();
+  .transition();
+
   display: flex;
   justify-content: center;
   align-items: center;
   width: 50px;
   height: 50px;
-  color: @white;
+  color: var(--white);
   font-size: 16px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-start;
+  align-content: center;
+
+  .button,
+  .square-button {
+    margin-right: 10px;
+  }
+}
+
+.button-container--right {
+  justify-content: flex-end;
+
+  .button,
+  .square-button {
+    margin-right: 0;
+    margin-left: 10px;
+  }
 }
 
 .square-button--twitch,
 .button--twitch {
-  background: #6441A4;
+  background: #6441a4;
 
   &:hover {
-    background: lighten(#6441A4, 4%);
+    background: lighten(#6441a4, 4%);
   }
 
   &:focus {
-    background: #6441A4;
+    background: #6441a4;
   }
 }
 
 .square-button--yt,
 .button--yt {
-  background: #D22222;
+  background: #d22222;
 
   &:hover {
-    background: lighten(#D22222, 4%);
+    background: lighten(#d22222, 4%);
   }
 
-  &:focus {
-    background: #D22222;
+  &:focus,
+  &:active,
+  &:disabled {
+    background: #d22222;
   }
 }
 
-.square-button--fb {
-  background: #3B5998;
+.square-button--fb,
+.button--fb {
+  background: #3b5998;
 
   &:hover {
-    background: lighten(#3B5998, 4%);
+    background: lighten(#3b5998, 4%);
   }
 }
 
 .square-button--twitter {
-  background: #1DA1F2;
+  background: #1da1f2;
 
   &:hover {
-    background: lighten(#1DA1F2, 4%)
+    background: lighten(#1da1f2, 4%);
   }
 }
 
 .button--soft-warning {
-  color: @red;
-  border-color: rgba(251,72,76,.3);
-  background: rgba(251,72,76,.08);
+  color: var(--warning);
+  background: rgba(251, 72, 76, 0.16);
+  border-color: transparent;
 
   &:focus {
-    color: @red;
-    border-color: rgba(251,72,76,.3);
-    background: rgba(251,72,76,.08);
+    color: var(--warning);
+    background: rgba(251, 72, 76, 0.16);
   }
 
   &:hover {
-    border-color: rgba(251,72,76,.4);
-    background: rgba(251,72,76,.12);
-    color: @red;
+    background: rgba(251, 72, 76, 0.2);
+    color: var(--warning);
   }
 }
 
@@ -179,22 +215,28 @@ button,
   background: #0078d7;
 
   &:hover {
-    background: lighten(#0078d7,4%)
+    background: lighten(#0078d7, 4%);
+  }
+}
+
+.theme-toggle {
+  &:focus {
+    outline: 0;
   }
 }
 
 .night-theme {
   .button--trans {
-    color: @night-link;
+    color: @light-4;
+    background-color: transparent;
+    border-color: transparent;
 
     &:hover {
-      color: @white;
+      color: @light-1;
     }
   }
 
-  .button--default {
-    background: rgba(255, 255, 255, .1);
-    border-color: transparent;
-    color: @white;
+  .icon-button {
+    .night-icon-hover();
   }
 }

@@ -2,15 +2,20 @@ import { Service } from './service';
 import { Inject } from 'util/injector';
 import { UserService } from 'services/user';
 import { HostsService } from 'services/hosts';
-import { handleErrors, authorizedHeaders } from 'util/requests';
+import { handleResponse, authorizedHeaders } from 'util/requests';
 import io from 'socket.io-client';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 export type TSocketEvent =
-  IStreamlabelsSocketEvent |
-  IDonationSocketEvent |
-  IFollowSocketEvent |
-  ISubscriptionSocketEvent;
+  | IStreamlabelsSocketEvent
+  | IDonationSocketEvent
+  | IFacemaskDonationSocketEvent
+  | IFollowSocketEvent
+  | ISubscriptionSocketEvent
+  | IAlertPlayingSocketEvent
+  | IAlertProfileChanged
+  | IBitsSocketEvent
+  | IFmExtEnabledSocketEvent;
 
 interface IStreamlabelsSocketEvent {
   type: 'streamlabels';
@@ -24,6 +29,17 @@ interface IDonationSocketEvent {
   message: {
     name: string;
     amount: string;
+    formattedAmount: string;
+    facemask: string;
+    message: string;
+  }[];
+}
+
+interface IFacemaskDonationSocketEvent {
+  type: 'facemaskdonation';
+  message: {
+    facemask: string;
+    _id: string;
   }[];
 }
 
@@ -31,6 +47,7 @@ interface IFollowSocketEvent {
   type: 'follow';
   message: {
     name: string;
+    _id: string;
   }[];
 }
 
@@ -38,7 +55,48 @@ interface ISubscriptionSocketEvent {
   type: 'subscription';
   message: {
     name: string;
+    subscriber_twitch_id?: string;
+    sub_plan?: string;
+    _id: string;
   }[];
+}
+
+interface IBitsSocketEvent {
+  type: 'bits';
+  message: {
+    name: string;
+    data: {
+      facemask?: string;
+      fm_id?: string;
+    };
+  }[];
+}
+
+interface IFmExtEnabledSocketEvent {
+  type: 'fm-ext-enabled';
+}
+
+export interface IAlertPlayingSocketEvent {
+  type: 'alertPlaying';
+  message: {
+    facemask?: string;
+    _id: string;
+    type: string;
+    payload?: {
+      _id?: string;
+    };
+    data: {
+      facemask?: string;
+      fm_id?: string;
+    };
+    subscriber_twitch_id?: string;
+    sub_plan?: string;
+    name?: string;
+  };
+}
+
+interface IAlertProfileChanged {
+  type: 'alertProfileChanged';
 }
 
 export class WebsocketService extends Service {
@@ -72,11 +130,10 @@ export class WebsocketService extends Service {
     const request = new Request(url, { headers });
 
     fetch(request)
-      .then(handleErrors)
-      .then(response => response.json())
+      .then(handleResponse)
       .then(json => json.socket_token)
       .then(token => {
-        const url = `https://aws-io.${this.hostsService.streamlabs}?token=${token}`;
+        const url = `${this.hostsService.io}?token=${token}`;
         this.socket = io(url, { transports: ['websocket'] });
 
         // These are useful for debugging
@@ -86,7 +143,9 @@ export class WebsocketService extends Service {
         this.socket.on('error', () => this.log('Error'));
         this.socket.on('disconnect', () => this.log('Connection Closed'));
 
-        this.socket.on('event', (e: any) => this.socketEvent.next(e));
+        this.socket.on('event', (e: any) => {
+          this.socketEvent.next(e);
+        });
       });
   }
 

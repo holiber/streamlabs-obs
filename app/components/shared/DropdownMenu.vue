@@ -1,12 +1,14 @@
 <template>
-  <popper trigger="click" :options="{ placement: 'bottom-start' }">
-
+  <popper
+    trigger="click"
+    :options="{ placement: (placement || 'bottom-start') }"
+  >
     <div class="popper dropdown-menu">
       <slot></slot>
     </div>
 
     <button slot="reference" class="dropdown-menu__toggle">
-      {{ title }} <i class="icon-down"/>
+      <span>{{ title }}</span> <i :class="icon || 'icon-dropdown'"/>
     </button>
 
   </popper>
@@ -16,69 +18,89 @@
 
 <style lang="less">
 @import "../../styles/index";
-
 .dropdown-menu {
-  position: absolute;
-  top: 20px!important;
-  background-color: @day-primary;
-  .border;
-  .radius;
-  padding: 10px;
+  top: 5px !important;
+  background-color: var(--background);
+  .radius();
+  .padding();
   max-height: 166px;
   overflow-y: auto;
-  transform: none!important;
+  z-index: 200000;
+  .shadow();
 }
 
 .dropdown-menu__toggle {
   display: flex;
   align-items: center;
-  text-transform: uppercase;
-  font-size: 13px;
-  .semibold;
-  color: @day-title;
-  letter-spacing: .7px;
+  text-transform: capitalize;
+  font-size: 14px;
+  .weight(@medium);
+  color: var(--title);
+
+  span {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   .fa,
   i {
-    margin-left: 6px;
-    font-size: 6px;
+    .margin-left();
+    padding: 3px; // easier to click
+    .icon-hover();
+  }
+
+  &:focus {
+    outline: 0;
   }
 }
 
 .dropdown-menu__separator {
   width: 100%;
   height: 1px;
-  background-color: @grey;
+  background-color: var(--midtone);
   opacity: .2;
-  margin: 10px 0;
+  .margin-v-sides();
 }
 
 .dropdown-menu__item {
   white-space: nowrap;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
-  color: @grey;
+  color: var(--midtone);
 
   &:hover,
   &.active {
-    color: @navy;
+    color: var(--navy);
   }
 }
 
-.night-theme {
-  .dropdown-menu {
-    background-color: @night-primary;
-    border-color: @night-secondary;
-  }
+.popper .popper__arrow {
+  display: none !important;
+}
 
-  .dropdown-menu__item {
-    &:hover,
-    &.active {
-      color: @white;
-    }
-  }
+.popper {
+  border: 0 !important;
+  padding: 8px !important;
+  color: inherit !important;
+}
 
-  .dropdown-menu__toggle {
-    color: @white;
-  }
+.popper[x-placement^="top"] {
+  margin-bottom: 5px;
+}
+
+.popper[x-placement^="bottom"] {
+  margin-top: 5px;
+}
+
+.popper[x-placement^="right"] {
+  margin-left: 5px;
+}
+
+.popper[x-placement^="left"] {
+  margin-right: 5px;
 }
 </style>

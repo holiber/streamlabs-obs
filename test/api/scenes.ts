@@ -2,10 +2,10 @@ import test from 'ava';
 import { useSpectron } from '../helpers/spectron';
 import { getClient } from '../helpers/api-client';
 import { IScenesServiceApi } from '../../app/services/scenes/scenes-api';
-import { sleep } from '../helpers/sleep';
+import { SceneBuilder } from '../helpers/scene-builder';
+const path = require('path');
 
 useSpectron({ restartAppAfterEachTest: false });
-
 
 test('The default scene exists', async t => {
   const client = await getClient();
@@ -13,9 +13,7 @@ test('The default scene exists', async t => {
   const scenes = scenesService.getScenes();
 
   t.true(scenes.length === 1);
-
 });
-
 
 test('Creating, fetching and removing scenes', async t => {
   const client = await getClient();
@@ -37,14 +35,12 @@ test('Creating, fetching and removing scenes', async t => {
   t.deepEqual(scenesNames, ['Scene']);
 });
 
-
 test('Switching between scenes', async t => {
   const client = await getClient();
   const scenesService = client.getResource<IScenesServiceApi>('ScenesService');
 
-  const scene = scenesService.getSceneByName('Scene');
+  const scene = scenesService.getScenes().find(scene => scene.name == 'Scene');
   const scene2 = scenesService.createScene('Scene2');
-
 
   t.is(scene.id, scenesService.activeSceneId);
 
@@ -55,15 +51,13 @@ test('Switching between scenes', async t => {
   scene2.remove();
 
   t.is(scene.id, scenesService.activeSceneId);
-
 });
-
 
 test('Creating, fetching and removing scene-items', async t => {
   const client = await getClient();
   const scenesService = client.getResource<IScenesServiceApi>('ScenesService');
 
-  const scene = scenesService.getSceneByName('Scene');
+  const scene = scenesService.getScenes().find(scene => scene.name == 'Scene');
   const image1 = scene.createAndAddSource('Image1', 'image_source');
   const image2 = scene.createAndAddSource('Image2', 'image_source');
   t.is(image1['name'], 'Image1');
@@ -72,14 +66,11 @@ test('Creating, fetching and removing scene-items', async t => {
   let itemsNames = items.map(item => item['name']);
   t.deepEqual(itemsNames, ['Image2', 'Image1']);
 
-
   scene.removeItem(image2.sceneItemId);
   items = scene.getItems();
   itemsNames = items.map(item => item['name']);
   t.deepEqual(itemsNames, ['Image1']);
-
 });
-
 
 test('Scenes events', async t => {
   const client = await getClient();
@@ -109,23 +100,18 @@ test('Scenes events', async t => {
   eventData = await client.fetchNextEvent();
   t.is(eventData.name, 'Scene3');
 
-
   const image = scene2.createAndAddSource('image', 'image_source');
   eventData = await client.fetchNextEvent();
   t.is(eventData.sceneItemId, image.sceneItemId);
-
 
   image.setVisibility(false);
   eventData = await client.fetchNextEvent();
   t.is(eventData.visible, false);
 
-
   image.remove();
   eventData = await client.fetchNextEvent();
   t.is(eventData.sceneItemId, image.sceneItemId);
-
 });
-
 
 test('Creating nested scenes', async t => {
   const client = await getClient();
@@ -153,9 +139,7 @@ test('Creating nested scenes', async t => {
   itemsANames = sceneAItems.map(item => item['name']);
 
   t.deepEqual(itemsANames, ['SceneB']);
-
 });
-
 
 test('SceneItem.setSettings()', async t => {
   const client = await getClient();
@@ -178,7 +162,7 @@ test('SceneItem.setSettings()', async t => {
       bottom: 5.6,
       left: 7.1,
       right: 10,
-    }
+    },
   });
 
   // crop values must be rounded
@@ -188,10 +172,7 @@ test('SceneItem.setSettings()', async t => {
     left: 7,
     right: 10,
   });
-
-
 });
-
 
 test('SceneItem.resetTransform()', async t => {
   const client = await getClient();
@@ -215,6 +196,32 @@ test('SceneItem.resetTransform()', async t => {
     crop: { top: 0, right: 0, bottom: 0, left: 0 },
     rotation: 0,
   });
+});
 
+test('SceneItem.addFile()', async t => {
+  const dataDir = path.resolve(__dirname, '..', '..', '..', 'test', 'data', 'sources-files');
 
+  const client = await getClient();
+  const sceneBuilder = new SceneBuilder(client);
+  const scenesService = client.getResource<IScenesServiceApi>('ScenesService');
+  const scene = scenesService.activeScene;
+
+  scene.clear();
+  scene.addFile(dataDir);
+
+  t.true(
+    sceneBuilder.isEqualTo(`
+    sources-files
+      html
+        hello.html: browser_source
+      images
+        moon.png: image_source
+        sun.png: image_source
+      media
+        alertbox.mp4: ffmpeg_source
+        chatbox.mp4: ffmpeg_source
+      text
+        hello.txt: text_gdiplus
+  `),
+  );
 });

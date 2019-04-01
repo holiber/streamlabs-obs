@@ -25,17 +25,18 @@ export default class Connect extends Vue {
       },
       () => {
         this.onboardingService.next();
-      }
+      },
     );
   }
 
   iconForPlatform(platform: TPlatform) {
-    if (this.loadingState) return 'fa-spinner fa-spin';
+    if (this.loadingState) return 'fas fa-spinner fa-spin';
 
     return {
-      twitch: 'fa-twitch',
-      youtube: 'fa-youtube-play',
-      mixer: 'fa-times'
+      twitch: 'fab fa-twitch',
+      youtube: 'fab fa-youtube',
+      mixer: 'fas fa-times',
+      facebook: 'fab fa-facebook',
     }[platform];
   }
 
@@ -50,5 +51,4 @@ export default class Connect extends Vue {
   contactSupport() {
     electron.remote.shell.openExternal('https://support.streamlabs.com');
   }
-
 }

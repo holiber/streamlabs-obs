@@ -2,13 +2,13 @@
  * simple singleton service implementation
  * @see original code http://stackoverflow.com/a/26227662
  */
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 const singleton = Symbol();
 const singletonEnforcer = Symbol();
+const instances: Service[] = [];
 
 export abstract class Service {
-  static hasInstance = false;
   static isSingleton = true;
 
   /**
@@ -19,17 +19,19 @@ export abstract class Service {
   private static proxyFn: (service: Service) => Service;
 
   /**
-   * returns true if service has been successfully initialized
+   * custom init function
    */
-  private static initFn: (service: Service) => boolean;
+  private static initFn: (service: Service) => void;
 
   serviceName = this.constructor.name;
 
   static get instance() {
-    const instance = !this.hasInstance
-      ? Service.createInstance(this)
-      : this[singleton];
+    const instance = !this.hasInstance ? Service.createInstance(this) : this[singleton];
     return this.proxyFn ? this.proxyFn(instance) : instance;
+  }
+
+  static get hasInstance(): boolean {
+    return !!instances[this.name];
   }
 
   /**
@@ -53,14 +55,18 @@ export abstract class Service {
     if (ServiceClass.hasInstance) {
       throw 'Unable to create more than one singleton service';
     }
-    ServiceClass.hasInstance = true;
     ServiceClass.isSingleton = true;
     const instance = new ServiceClass(singletonEnforcer);
     ServiceClass[singleton] = instance;
+    instances[ServiceClass.name] = instance;
 
-    const mustInit = this.initFn ? !this.initFn(instance) : true;
+    const mustInit = !this.initFn;
+
+    // call a custom init function if exists
+    if (this.initFn) this.initFn(instance);
 
     if (mustInit) instance.init();
+
     instance.mounted();
     Service.serviceAfterInit.next(instance);
     if (mustInit) instance.afterInit();

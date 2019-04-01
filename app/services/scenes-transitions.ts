@@ -2,22 +2,23 @@ import { mutation, StatefulService } from './stateful-service';
 import * as obs from '../../obs-api';
 import {
   getPropertiesFormData,
-  IListOption, setPropertiesFormData,
-  TFormData, TObsValue
-} from '../components/shared/forms/Input';
+  IObsListOption,
+  setPropertiesFormData,
+  TObsFormData,
+  TObsValue,
+} from 'components/obs/inputs/ObsInput';
 import { Inject } from '../util/injector';
 import { WindowsService } from './windows';
 import { $t } from 'services/i18n';
 
 interface ISceneTransitionsState {
-  availableTransitions: IListOption<string>[];
+  availableTransitions: IObsListOption<string>[];
   duration: number;
-  properties: TFormData;
+  properties: TObsFormData;
   type: string;
 }
 
 export class ScenesTransitionsService extends StatefulService<ISceneTransitionsState> {
-
   static initialState = {
     duration: 300,
     type: '',
@@ -26,25 +27,22 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
   @Inject()
   windowsService: WindowsService;
 
-
   init() {
     // Set the default transition type
     this.setType('cut_transition');
   }
-
 
   @mutation()
   private SET_TYPE(type: string) {
     this.state.type = type;
   }
 
-
   @mutation()
   private SET_DURATION(duration: number) {
     this.state.duration = duration;
   }
 
-  getTypes(): IListOption<string>[] {
+  getTypes(): IObsListOption<string>[] {
     return [
       { description: $t('Cut'), value: 'cut_transition' },
       { description: $t('Fade'), value: 'fade_transition' },
@@ -52,7 +50,7 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
       { description: $t('Slide'), value: 'slide_transition' },
       { description: $t('Fade to Color'), value: 'fade_to_color_transition' },
       { description: $t('Luma Wipe'), value: 'wipe_transition' },
-      { description: $t('Stinger'), value: 'obs_stinger_transition' }
+      { description: $t('Stinger'), value: 'obs_stinger_transition' },
     ];
   }
 
@@ -60,7 +58,6 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
     const transition = this.getCurrentTransition();
     transition.start(this.state.duration, scene);
   }
-
 
   release() {
     this.getCurrentTransition().release();
@@ -75,22 +72,21 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
     return this.getCurrentTransition().settings;
   }
 
-  setSettings(settings: Dictionary<TObsValue>)  {
+  setSettings(settings: Dictionary<TObsValue>) {
     this.getCurrentTransition().update(settings);
   }
 
-  getPropertiesFormData(): TFormData {
+  getPropertiesFormData(): TObsFormData {
     return getPropertiesFormData(this.getCurrentTransition()) || [];
   }
 
-  setPropertiesFormData(formData: TFormData) {
+  setPropertiesFormData(formData: TObsFormData) {
     return setPropertiesFormData(this.getCurrentTransition(), formData);
   }
 
   private getCurrentTransition() {
     return obs.Global.getOutputSource(0) as obs.ITransition;
   }
-
 
   setType(type: string) {
     const oldTransition = this.getCurrentTransition() as obs.ITransition;
@@ -112,11 +108,9 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
     }
   }
 
-
   setDuration(duration: number) {
     this.SET_DURATION(duration);
   }
-
 
   getFormData() {
     return {
@@ -124,24 +118,24 @@ export class ScenesTransitionsService extends StatefulService<ISceneTransitionsS
         description: $t('Transition'),
         name: 'type',
         value: this.state.type,
-        options: this.getTypes()
+        options: this.getTypes(),
       },
       duration: {
         description: $t('Duration'),
         name: 'duration',
-        value: this.state.duration
-      }
+        value: this.state.duration,
+      },
     };
   }
-
 
   showSceneTransitions() {
     this.windowsService.showWindow({
       componentName: 'SceneTransitions',
+      title: $t('Scene Transitions'),
       size: {
         width: 500,
-        height: 600
-      }
+        height: 600,
+      },
     });
   }
 }

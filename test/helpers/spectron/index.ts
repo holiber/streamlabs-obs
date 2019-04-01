@@ -1,10 +1,12 @@
 /// <reference path="../../../app/index.d.ts" />
-import 'rxjs/add/operator/first';
-import test from 'ava';
+import avaTest, { ExecutionContext, TestInterface } from 'ava';
 import { Application } from 'spectron';
 import { getClient } from '../api-client';
 import { DismissablesService } from 'services/dismissables';
+import { getUserName, releaseUserInPool } from './user';
 import { sleep } from '../sleep';
+
+export const test = avaTest as TestInterface<ITestContext>;
 
 const path = require('path');
 const fs = require('fs');
@@ -21,37 +23,65 @@ async function focusWindow(t: any, regex: RegExp) {
   }
 }
 
-
 // Focuses the main window
 export async function focusMain(t: any) {
   await focusWindow(t, /windowId=main$/);
 }
-
 
 // Focuses the child window
 export async function focusChild(t: any) {
   await focusWindow(t, /windowId=child/);
 }
 
+// Focuses the Library webview
+export async function focusLibrary(t: any) {
+  // doesn't work without delay, probably need to wait until load
+  await sleep(2000);
+  await focusWindow(t, /streamlabs\.com\/library/);
+}
+
 interface ITestRunnerOptions {
   skipOnboarding?: boolean;
   restartAppAfterEachTest?: boolean;
-  afterStartCb?  (t: any): Promise<any>;
+  appArgs?: string;
+  afterStartCb?(t: any): Promise<any>;
+
+  /**
+   * Called after cache directory is created but before
+   * the app is started.  This is useful for setting up
+   * some known state in the cache directory before the
+   * app starts up and loads it.
+   */
+  beforeAppStartCb?(t: any): Promise<any>;
 }
 
 const DEFAULT_OPTIONS: ITestRunnerOptions = {
   skipOnboarding: true,
-  restartAppAfterEachTest: true
+  restartAppAfterEachTest: true,
 };
 
-export function useSpectron(options: ITestRunnerOptions) {
+export interface ITestContext {
+  cacheDir: string;
+  app: Application;
+}
+
+export type TExecutionContext = ExecutionContext<ITestContext>;
+
+export function useSpectron(options: ITestRunnerOptions = {}) {
+  // tslint:disable-next-line:no-parameter-reassignment TODO
   options = Object.assign({}, DEFAULT_OPTIONS, options);
   let appIsRunning = false;
   let context: any = null;
   let app: any;
+  let testPassed = false;
+  let failMsg = '';
+  let testName = '';
+  let logFileLastReadingPos = 0;
+  const failedTests: string[] = [];
+  const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'slobs-test'));
 
-  async function startApp(t: any) {
-    t.context.cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), 'slobs-test'));
+  async function startApp(t: TExecutionContext) {
+    t.context.cacheDir = cacheDir;
     app = t.context.app = new Application({
       path: path.join(__dirname, '..', '..', '..', '..', 'node_modules', '.bin', 'electron.cmd'),
       args: [
@@ -59,22 +89,40 @@ export function useSpectron(options: ITestRunnerOptions) {
         path.join(__dirname, 'context-menu-injected.js'),
         '--require',
         path.join(__dirname, 'dialog-injected.js'),
-        '.'
+        options.appArgs ? options.appArgs : '',
+        '.',
       ],
       env: {
         NODE_ENV: 'test',
-        SLOBS_CACHE_DIR: t.context.cacheDir
-      }
+        SLOBS_CACHE_DIR: t.context.cacheDir,
+      },
+      webdriverOptions: {
+        // most of deprecation warning encourage us to use WebdriverIO actions API
+        // however the documentation for this API looks very poor, it provides only one example:
+        // http://webdriver.io/api/protocol/actions.html
+        // disable deprecation warning and waiting for better docs now
+        deprecationWarnings: false,
+      },
     });
 
+    if (options.beforeAppStartCb) await options.beforeAppStartCb(t);
+
     await t.context.app.start();
+
+    // Disable CSS transitions while running tests to allow for eager test clicks
+    await t.context.app.webContents.executeJavaScript(`
+      const disableAnimationsEl = document.createElement('style');
+      disableAnimationsEl.textContent =
+        '*{ transition: none !important; transition-property: none !important; }';
+      document.head.appendChild(disableAnimationsEl);
+    `);
 
     // Wait up to 2 seconds before giving up looking for an element.
     // This will slightly slow down negative assertions, but makes
     // the tests much more stable, especially on slow systems.
     t.context.app.client.timeouts('implicit', 2000);
 
-    // await sleep(100000);
+    // await sleep(10000);
 
     // Pretty much all tests except for onboarding-specific
     // tests will want to skip this flow, so we do it automatically.
@@ -104,32 +152,95 @@ export function useSpectron(options: ITestRunnerOptions) {
     }
   }
 
-  async function stopApp() {
-    await context.app.stop();
-    await new Promise((resolve) => {
+  async function stopApp(t: TExecutionContext) {
+    try {
+      await context.app.stop();
+    } catch (e) {
+      fail('Crash on shutdown');
+    }
+    appIsRunning = false;
+    await checkErrorsInLogFile();
+    logFileLastReadingPos = 0;
+    await new Promise(resolve => {
       rimraf(context.cacheDir, resolve);
     });
-    appIsRunning = false;
+  }
+
+  /**
+   * test should be considered as failed if it writes exceptions in to the log file
+   */
+  async function checkErrorsInLogFile() {
+    const filePath = path.join(cacheDir, 'slobs-client', 'log.log');
+    if (!fs.existsSync(filePath)) return;
+    const logs = fs.readFileSync(filePath).toString();
+    const errors = logs
+      .substr(logFileLastReadingPos)
+      .split('\n')
+      .filter((record: string) => record.match(/\[error\]/));
+
+    // save the last reading position, to skip already read records next time
+    logFileLastReadingPos = logs.length - 1;
+
+    if (!errors.length) return;
+    fail(`The log-file has errors \n ${logs}`);
   }
 
   test.beforeEach(async t => {
+    testName = t.title.replace('beforeEach hook for ', '');
+    testPassed = false;
     t.context.app = app;
     if (options.restartAppAfterEachTest || !appIsRunning) await startApp(t);
   });
 
+  test.afterEach(async t => {
+    testPassed = true;
+  });
+
   test.afterEach.always(async t => {
-    const client = await getClient();
-    await client.unsubscribeAll();
-    if (options.restartAppAfterEachTest) {
-      client.disconnect();
+    // wrap in try/catch for the situation when we have a crash
+    // so we still can read the logs after the crash
+    try {
+      const client = await getClient();
+      await client.unsubscribeAll();
+      await releaseUserInPool();
+      if (options.restartAppAfterEachTest) {
+        client.disconnect();
+        await stopApp(t);
+      } else {
+        await checkErrorsInLogFile();
+      }
+    } catch (e) {
+      testPassed = false;
     }
 
-    if (options.restartAppAfterEachTest) {
-      await stopApp();
+    if (!testPassed) {
+      failedTests.push(testName);
+      const userName = getUserName();
+      if (userName) console.log(`Test failed for the account: ${userName}`);
+      t.fail(failMsg);
     }
   });
 
   test.after.always(async t => {
-    if (appIsRunning) await stopApp();
+    if (appIsRunning) {
+      await stopApp(t);
+      if (!testPassed) failedTests.push(testName);
+    }
+
+    if (failedTests.length) saveFailedTestsToFile(failedTests);
   });
+
+  function fail(msg: string) {
+    testPassed = false;
+    failMsg = msg;
+  }
+}
+
+function saveFailedTestsToFile(failedTests: string[]) {
+  const filePath = 'test-dist/failed-tests.json';
+  if (fs.existsSync(filePath)) {
+    // tslint:disable-next-line:no-parameter-reassignment TODO
+    failedTests = JSON.parse(fs.readFileSync(filePath)).concat(failedTests);
+  }
+  fs.writeFileSync(filePath, JSON.stringify(failedTests));
 }

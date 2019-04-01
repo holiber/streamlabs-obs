@@ -7,22 +7,24 @@ import { Inject } from 'util/injector';
 import { TransitionsService } from 'services/transitions';
 import Display from 'components/shared/Display.vue';
 import StudioModeControls from 'components/StudioModeControls.vue';
+import { AppService } from 'services/app';
+import ResizeBar from 'components/shared/ResizeBar.vue';
 
 @Component({
   components: {
     StudioEditor,
     StudioControls,
     Display,
-    StudioModeControls
-  }
+    StudioModeControls,
+    ResizeBar,
+  },
 })
 export default class Studio extends Vue {
   @Inject() private customizationService: CustomizationService;
   @Inject() private transitionsService: TransitionsService;
+  @Inject() private appService: AppService;
 
-  $refs: {
-    studioModeContainer: HTMLDivElement;
-  };
+  $refs: { studioModeContainer: HTMLDivElement };
 
   stacked = false;
 
@@ -33,11 +35,7 @@ export default class Studio extends Vue {
       if (this.studioMode) {
         const rect = this.$refs.studioModeContainer.getBoundingClientRect();
 
-        if ((rect.width / rect.height) > (16 / 9)) {
-          this.stacked = false;
-        } else {
-          this.stacked = true;
-        }
+        this.stacked = rect.width / rect.height <= 16 / 9;
       }
     }, 1000);
   }
@@ -46,8 +44,12 @@ export default class Studio extends Vue {
     clearInterval(this.sizeCheckInterval);
   }
 
-  get previewEnabled() {
-    return !this.customizationService.state.performanceMode;
+  get displayEnabled() {
+    return !this.customizationService.state.hideStyleBlockingElements && !this.performanceMode;
+  }
+
+  get performanceMode() {
+    return this.customizationService.state.performanceMode;
   }
 
   get studioMode() {
@@ -60,5 +62,29 @@ export default class Studio extends Vue {
 
   enablePreview() {
     this.customizationService.setSettings({ performanceMode: false });
+  }
+
+  get height() {
+    return this.customizationService.state.bottomdockSize;
+  }
+
+  set height(value) {
+    this.customizationService.setSettings({ bottomdockSize: value });
+  }
+
+  get maxHeight() {
+    return this.$root.$el.getBoundingClientRect().height - 400;
+  }
+
+  get minHeight() {
+    return 50;
+  }
+
+  onResizeStartHandler() {
+    this.customizationService.setSettings({ hideStyleBlockingElements: true });
+  }
+
+  onResizeStopHandler() {
+    this.customizationService.setSettings({ hideStyleBlockingElements: false });
   }
 }

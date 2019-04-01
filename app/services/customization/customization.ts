@@ -1,27 +1,26 @@
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { PersistentStatefulService } from '../persistent-stateful-service';
 import { mutation } from '../stateful-service';
 import {
   ICustomizationServiceApi,
   ICustomizationServiceState,
-  ICustomizationSettings
+  ICustomizationSettings,
 } from './customization-api';
-import { IFormInput, INumberInputValue, TFormData } from '../../components/shared/forms/Input';
+import {
+  IObsInput,
+  IObsListInput,
+  IObsNumberInputValue,
+  TObsFormData,
+} from 'components/obs/inputs/ObsInput';
 import Utils from 'services/utils';
 import { $t } from 'services/i18n';
-
-const LIVEDOCK_MIN_SIZE = 0.15;
-const LIVEDOCK_MAX_SIZE = 0.5;
 
 /**
  * This class is used to store general UI behavior flags
  * that are sticky across application runtimes.
  */
-export class CustomizationService
-  extends PersistentStatefulService<ICustomizationServiceState>
-  implements ICustomizationServiceApi
-{
-
+export class CustomizationService extends PersistentStatefulService<ICustomizationServiceState>
+  implements ICustomizationServiceApi {
   static defaultState: ICustomizationServiceState = {
     nightMode: true,
     updateStreamInfoOnLive: true,
@@ -29,34 +28,33 @@ export class CustomizationService
     leftDock: false,
     hideViewerCount: false,
     livedockCollapsed: true,
-    previewSize: 300,
-    livedockSize: 0.28,
+    livedockSize: 0,
+    bottomdockSize: 240,
     performanceMode: false,
     chatZoomFactor: 1,
     enableBTTVEmotes: false,
     enableFFZEmotes: false,
     mediaBackupOptOut: false,
+    folderSelection: false,
+    navigateToLiveOnStreamStart: true,
     experimental: {
       // put experimental features here
-    }
+    },
+    hideStyleBlockingElements: true,
   };
 
   settingsChanged = new Subject<Partial<ICustomizationSettings>>();
 
   init() {
     super.init();
-    this.setLiveDockCollapsed(true);// livedock is always collapsed on app start
+    this.setLiveDockCollapsed(true); // livedock is always collapsed on app start
 
-    // migrate livedockSize from % to float number
-    const livedockSize = this.state.livedockSize;
-    if (livedockSize > LIVEDOCK_MAX_SIZE) {
-      this.setSettings({
-        livedockSize: CustomizationService.defaultState.livedockSize
-      });
-    }
+    // Hide these elements until the app is finished loading
+    this.setSettings({ hideStyleBlockingElements: true });
   }
 
   setSettings(settingsPatch: Partial<ICustomizationSettings>) {
+    // tslint:disable-next-line:no-parameter-reassignment TODO
     settingsPatch = Utils.getChangedParams(this.state, settingsPatch);
     this.SET_SETTINGS(settingsPatch);
     this.settingsChanged.next(settingsPatch);
@@ -102,11 +100,15 @@ export class CustomizationService
     this.setSettings({ mediaBackupOptOut: optOut });
   }
 
-  getSettingsFormData(): TFormData {
+  setNavigateToLive(enabled: boolean) {
+    this.setSettings({ navigateToLiveOnStreamStart: enabled });
+  }
+
+  getSettingsFormData(): TObsFormData {
     const settings = this.getSettings();
 
     return [
-      <IFormInput<boolean>> {
+      <IObsInput<boolean>>{
         value: settings.nightMode,
         name: 'nightMode',
         description: $t('Night mode'),
@@ -115,7 +117,23 @@ export class CustomizationService
         enabled: true,
       },
 
-      <IFormInput<boolean>>{
+      <IObsListInput<boolean>>{
+        value: settings.folderSelection,
+        name: 'folderSelection',
+        description: $t('Scene item selection mode'),
+        type: 'OBS_PROPERTY_LIST',
+        options: [
+          { value: true, description: $t('Single click selects group. Double click selects item') },
+          {
+            value: false,
+            description: $t('Double click selects group. Single click selects item'),
+          },
+        ],
+        visible: true,
+        enabled: true,
+      },
+
+      <IObsInput<boolean>>{
         value: settings.leftDock,
         name: 'leftDock',
         description: $t('Show the live dock (chat) on the left side'),
@@ -124,7 +142,7 @@ export class CustomizationService
         enabled: true,
       },
 
-      <INumberInputValue> {
+      <IObsNumberInputValue>{
         value: settings.chatZoomFactor,
         name: 'chatZoomFactor',
         description: $t('Chat Text Size'),
@@ -137,20 +155,7 @@ export class CustomizationService
         usePercentages: true,
       },
 
-      <INumberInputValue> {
-        value: settings.livedockSize,
-        name: 'livedockSize',
-        description: $t('Chat Width'),
-        type: 'OBS_PROPERTY_SLIDER',
-        minVal: LIVEDOCK_MIN_SIZE,
-        maxVal: LIVEDOCK_MAX_SIZE,
-        stepVal: 0.01,
-        visible: true,
-        enabled: true,
-        usePercentages: true,
-      },
-
-      <IFormInput<boolean>>  {
+      <IObsInput<boolean>>{
         value: settings.enableBTTVEmotes,
         name: 'enableBTTVEmotes',
         description: $t('Enable BetterTTV emotes for Twitch'),
@@ -159,19 +164,18 @@ export class CustomizationService
         enabled: true,
       },
 
-      <IFormInput<boolean>>  {
+      <IObsInput<boolean>>{
         value: settings.enableFFZEmotes,
         name: 'enableFFZEmotes',
         description: $t('Enable FrankerFaceZ emotes for Twitch'),
         type: 'OBS_PROPERTY_BOOL',
         visible: true,
         enabled: true,
-      }
-
+      },
     ];
   }
 
-  getExperimentalSettingsFormData(): TFormData {
+  getExperimentalSettingsFormData(): TObsFormData {
     return [];
   }
 
@@ -183,5 +187,4 @@ export class CustomizationService
   private SET_SETTINGS(settingsPatch: Partial<ICustomizationSettings>) {
     Object.assign(this.state, settingsPatch);
   }
-
 }

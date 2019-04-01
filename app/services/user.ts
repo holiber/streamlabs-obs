@@ -1,24 +1,27 @@
 import Vue from 'vue';
 import URI from 'urijs';
 import { defer } from 'lodash';
-import { PersistentStatefulService } from './persistent-stateful-service';
-import { Inject } from '../util/injector';
-import { handleErrors, authorizedHeaders } from 'util/requests';
-import { mutation } from './stateful-service';
+import { PersistentStatefulService } from 'services/persistent-stateful-service';
+import { Inject } from 'util/injector';
+import { handleResponse, authorizedHeaders } from 'util/requests';
+import { mutation } from 'services/stateful-service';
 import electron from 'electron';
 import { HostsService } from './hosts';
-import {
-  getPlatformService,
-  IPlatformAuth,
-  TPlatform,
-  IPlatformService
-} from './platforms';
-import { CustomizationService } from './customization';
-import Raven from 'raven-js';
-import { AppService } from 'services/app';
+import { ChatbotApiService } from './chatbot';
+import { IncrementalRolloutService } from 'services/incremental-rollout';
+import { PlatformAppsService } from 'services/platform-apps';
+import { getPlatformService, IPlatformAuth, TPlatform, IPlatformService } from './platforms';
+import { CustomizationService } from 'services/customization';
+import * as Sentry from '@sentry/browser';
+import { RunInLoadingMode } from 'services/app/app-decorators';
 import { SceneCollectionsService } from 'services/scene-collections';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import Util from 'services/utils';
+import { WindowsService } from 'services/windows';
+import { $t } from 'services/i18n';
+import uuid from 'uuid/v4';
+import { OnboardingService } from './onboarding';
+import { NavigationService } from './navigation';
 
 // Eventually we will support authing multiple platforms at once
 interface IUserServiceState {
@@ -26,10 +29,15 @@ interface IUserServiceState {
 }
 
 export class UserService extends PersistentStatefulService<IUserServiceState> {
-  @Inject() hostsService: HostsService;
-  @Inject() customizationService: CustomizationService;
-  @Inject() appService: AppService;
-  @Inject() sceneCollectionsService: SceneCollectionsService;
+  @Inject() private hostsService: HostsService;
+  @Inject() private customizationService: CustomizationService;
+  @Inject() private sceneCollectionsService: SceneCollectionsService;
+  @Inject() private windowsService: WindowsService;
+  @Inject() private onboardingService: OnboardingService;
+  @Inject() private navigationService: NavigationService;
+  @Inject() private chatbotApiService: ChatbotApiService;
+  @Inject() private incrementalRolloutService: IncrementalRolloutService;
+  @Inject() private platformAppsService: PlatformAppsService;
 
   @mutation()
   LOGIN(auth: IPlatformAuth) {
@@ -51,24 +59,34 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
     this.state.auth.platform.channelId = id;
   }
 
+  @mutation()
+  private SET_USERNAME(name: string) {
+    this.state.auth.platform.channelId = name;
+  }
+
   userLogin = new Subject<IPlatformAuth>();
+  userLogout = new Subject();
 
   init() {
     super.init();
-    this.setRavenContext();
+    this.setSentryContext();
     this.validateLogin();
+    this.incrementalRolloutService.fetchAvailableFeatures();
+  }
+
+  async initialize() {
+    await this.refreshUserInfo();
   }
 
   mounted() {
     // This is used for faking authentication in tests.  We have
     // to do this because Twitch adds a captcha when we try to
     // actually log in from integration tests.
-    electron.ipcRenderer.on(
-      'testing-fakeAuth',
-      (e: Electron.Event, auth: any) => {
-        this.LOGIN(auth);
-      }
-    );
+    electron.ipcRenderer.on('testing-fakeAuth', async (e: Electron.Event, auth: IPlatformAuth) => {
+      const service = getPlatformService(auth.platform.type);
+      await this.login(service, auth);
+      this.onboardingService.next();
+    });
   }
 
   // Makes sure the user's login is still good
@@ -89,6 +107,42 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
       });
   }
 
+  /**
+   * Attempt to update user info via API.  This is mainly
+   * to support name changes on Twitch.
+   */
+  async refreshUserInfo() {
+    if (!this.isLoggedIn()) return;
+
+    // Make a best attempt to refresh the user data
+    try {
+      const service = getPlatformService(this.platform.type);
+      const userInfo = await service.fetchUserInfo();
+
+      if (userInfo.username) {
+        this.SET_USERNAME(userInfo.username);
+      }
+    } catch (e) {
+      console.error('Error fetching user info', e);
+    }
+  }
+
+  /**
+   * Attempts to flush the user's session to disk if it exists
+   */
+  flushUserSession(): Promise<void> {
+    if (this.isLoggedIn() && this.state.auth.partition) {
+      return new Promise(resolve => {
+        const session = electron.remote.session.fromPartition(this.state.auth.partition);
+
+        session.flushStorageData();
+        session.cookies.flushStore(resolve);
+      });
+    }
+
+    return Promise.resolve();
+  }
+
   isLoggedIn() {
     return !!(this.state.auth && this.state.auth.widgetToken);
   }
@@ -103,7 +157,7 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
     let userId = localStorage.getItem(localStorageKey);
 
     if (!userId) {
-      userId = electron.ipcRenderer.sendSync('getUniqueId');
+      userId = uuid();
       localStorage.setItem(localStorageKey, userId);
     }
 
@@ -155,24 +209,37 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
   }
 
   dashboardUrl(subPage: string) {
-    const host = Util.isPreview()
-      ? this.hostsService.beta3
-      : this.hostsService.streamlabs;
+    const host = Util.isPreview() ? this.hostsService.beta3 : this.hostsService.streamlabs;
     const token = this.apiToken;
     const nightMode = this.customizationService.nightMode ? 'night' : 'day';
 
     return `https://${host}/slobs/dashboard?oauth_token=${token}&mode=${nightMode}&r=${subPage}`;
   }
 
-  overlaysUrl() {
-    const host = Util.isPreview()
-      ? this.hostsService.beta3
-      : this.hostsService.streamlabs;
+  appStoreUrl(appId?: string) {
+    const host = this.hostsService.platform;
+    const token = this.apiToken;
+    const nightMode = this.customizationService.nightMode ? 'night' : 'day';
+    let url = `https://${host}/slobs-store`;
+
+    if (appId) {
+      url = `${url}/app/${appId}`;
+    }
+
+    return `${url}?token=${token}&mode=${nightMode}`;
+  }
+
+  overlaysUrl(type?: 'overlay' | 'widget-theme', id?: string) {
+    const host = Util.isPreview() ? this.hostsService.beta3 : this.hostsService.streamlabs;
     const uiTheme = this.customizationService.nightMode ? 'night' : 'day';
     let url = `https://${host}/library?mode=${uiTheme}&slobs`;
 
     if (this.isLoggedIn()) {
-      url = url + `&oauth_token=${this.apiToken}`;
+      url += `&oauth_token=${this.apiToken}`;
+    }
+
+    if (type && id) {
+      url += `#/?type=${type}&id=${id}`;
     }
 
     return url;
@@ -184,26 +251,70 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
     const headers = authorizedHeaders(this.apiToken);
     const request = new Request(url, { headers });
 
-    return fetch(request)
-      .then(handleErrors)
-      .then(response => response.json());
+    return fetch(request).then(handleResponse);
   }
 
+  async showLogin() {
+    if (this.isLoggedIn()) await this.logOut();
+    this.onboardingService.start({ isLogin: true });
+  }
+
+  @RunInLoadingMode()
   private async login(service: IPlatformService, auth: IPlatformAuth) {
     this.LOGIN(auth);
-    this.userLogin.next(auth);
-    this.setRavenContext();
+    this.setSentryContext();
     service.setupStreamSettings(auth);
+    this.userLogin.next(auth);
     await this.sceneCollectionsService.setupNewUser();
   }
 
+  @RunInLoadingMode()
   async logOut() {
     // Attempt to sync scense before logging out
-    this.appService.startLoading();
     await this.sceneCollectionsService.save();
     await this.sceneCollectionsService.safeSync();
+    // signs out of chatbot
+    await this.chatbotApiService.Base.logOut();
+    // Navigate away from disabled tabs on logout
+    this.navigationService.navigate('Studio');
+
+    const session = this.state.auth.partition
+      ? electron.remote.session.fromPartition(this.state.auth.partition)
+      : electron.remote.session.defaultSession;
+
+    session.clearStorageData({ storages: ['cookies'] });
+
     this.LOGOUT();
-    this.appService.finishLoading();
+    this.userLogout.next();
+    this.platformAppsService.unloadAllApps();
+  }
+
+  getFacebookPages() {
+    if (this.platform.type !== 'facebook') return;
+    const host = this.hostsService.streamlabs;
+    const url = `https://${host}/api/v5/slobs/user/facebook/pages`;
+    const headers = authorizedHeaders(this.apiToken);
+    const request = new Request(url, { headers });
+    return fetch(request)
+      .then(handleResponse)
+      .catch(() => null);
+  }
+
+  postFacebookPage(pageId: string) {
+    const host = this.hostsService.streamlabs;
+    const url = `https://${host}/api/v5/slobs/user/facebook/pages`;
+    const headers = authorizedHeaders(this.apiToken);
+    headers.append('Content-Type', 'application/json');
+    const request = new Request(url, {
+      headers,
+      method: 'POST',
+      body: JSON.stringify({ page_id: pageId, page_type: 'page' }),
+    });
+    try {
+      fetch(request).then(() => this.updatePlatformChannelId(pageId));
+    } catch {
+      console.error(new Error('Could not set Facebook page'));
+    }
   }
 
   /**
@@ -214,25 +325,28 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
     platform: TPlatform,
     onWindowShow: (...args: any[]) => any,
     onAuthStart: (...args: any[]) => any,
-    onAuthFinish: (...args: any[]) => any
+    onAuthFinish: (...args: any[]) => any,
   ) {
     const service = getPlatformService(platform);
+    const partition = `persist:${uuid()}`;
 
     const authWindow = new electron.remote.BrowserWindow({
       ...service.authWindowOptions,
       alwaysOnTop: false,
       show: false,
       webPreferences: {
+        partition,
         nodeIntegration: false,
         nativeWindowOpen: true,
-        sandbox: true
-      }
+        sandbox: true,
+      },
     });
 
     authWindow.webContents.on('did-navigate', async (e, url) => {
       const parsed = this.parseAuthFromUrl(url);
 
       if (parsed) {
+        parsed.partition = partition;
         authWindow.close();
         onAuthStart();
         await this.login(service, parsed);
@@ -277,8 +391,8 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
           type: query.platform,
           username: query.platform_username,
           token: query.platform_token,
-          id: query.platform_id
-        }
+          id: query.platform_id,
+        },
       } as IPlatformAuth;
     }
 
@@ -286,13 +400,30 @@ export class UserService extends PersistentStatefulService<IUserServiceState> {
   }
 
   /**
-   * Registers the current user information with Raven so
-   * we can view more detailed information in sentry.
+   * Registers the current user information with Sentry so
+   * we can view more detailed information.
    */
-  setRavenContext() {
+  setSentryContext() {
     if (!this.isLoggedIn()) return;
-    Raven.setUserContext({ username: this.username });
-    Raven.setExtraContext({ platform: this.platform.type });
+
+    Sentry.configureScope(scope => {
+      scope.setUser({ username: this.username });
+      scope.setExtra('platform', this.platform.type);
+    });
+  }
+
+  popoutRecentEvents() {
+    this.windowsService.createOneOffWindow(
+      {
+        componentName: 'RecentEvents',
+        title: $t('Recent Events'),
+        size: {
+          width: 800,
+          height: 600,
+        },
+      },
+      'RecentEvents',
+    );
   }
 }
 
@@ -308,9 +439,8 @@ export function requiresLogin() {
       ...descriptor,
       value(...args: any[]) {
         // TODO: Redirect to login if not logged in?
-        if (UserService.instance.isLoggedIn())
-          return original.apply(target, args);
-      }
+        if (UserService.instance.isLoggedIn()) return original.apply(target, args);
+      },
     };
   };
 }

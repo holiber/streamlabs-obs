@@ -6,10 +6,10 @@ import { UserService } from 'services/user';
 import { Inject } from 'util/injector';
 import Display from 'components/shared/Display.vue';
 import { CustomizationService } from 'services/customization';
-import Slider from 'components/shared/Slider.vue';
 import VTooltip from 'v-tooltip';
 import { $t, I18nService } from 'services/i18n';
-
+import { NavigationService } from 'services/navigation';
+import ResizeBar from 'components/shared/ResizeBar.vue';
 
 Vue.use(VTooltip);
 VTooltip.options.defaultContainer = '#mainWrapper';
@@ -19,35 +19,48 @@ VTooltip.options.defaultContainer = '#mainWrapper';
     SceneSelector,
     Mixer,
     Display,
-    Slider
-  }
+    ResizeBar,
+  },
 })
 export default class Live extends Vue {
   @Inject() userService: UserService;
   @Inject() customizationService: CustomizationService;
   @Inject() i18nService: I18nService;
+  @Inject() navigationService: NavigationService;
 
   $refs: {
     webview: Electron.WebviewTag;
   };
-  
+
   enablePreviewTooltip = $t('Enable the preview stream');
   disablePreviewTooltip = $t('Disable the preview stream, can help with CPU');
 
   mounted() {
-    this.i18nService.setWebviewLocale(this.$refs.webview);
+    I18nService.setWebviewLocale(this.$refs.webview);
+
+    this.$refs.webview.addEventListener('new-window', e => {
+      const match = e.url.match(/dashboard\/([^\/^\?]*)/);
+
+      if (match && match[1] === 'recent-events') {
+        this.popout();
+      } else if (match) {
+        this.navigationService.navigate('Dashboard', {
+          subPage: match[1],
+        });
+      }
+    });
   }
 
-  get previewSize() {
-    return this.customizationService.state.previewSize;
-  }
-
-  set previewSize(previewSize: number) {
-    this.customizationService.setSettings({ previewSize });
+  popout() {
+    this.userService.popoutRecentEvents();
   }
 
   get previewEnabled() {
-    return this.customizationService.state.livePreviewEnabled && !this.performanceModeEnabled;
+    return (
+      this.customizationService.state.livePreviewEnabled &&
+      !this.performanceModeEnabled &&
+      !this.customizationService.state.hideStyleBlockingElements
+    );
   }
 
   get performanceModeEnabled() {
@@ -60,5 +73,36 @@ export default class Live extends Vue {
 
   get recenteventsUrl() {
     return this.userService.recentEventsUrl();
+  }
+
+  get height() {
+    return this.customizationService.state.bottomdockSize;
+  }
+
+  set height(value) {
+    this.customizationService.setSettings({ bottomdockSize: value });
+  }
+
+  get displayWidth() {
+    // 29 pixels is roughly the size of the title control label
+    return (16 / 9) * (this.height - 29);
+  }
+
+  get maxHeight() {
+    // Roughly 400 pixels below the top is a good top limit for
+    // resizing. It allows plenty of room for the title bar and header.
+    return this.$root.$el.getBoundingClientRect().height - 400;
+  }
+
+  get minHeight() {
+    return 50;
+  }
+
+  onResizeStartHandler() {
+    this.customizationService.setSettings({ hideStyleBlockingElements: true });
+  }
+
+  onResizeStopHandler() {
+    this.customizationService.setSettings({ hideStyleBlockingElements: false });
   }
 }

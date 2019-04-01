@@ -1,5 +1,6 @@
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const plugins = [];
 
@@ -25,12 +26,12 @@ module.exports = {
     filename: '[name].js'
   },
 
-  devtool: 'sourcemap',
+  devtool: 'source-map',
 
   target: 'electron-renderer',
 
   resolve: {
-    extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts', '.json', '.tsx'],
     modules: [path.resolve(__dirname, 'app'), 'node_modules']
   },
 
@@ -47,7 +48,8 @@ module.exports = {
     'socket.io-client': 'require("socket.io-client")',
     'rimraf': 'require("rimraf")',
     'backtrace-js': 'require("backtrace-js")',
-    'request': 'require("request")'
+    'request': 'require("request")',
+    'archiver': 'require("archiver")'
   },
 
   module: {
@@ -60,15 +62,19 @@ module.exports = {
           transformToRequire: {
             video: 'src',
             source: 'src'
-          }
+          },
+          loaders: { tsx: ['babel-loader', { loader: 'ts-loader', options: { appendTsxSuffixTo: [/\.vue$/] } }]  }
         }
       },
       {
         test: /\.ts$/,
-        // TODO: use recommended by MS awesome-typescript-loader when the issue will be resoled
-        // https://github.com/s-panferov/awesome-typescript-loader/issues/356
         loader: 'ts-loader',
         exclude: /node_modules|vue\/src/
+      },
+      {
+        test: /\.tsx$/,
+        use: [{ loader: 'babel-loader' }, { loader: 'ts-loader', options: { appendTsxSuffixTo: [/\.vue$/] } }],
+        exclude: /node_modules/,
       },
       {
         test: /\.ts$/,
@@ -81,7 +87,18 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.less$/,
+        test: /\.m\.less$/, // Local style modules
+        use: [
+          { loader: 'style-loader' },
+          {
+            loader: 'css-loader',
+            options: { camelCase: true, localIdentName: '[local]___[hash:base64:5]', modules: true, importLoaders: 1 }
+          },
+          { loader: 'less-loader' }
+        ]
+      },
+      {
+        test: /\.g\.less$/, // Global styles
         use: [
           'style-loader',
           {
@@ -94,7 +111,7 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|jpe?g|gif|svg|mp4|ico|wav)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif|svg|mp4|ico|wav|webm)(\?.*)?$/,
         loader: 'file-loader',
         options: {
           name: '[name]-[hash].[ext]',
@@ -116,7 +133,10 @@ module.exports = {
   },
 
   optimization: {
-    minimize: false
+    minimizer: [new TerserPlugin({
+      sourceMap: true,
+      terserOptions: { mangle: false }
+    })]
   },
 
   plugins

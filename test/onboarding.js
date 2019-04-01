@@ -1,8 +1,9 @@
 import test from 'ava';
 import { useSpectron, focusMain, focusChild } from './helpers/spectron/index';
-import {selectSource, clickSourceProperties, sourceIsExisting} from './helpers/spectron/sources';
+import { selectSource, clickSourceProperties, sourceIsExisting } from './helpers/spectron/sources';
+import { logOut } from './helpers/spectron/user';
 
-useSpectron({ skipOnboarding: false });
+useSpectron({ skipOnboarding: false, appArgs: '--nosync' });
 
 test('Adding some starter widgets', async t => {
   const app = t.context.app;
@@ -23,6 +24,11 @@ test('Adding some starter widgets', async t => {
     widgetToken,
     platform
   });
+
+  // This will show up if there are scene collections to import
+  if (await t.context.app.client.isExisting('button=Continue')) {
+    await t.context.app.client.click('button=Continue');
+  }
 
   // This will only show up if OBS is installed
   if (await t.context.app.client.isExisting('button=Start Fresh')) {
@@ -49,9 +55,10 @@ test('Adding some starter widgets', async t => {
   t.false(await sourceIsExisting(t, 'Donation Ticker'));
   t.true(await sourceIsExisting(t, 'Donation Goal'));
 
+  await logOut(t); // widget settings don't work with a fake-auth
   await selectSource(t, 'Chat Box');
   await clickSourceProperties(t);
   await focusChild(t);
 
-  t.true(await app.client.isExisting('label=Widget Type'));
+  t.true(await app.client.isExisting('label=Custom CSS'));
 });

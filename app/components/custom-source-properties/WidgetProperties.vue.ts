@@ -1,60 +1,32 @@
 import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator';
-import ListInput from 'components/shared/forms/ListInput.vue';
 import { ISourceApi } from 'services/sources';
-import { IListInput } from 'components/shared/forms/Input';
-import { WidgetDefinitions, IWidget, WidgetType } from 'services/widgets';
+import { WidgetType } from 'services/widgets';
 import { NavigationService } from 'services/navigation';
 import { WindowsService } from 'services/windows';
 import { Inject } from 'util/injector';
-import { $t } from 'services/i18n';
+import { UserService } from 'services/user';
 
-@Component({
-  components: {
-    ListInput
-  }
-})
+@Component({})
 export default class WidgetProperties extends Vue {
   @Prop() source: ISourceApi;
 
   @Inject() navigationService: NavigationService;
   @Inject() windowsService: WindowsService;
+  @Inject() userService: UserService;
 
-  widgetModel: IListInput<string> = null;
-
-  created() {
-    this.refreshWidgetModel();
+  get isLoggedIn() {
+    return this.userService.isLoggedIn();
   }
 
-  handleInput(value: IListInput<string>) {
-    this.source.setPropertiesManagerSettings({
-      widgetType: value.value
-    });
-    this.refreshWidgetModel();
-    this.$emit('update');
+  login() {
+    this.windowsService.closeChildWindow();
+    this.userService.showLogin();
   }
 
-  refreshWidgetModel() {
-    const value = this.source
-      .getPropertiesManagerSettings()
-      .widgetType.toString();
+  navigateWidgetSettings() {
+    const widgetType = this.source.getPropertiesManagerSettings().widgetType;
 
-    this.widgetModel = {
-      value,
-      description: $t('Widget Type'),
-      name: 'widgetType',
-      options: Object.keys(WidgetDefinitions).map(type => {
-        const widget = WidgetDefinitions[type] as IWidget;
-
-        return {
-          description: widget.name,
-          value: type
-        };
-      })
-    };
-  }
-
-  navigateDashboard() {
     const subPage = {
       [WidgetType.AlertBox]: 'alertbox',
       [WidgetType.DonationGoal]: 'donationgoal',
@@ -64,12 +36,12 @@ export default class WidgetProperties extends Vue {
       [WidgetType.DonationTicker]: 'donationticker',
       [WidgetType.ChatBox]: 'chatbox',
       [WidgetType.EventList]: 'eventlist',
-      [WidgetType.TheJar]: 'jar',
+      [WidgetType.TipJar]: 'jar',
       [WidgetType.ViewerCount]: 'viewercount',
       [WidgetType.StreamBoss]: 'streamboss',
       [WidgetType.Credits]: 'credits',
-      [WidgetType.SpinWheel]: 'wheel'
-    }[this.widgetModel.value];
+      [WidgetType.SpinWheel]: 'wheel',
+    }[widgetType.toString()];
 
     this.navigationService.navigate('Dashboard', { subPage });
     this.windowsService.closeChildWindow();

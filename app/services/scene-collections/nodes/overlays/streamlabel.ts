@@ -1,8 +1,6 @@
 import { Node } from '../node';
 import { SceneItem } from '../../../scenes';
 import { TextNode } from './text';
-import { Inject } from '../../../../util/injector';
-import path from 'path';
 
 interface ISchema {
   labelType: string;
@@ -30,7 +28,7 @@ export class StreamlabelNode extends Node<ISchema, IContext> {
     await this.data.textSource.load(context);
 
     context.sceneItem.source.replacePropertiesManager('streamlabels', {
-      statname: this.data.labelType
+      statname: this.data.labelType,
     });
   }
 }

@@ -8,8 +8,7 @@ import Mixer from './Mixer.vue';
   components: {
     SceneSelector,
     SourceSelector,
-    Mixer
-  }
+    Mixer,
+  },
 })
-export default class StudioControls extends Vue {
-}
+export default class StudioControls extends Vue {}

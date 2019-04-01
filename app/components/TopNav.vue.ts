@@ -7,22 +7,53 @@ import { UserService } from 'services/user';
 import electron from 'electron';
 import Login from 'components/Login.vue';
 import { SettingsService } from 'services/settings';
+import { WindowsService } from 'services/windows';
 import Utils from 'services/utils';
 import { TransitionsService } from 'services/transitions';
+import { PlatformAppsService } from 'services/platform-apps';
+import { IncrementalRolloutService, EAvailableFeatures } from 'services/incremental-rollout';
+import { FacemasksService } from 'services/facemasks';
+import { AppService } from '../services/app';
+import VueResize from 'vue-resize';
+import { $t } from 'services/i18n';
+Vue.use(VueResize);
 
 @Component({
-  components: { Login }
+  components: {
+    Login,
+  },
 })
 export default class TopNav extends Vue {
+  @Inject() appService: AppService;
   @Inject() settingsService: SettingsService;
   @Inject() customizationService: CustomizationService;
   @Inject() navigationService: NavigationService;
   @Inject() userService: UserService;
   @Inject() transitionsService: TransitionsService;
+  @Inject() windowsService: WindowsService;
+  @Inject() platformAppsService: PlatformAppsService;
+  @Inject() incrementalRolloutService: IncrementalRolloutService;
+  @Inject() facemasksService: FacemasksService;
 
   slideOpen = false;
 
-  studioModeTooltip = 'Studio Mode';
+  studioModeTooltip = $t('Studio Mode');
+  settingsTooltip = $t('Settings');
+  helpTooltip = $t('Get Help');
+  logoutTooltip = $t('Logout');
+  sunTooltip = $t('Day mode');
+  moonTooltip = $t('Night mode');
+  facemasksTooltip = $t('Face Mask Settings');
+
+  availableChatbotPlatforms = ['twitch', 'mixer', 'youtube'];
+
+  mounted() {
+    this.topNav = this.$refs.top_nav;
+  }
+
+  get availableFeatures() {
+    return EAvailableFeatures;
+  }
 
   @Prop() locked: boolean;
 
@@ -30,8 +61,16 @@ export default class TopNav extends Vue {
     this.navigationService.navigate('Studio');
   }
 
+  navigateChatBot() {
+    this.navigationService.navigate('Chatbot');
+  }
+
   navigateDashboard() {
     this.navigationService.navigate('Dashboard');
+  }
+
+  navigatePlatformAppStore() {
+    this.navigationService.navigate('PlatformAppStore');
   }
 
   navigateOverlays() {
@@ -46,6 +85,18 @@ export default class TopNav extends Vue {
     this.navigationService.navigate('Onboarding');
   }
 
+  navigateDesignSystem() {
+    this.navigationService.navigate('DesignSystem');
+  }
+
+  navigateHelp() {
+    this.navigationService.navigate('Help');
+  }
+
+  featureIsEnabled(feature: EAvailableFeatures) {
+    return this.incrementalRolloutService.featureIsEnabled(feature);
+  }
+
   studioMode() {
     if (this.transitionsService.state.studioMode) {
       this.transitionsService.disableStudioMode();
@@ -58,16 +109,20 @@ export default class TopNav extends Vue {
     return this.transitionsService.state.studioMode;
   }
 
+  get facemasksActive() {
+    return this.facemasksService.state.active;
+  }
+
   openSettingsWindow() {
     this.settingsService.showSettings();
   }
 
-  toggleNightTheme() {
-    this.customizationService.nightMode = !this.customizationService.nightMode;
+  openFacemaskSettingsWindow() {
+    this.facemasksService.showSettings();
   }
 
-  bugReport() {
-    electron.remote.shell.openExternal('https://tracker.streamlabs.com');
+  toggleNightTheme() {
+    this.customizationService.nightMode = !this.customizationService.nightMode;
   }
 
   openDiscord() {
@@ -87,6 +142,32 @@ export default class TopNav extends Vue {
   }
 
   get isUserLoggedIn() {
-    return this.userService.isLoggedIn();
+    return this.userService.state.auth;
+  }
+
+  get appStoreVisible() {
+    return this.platformAppsService.state.storeVisible;
+  }
+
+  get chatbotVisible() {
+    return (
+      this.userService.isLoggedIn() &&
+      this.availableChatbotPlatforms.indexOf(this.userService.platform.type) !== -1
+    );
+  }
+
+  get loading() {
+    return this.appService.state.loading;
+  }
+
+  $refs: {
+    top_nav: HTMLDivElement;
+  };
+
+  topNav: HTMLDivElement;
+  responsiveClass = false;
+
+  handleResize() {
+    this.responsiveClass = this.topNav.clientWidth < 1200;
   }
 }

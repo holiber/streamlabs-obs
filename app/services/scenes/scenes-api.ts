@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs/Observable';
-import { ISourceApi, TSourceType, ISource } from 'services/sources';
+import { Observable } from 'rxjs';
+import { ISourceApi, TSourceType, ISource, ISourceAddOptions } from 'services/sources';
 import { ISelection, TNodesList } from 'services/selection';
 
 /**
@@ -12,7 +12,7 @@ export interface IScenesServiceApi {
   scenes: ISceneApi[];
   activeScene: ISceneApi;
   activeSceneId: string;
-  getSceneByName(name: string): ISceneApi;
+  getScene(id: string): ISceneApi;
   getScenes(): ISceneApi[];
   getModel(): IScenesState;
   suggestName(name: string): string;
@@ -33,7 +33,6 @@ export interface IScene extends IResource {
   nodes: (ISceneItem | ISceneItemFolder)[];
 }
 
-
 export interface ISceneApi extends IScene {
   getNode(sceneNodeId: string): TSceneNodeApi;
   getNodeByName(name: string): TSceneNodeApi;
@@ -43,9 +42,42 @@ export interface ISceneApi extends IScene {
   getRootNodes(): TSceneNodeApi[];
   getItems(): ISceneItemApi[];
   getFolders(): ISceneItemFolderApi[];
+
+  /**
+   * returns scene items of scene + scene items of nested scenes
+   */
+  getNestedItems(): ISceneItemApi[];
+
+  /**
+   * returns sources of scene + sources of nested scenes
+   * result also includes nested scenes
+   */
+  getNestedSources(): ISourceApi[];
+
+  /**
+   * return nested scenes in the safe-to-add order
+   */
+  getNestedScenes(): ISceneApi[];
+
+  /**
+   * returns the source linked to scene
+   */
+  getSource(): ISourceApi;
+
   addSource(sourceId: string, options?: ISceneNodeAddOptions): ISceneItemApi;
   createAndAddSource(name: string, type: TSourceType): ISceneItemApi;
   createFolder(name: string): ISceneItemFolderApi;
+
+  /**
+   * creates sources from file system folders and files
+   * source type depends on the file extension
+   */
+  addFile(path: string, folderId?: string): TSceneNodeApi;
+
+  /**
+   * removes all nodes from the scene
+   */
+  clear(): void;
   removeFolder(folderId: string): void;
   removeItem(sceneItemId: string): void;
   remove(): void;
@@ -56,11 +88,11 @@ export interface ISceneApi extends IScene {
   getSelection(itemsList?: TNodesList): ISelection;
 }
 
-
 export interface ISceneNodeAddOptions {
   id?: string; // A new ID will be assigned if one is not provided
+  sourceAddOptions?: ISourceAddOptions;
+  select?: boolean; // Immediately select this source
 }
-
 
 export interface ISceneItemInfo {
   id: string;
@@ -75,13 +107,11 @@ export interface ISceneItemInfo {
   rotation?: number;
 }
 
-
 export interface IScenesState {
   activeSceneId: string;
   displayOrder: string[];
   scenes: Dictionary<IScene>;
 }
-
 
 export interface ISceneCreateOptions {
   duplicateSourcesFromScene?: string;
@@ -115,7 +145,6 @@ export interface IPartialSettings {
   locked?: boolean;
 }
 
-
 export interface ISceneItem extends ISceneItemSettings, ISceneItemNode {
   sceneItemId: string;
   sourceId: string;
@@ -134,6 +163,8 @@ export interface ISceneItemActions {
   centerOnScreen(): void;
   rotate(deg: number): void;
   remove(): void;
+  scale(scale: IVec2, origin: IVec2): void;
+  scaleWithOffset(scale: IVec2, offset: IVec2): void;
 
   /**
    * only for scene sources
@@ -149,6 +180,7 @@ export interface ISceneItemApi extends ISceneItem, ISceneItemActions, ISceneNode
    */
   getSource(): ISourceApi;
   getModel(): ISceneItem & ISource;
+  setScale(scale: IVec2, origin: IVec2): void;
 }
 
 export type TSceneNodeType = 'item' | 'folder';
@@ -299,7 +331,6 @@ export interface ISceneNodeApi extends ISceneItemNode {
    */
   getPrevSiblingNode(): TSceneNodeApi;
 
-
   /**
    * Returns a node path - the chain of all parent ids for the node
    */
@@ -314,7 +345,6 @@ export interface ISceneItemFolder extends ISceneItemNode {
  * API for scene folders
  */
 export interface ISceneItemFolderApi extends ISceneItemFolder, ISceneNodeApi {
-
   /**
    * Returns all direct children items and folders
    * To get all nested children
@@ -331,7 +361,6 @@ export interface ISceneItemFolderApi extends ISceneItemFolder, ISceneNodeApi {
    * Returns all direct children folders
    */
   getFolders(): ISceneItemFolderApi[];
-
 
   /**
    * Returns all nested nodes.
@@ -370,7 +399,5 @@ export interface ISceneItemFolderApi extends ISceneItemFolder, ISceneNodeApi {
    */
   ungroup(): void;
 
-
   getModel(): ISceneItemFolder;
-
 }

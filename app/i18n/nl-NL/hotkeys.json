@@ -12,5 +12,7 @@
   "Push to Talk": "Push-to-talk",
   "Enable Studio Mode": "Studio Mode inschakelen",
   "Disable Studio Mode": "Studio Mode uitschakelen",
-  "Transition (Studio Mode)": "Overgang (Studio Mode)"
+  "Transition (Studio Mode)": "Overgang (Studio Mode)",
+  "Capture Foreground Window": "Capture Foreground Window",
+  "Deactivate Capture": "Deactivate Capture"
 }

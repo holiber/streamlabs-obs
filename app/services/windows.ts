@@ -26,6 +26,7 @@ import Projector from 'components/windows/Projector.vue';
 import MediaGallery from 'components/windows/MediaGallery.vue';
 import PlatformAppPopOut from 'components/windows/PlatformAppPopOut.vue';
 import FacemaskSettings from 'components/windows/FacemaskSettings.vue';
+import EditTransform from 'components/windows/EditTransform';
 import { mutation, StatefulService } from 'services/stateful-service';
 import electron from 'electron';
 import Vue from 'vue';
@@ -56,6 +57,8 @@ import ChatbotCapsProtectionWindow from 'components/page-components/Chatbot/wind
 import ChatbotSymbolProtectionWindow from 'components/page-components/Chatbot/windows/ChatbotSymbolProtectionWindow.vue';
 import ChatbotLinkProtectionWindow from 'components/page-components/Chatbot/windows/ChatbotLinkProtectionWindow.vue';
 import ChatbotWordProtectionWindow from 'components/page-components/Chatbot/windows/ChatbotWordProtectionWindow.vue';
+import ChatbotParagraphProtectionWindow from 'components/page-components/Chatbot/windows/ChatbotParagraphProtectionWindow.vue';
+import ChatbotEmoteProtectionWindow from 'components/page-components/Chatbot/windows/ChatbotEmoteProtectionWindow.vue';
 import ChatbotQuoteWindow from 'components/page-components/Chatbot/windows/ChatbotQuoteWindow.vue';
 import ChatbotQuotePreferencesWindow from 'components/page-components/Chatbot/windows/ChatbotQuotePreferencesWindow.vue';
 import ChatbotQueuePreferencesWindow from 'components/page-components/Chatbot/windows/ChatbotQueuePreferencesWindow.vue';
@@ -102,6 +105,7 @@ export function getComponents() {
     MediaGallery,
     PlatformAppPopOut,
     FacemaskSettings,
+    EditTransform,
 
     BitGoal,
     DonationGoal,
@@ -128,6 +132,8 @@ export function getComponents() {
     ChatbotSymbolProtectionWindow,
     ChatbotLinkProtectionWindow,
     ChatbotWordProtectionWindow,
+    ChatbotParagraphProtectionWindow,
+    ChatbotEmoteProtectionWindow,
     ChatbotQuoteWindow,
     ChatbotQuotePreferencesWindow,
     ChatbotQueuePreferencesWindow,

@@ -14,20 +14,29 @@ import {
   TSceneNodeModel,
 } from 'services/scenes';
 import { $t } from 'services/i18n';
-import { Inject } from '../../util/injector';
-import { shortcut } from '../shortcuts';
-import { ISelection, ISelectionServiceApi, ISelectionState, TNodesList } from './selection-api';
+import { Inject } from 'util/injector';
+import { shortcut } from 'services/shortcuts';
 import { Subject } from 'rxjs';
-import Utils from '../utils';
-import { Source } from '../sources';
+import Utils from 'services/utils';
+import { Source } from 'services/sources';
 import { AnchorPoint, AnchorPositions, CenteringAxis } from 'util/ScalableRectangle';
-import { Rect } from '../../util/rect';
+import { Rect } from 'util/rect';
+import { WindowsService } from 'services/windows';
+
+interface ISelectionState {
+  selectedIds: string[];
+  lastSelectedId: string;
+}
+
+/**
+ * list of ISceneNode.id or ISceneNode
+ */
+export type TNodesList = string | string[] | ISceneItemNode | ISceneItemNode[];
 
 /**
  * represents selection of active scene and provide shortcuts
  */
-export class SelectionService extends StatefulService<ISelectionState>
-  implements ISelectionServiceApi {
+export class SelectionService extends StatefulService<ISelectionState> {
   static initialState: ISelectionState = {
     selectedIds: [],
     lastSelectedId: '',
@@ -37,6 +46,7 @@ export class SelectionService extends StatefulService<ISelectionState>
   private sceneId: string;
 
   @Inject() private scenesService: ScenesService;
+  @Inject() private windowsService: WindowsService;
 
   init() {
     this.scenesService.sceneSwitched.subscribe(() => {
@@ -62,6 +72,7 @@ export class SelectionService extends StatefulService<ISelectionState>
   getBoundingRect: () => Rect;
   getLastSelected: () => SceneItem;
   getLastSelectedId: () => string;
+  getTransform: () => { crop: any; position: any; scale: any };
   getSize: () => number;
   isSelected: (item: string | ISceneItem) => boolean;
   copyTo: (sceneId: string, folderId?: string, duplicateSources?: boolean) => TSceneNode[];
@@ -78,9 +89,11 @@ export class SelectionService extends StatefulService<ISelectionState>
   setSettings: (settings: Partial<ISceneItemSettings>) => void;
   setVisibility: (isVisible: boolean) => void;
   setTransform: (transform: IPartialTransform) => void;
+  setDeltaPos: (dir: 'x' | 'y', delta: number) => void;
   resetTransform: () => void;
   scale: (scale: IVec2, origin?: IVec2) => void;
   scaleWithOffset: (scale: IVec2, offset: IVec2) => void;
+  unilateralScale: (dimension: 'x' | 'y', sale: number) => void;
   flipY: () => void;
   flipX: () => void;
   stretchToScreen: () => void;
@@ -143,10 +156,19 @@ export class SelectionService extends StatefulService<ISelectionState>
     return this.getSelection().nudgeActiveItemsDown.call(this);
   }
 
+  openEditTransform() {
+    const windowHeight = this.isSceneItem() ? 460 : 300;
+    this.windowsService.showWindow({
+      componentName: 'EditTransform',
+      title: $t('Edit Transform'),
+      size: { width: 500, height: windowHeight },
+    });
+  }
+
   /**
    * @override Selection.select
    */
-  select(items: TNodesList): ISelection {
+  select(items: TNodesList): void {
     this.getSelection().select.call(this, items);
 
     const scene = this.getScene();
@@ -161,7 +183,6 @@ export class SelectionService extends StatefulService<ISelectionState>
       });
 
     this.updated.next(this.state);
-    return this;
   }
 
   /**
@@ -192,7 +213,7 @@ export class SelectionService extends StatefulService<ISelectionState>
  * Helper for working with multiple sceneItems
  */
 @ServiceHelper()
-export class Selection implements ISelection {
+export class Selection {
   @Inject() private scenesService: ScenesService;
 
   _resourceId: string;
@@ -333,6 +354,12 @@ export class Selection implements ISelection {
     return this.state.lastSelectedId;
   }
 
+  getTransform() {
+    if (!this.isSceneItem()) return;
+    const item = this.getNodes()[0] as SceneItem;
+    return item.state.transform;
+  }
+
   getSize(): number {
     return this.state.selectedIds.length;
   }
@@ -453,11 +480,19 @@ export class Selection implements ISelection {
     }
   }
 
-  isVisible() {
-    return !this.getItems().find(item => !item.visible);
+  /**
+   * A selection is considered visible if at least 1 item
+   * in the selection is visible.
+   */
+  isVisible(): boolean {
+    return !!this.getItems().find(item => item.visible);
   }
 
-  isLocked() {
+  /**
+   * A selection is considered locked if all items in the
+   * selection are locked.
+   */
+  isLocked(): boolean {
     return !this.getItems().find(item => !item.locked);
   }
 
@@ -564,6 +599,14 @@ export class Selection implements ISelection {
    */
   scaleWithOffset(scale: IVec2, offset: IVec2) {
     this.scale(scale, this.getBoundingRect().getOriginFromOffset(offset));
+  }
+
+  unilateralScale(dimension: 'x' | 'y', scale: number) {
+    this.getItems().forEach(item => item.unilateralScale(dimension, scale));
+  }
+
+  setDeltaPos(dir: 'x' | 'y', delta: number) {
+    this.getItems().forEach(item => item.setDeltaPos(dir, delta));
   }
 
   flipY() {

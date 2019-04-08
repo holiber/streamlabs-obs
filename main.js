@@ -59,6 +59,27 @@ const releaseChannel = (() => {
   // Set approximate maximum log size in bytes. When it exceeds,
   // the archived log will be saved as the log.old.log file
   electronLog.transports.file.maxSize = 5 * 1024 * 1024;
+
+  // network logging is disabled by default
+  if (!process.argv.includes('--network-logging')) return;
+  app.on('ready', () => {
+
+    // ignore fs requests
+    const filter = { urls: ['https://*', 'http://*'] };
+
+    session.defaultSession.webRequest.onBeforeRequest(filter, (details, callback) => {
+      log('HTTP REQUEST', details.method, details.url);
+      callback(details);
+    });
+
+    session.defaultSession.webRequest.onErrorOccurred(filter, (details) => {
+      log('HTTP REQUEST FAILED', details.method, details.url);
+    });
+
+    session.defaultSession.webRequest.onCompleted(filter, (details) => {
+      log('HTTP REQUEST COMPLETED', details.method, details.url, details.statusCode);
+    });
+  });
 })();
 
 function log(...args) {
@@ -104,36 +125,23 @@ function startApp() {
     );
   }
 
-  const bt = require('backtrace-node');
+  const Raven = require('raven');
 
   function handleFinishedReport() {
-    dialog.showErrorBox(`Unhandled Exception`,
-    'An unexpected error occured and the application must be shut down.\n' +
-    'Information concerning this occasion has been sent for debugging purposes.\n' +
-    'Sorry for the inconvenience and thanks for your patience as we work out the bugs!\n' +
+    dialog.showErrorBox('Something Went Wrong',
+    'An unexpected error occured and Streamlabs OBS must be shut down.\n' +
     'Please restart the application.');
 
-    if (app) {
-      app.quit();
-    }
-  }
-
-  function handleUnhandledException(err) {
-    bt.report(err, {}, handleFinishedReport);
+    app.exit();
   }
 
   if (pjson.env === 'production') {
-    bt.initialize({
-      disableGlobalHandler: true,
-      endpoint: 'https://streamlabs.sp.backtrace.io:6098',
-      token: 'e3f92ff3be69381afe2718f94c56da4644567935cc52dec601cf82b3f52a06ce',
-      attributes: {
-        version: pjson.version,
-        processType: 'main'
-      }
-    });
 
-    process.on('uncaughtException', handleUnhandledException);
+    Raven.config('https://6971fa187bb64f58ab29ac514aa0eb3d@sentry.io/251674', {
+      release: process.env.SLOBS_VERSION 
+    }).install(function (err, initialErr, eventId) {
+      handleFinishedReport();
+    });
 
     crashReporter.start({
       productName: 'streamlabs-obs',

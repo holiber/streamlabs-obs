@@ -58,13 +58,12 @@
   </div>
 
   <div class="top-nav-right">
-
-    <div class="top-nav-item">
-      <button @click="toggleNightTheme" class="theme-toggle">
-        <div class="theme-toggle__bg"></div>
-        <img class="theme-toggle__icon theme-toggle__icon--moon" v-tooltip.right="moonTooltip" src="../../media/images/moon.png"/>
-        <img class="theme-toggle__icon theme-toggle__icon--sun" v-tooltip.right="sunTooltip" src="../../media/images/sun.png"/>
-      </button>
+    <div class="top-nav-item">	
+      <button @click="toggleNightTheme" class="theme-toggle">	
+        <div class="theme-toggle__bg"></div>	
+        <img class="theme-toggle__icon theme-toggle__icon--moon" v-tooltip.right="moonTooltip" src="../../media/images/moon.png"/>	
+        <img class="theme-toggle__icon theme-toggle__icon--sun" v-tooltip.right="sunTooltip" src="../../media/images/sun.png"/>	
+      </button>	
     </div>
     <div class="top-nav-item" v-if="isDevMode" style="z-index: 99999">
       <a class="link" @click="openDevTools">Dev Tools</a>
@@ -79,7 +78,7 @@
         <i class="icon-studio-mode-3" v-tooltip.right="studioModeTooltip" /><span>{{ $t('Studio Mode') }}</span>
       </a>
     </div>
-    <div v-if="isUserLoggedIn" class="top-nav-item" :class="{ 'top-nav-item--active': facemasksActive }">
+    <div v-if="isUserLoggedIn" class="top-nav-item" :class="{ 'top-nav-item--active': facemasksActive, 'top-nav-item--error': facemasksExtensionError }">
       <a
         @click="openFacemaskSettingsWindow"
         class="link">
@@ -134,6 +133,15 @@
       > i,
       > span {
         color: var(--teal);
+      }
+    }
+  }
+
+  &.top-nav-item--error {
+    > a {
+      > i,
+      > span {
+        color: @red;
       }
     }
   }

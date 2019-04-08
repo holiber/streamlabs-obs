@@ -3,7 +3,7 @@ import { Component } from 'vue-property-decorator';
 import { Inject } from '../util/injector';
 import { SourcesService } from 'services/sources';
 import { ScenesService, ISceneItemNode, TSceneNode } from 'services/scenes';
-import { SelectionService } from 'services/selection/selection';
+import { SelectionService } from 'services/selection';
 import { EditMenu } from '../util/menus/EditMenu';
 import SlVueTree, { ISlTreeNode, ISlTreeNodeModel, ICursorPosition } from 'sl-vue-tree';
 import { WidgetType } from 'services/widgets';
@@ -120,7 +120,7 @@ export default class SourceSelector extends Vue {
 
   showContextMenu(sceneNodeId?: string, event?: MouseEvent) {
     const sceneNode = this.scene.getNode(sceneNodeId);
-    if (!sceneNode.isSelected()) sceneNode.select();
+    if (sceneNode && !sceneNode.isSelected()) sceneNode.select();
     const menuOptions = sceneNode
       ? {
           selectedSceneId: this.scene.id,

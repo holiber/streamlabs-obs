@@ -63,7 +63,7 @@ export class AppService extends StatefulService<IAppState> {
     argv: electron.remote.process.argv,
   };
 
-  private autosaveInterval: number;
+  readonly appDataDirectory = electron.remote.app.getPath('userData');
 
   @Inject() transitionsService: TransitionsService;
   @Inject() sourcesService: SourcesService;
@@ -103,8 +103,11 @@ export class AppService extends StatefulService<IAppState> {
       showDialog(message);
 
       crashHandler.unregisterProcess(this.pid);
-      electron.ipcRenderer.send('shutdownComplete');
 
+      obs.NodeObs.StopCrashHandler();
+      obs.IPC.disconnect();
+
+      electron.ipcRenderer.send('shutdownComplete');
       return;
     }
 

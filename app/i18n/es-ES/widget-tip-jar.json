@@ -1,11 +1,11 @@
 {
-  "Jar Image": "Jar Image",
+  "Jar Image": "Imagen del frasco",
   "Enabled Events": "Enabled Events",
   "Minimum Bits": "Bit mínimos",
   "Minimum Tips": "Minimum Tips",
   "Background Color": "Color de fondo",
   "Text": "Texto",
-  "Show Text": "Show Text",
+  "Show Text": "Mostrar texto",
   "Text Color": "Color del texto",
   "Font Size": "Tamaño de fuente",
   "Tips over": "Tips over",
@@ -19,5 +19,5 @@
   "Periscope Super Hearts": "Periscope Super Hearts",
   "Picarto Follows": "Picarto Follows",
   "Picarto Subscriptions": "Picarto Subscriptions",
-  "Manage Jar": "Manage Jar"
+  "Manage Jar": "Gestionar frasco"
 }

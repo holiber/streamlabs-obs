@@ -1,11 +1,11 @@
 {
-  "Banned Media": "Banned Media",
-  "Check Banned Media": "Check Banned Media",
+  "Banned Media": "Medio vetado",
+  "Check Banned Media": "Comprobar medio vetado",
   "Price Per Second": "Price Per Second",
   "Min. Amount to Share": "Min. Amount to Share",
-  "Max Duration": "Max Duration",
+  "Max Duration": "Máxima duración",
   "Buffer Time": "Buffer Time",
-  "Spam Security": "Spam Security",
+  "Spam Security": "Seguridad de spam",
   "The time between videos the next video has to buffer.": "The time between videos the next video has to buffer.",
   "Manage Media Settings": "Manage Media Settings"
 }

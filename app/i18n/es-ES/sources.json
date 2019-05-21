@@ -141,10 +141,10 @@
   "Unhide All": "Mostrar Todas",
   "Cloud Backup: All media and sources are backed up in the cloud": "Cloud Backup: Una copia de seguridad de todos archivos multimedia y fuentes es almacenada en la nube",
   "Cloud Backup: Your media and sources are being synced with the cloud": "Cloud Backup: Tus archivos multimedia y fuentes se están sincronizando con la nube",
-  "The streamer manually adds images of sponsors.": "The streamer manually adds images of sponsors.",
+  "The streamer manually adds images of sponsors.": "El streamer manualmente añade las imágenes de los patrocinadores.",
   "Mixer chat": "Mixer chat",
   "Edit Transform": "Edit Transform",
-  "There are no existing sources of this type.": "There are no existing sources of this type.",
+  "There are no existing sources of this type.": "No existen fuentes de este tipo.",
   "Instant Replay": "Instant Replay",
   "Include text into your stream, such as follower count, last donation, and many others.": "Es un marcador de posición para una etiqueta de Streamlabels.",
   "Automatically plays your most recently captured replay in your stream.": "Reproduce automáticamente la repetición capturada más recientemente en tu emisión.",
@@ -154,6 +154,6 @@
   "Directly capture the OpenVR monitoring video buffer of your HMD.": "Capturar directamente el búfer de vídeo de monitoreo OpenVR de tu HMD.",
   "LIV Client Capture": "LIV Client Capture",
   "VLC Source": "VLC Source",
-  "Add playlists of videos to your scene.": "Add playlists of videos to your scene.",
+  "Add playlists of videos to your scene.": "Añade listas de reproducción de vídeos a tu escena.",
   "Settings for ": "Configuración de "
 }

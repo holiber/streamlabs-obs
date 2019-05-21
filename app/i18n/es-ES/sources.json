@@ -33,7 +33,7 @@
   "Thanks viewers with notification popups.": "Da las gracias a tus espectadores con notificaciones en ventanas emergentes.",
   "Donations": "Donaciones",
   "Subscriptions": "Suscripciones",
-  "Follows": "Follows",
+  "Follows": "Seguidos",
   "Bits": "Bits",
   "Hosts": "Hosts",
   "Show off your most recent donations to your viewers.": "Muestra las donaciones más recientes a tus espectadores.",
@@ -102,8 +102,8 @@
   "Add Folder": "Añadir Carpeta",
   "Remove Sources": "Eliminar Fuentes",
   "Setup Source Properties": "Configurar Propiedades de Fuente",
-  "Rename Folder": "Rename Folder",
-  "Name Folder": "Name Folder",
+  "Rename Folder": "Renombrar carpeta",
+  "Name Folder": "Nombrar carpeta",
   "Rename Source": "Renombrar Fuente",
   "Name Source": "Nombrar Fuente",
   "Source filters": "Filtros de fuente",
@@ -155,5 +155,5 @@
   "LIV Client Capture": "LIV Client Capture",
   "VLC Source": "VLC Source",
   "Add playlists of videos to your scene.": "Add playlists of videos to your scene.",
-  "Settings for ": "Settings for "
+  "Settings for ": "Configuración de "
 }

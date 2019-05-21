@@ -53,15 +53,15 @@
   "Stop Replay Buffer": "Stop Replay Buffer",
   "Stopping...": "Stopping...",
   "Your stream has been scheduled for %{time} from now. If you'd like to make another schedule please enter a different time": "Tu emisión ha sido programada para %{time} desde ahora. Si deseas otra programación, introduce una hora diferente",
-  "Stop streaming to access these controls:": "Stop streaming to access these controls:",
+  "Stop streaming to access these controls:": "Detén la emisión para acceder a estos controles:",
   "Tags": "Tags",
   "Select stream tags": "Select stream tags",
-  "You can now edit your channel tags from this screen.": "You can now edit your channel tags from this screen.",
+  "You can now edit your channel tags from this screen.": "Ahora puedes editar las etiquetas de tu canal en esta pantalla.",
   "Log out and back in to reauthorize additional permissions.": "Cierra sesión e ingresa de nuevo para reautorizar permisos adicionales.",
-  "Are you sure you want to start streaming?": "Are you sure you want to start streaming?",
+  "Are you sure you want to start streaming?": "¿Estás seguro que deseas comenzar a emitir?",
   "Please enable account for streaming to recieve a stream key": "Por favor, activa la cuenta de emisión para recibir una clave de emisión",
   "Facebook Page Creation": "Facebook Page Creation",
-  " to create a page, and then try again.": " to create a page, and then try again.",
+  " to create a page, and then try again.": " para crear una página, y luego intenta de nuevo.",
   "Facebook Page": "Página de Facebook",
   "Description": "Descripción",
   "Checking optimized setting for": "Checking optimized setting for",
@@ -71,6 +71,6 @@
   "Use optimized encoder settings ": "Use optimized encoder settings ",
   "Scheduled Date": "Scheduled Date",
   "Scheduled Time": "Scheduled Time",
-  "You are 10 minutes away from the 8 hour stream limit": "You are 10 minutes away from the 8 hour stream limit",
-  "Stream has disconnected, attempting to reconnect.": "Stream has disconnected, attempting to reconnect."
+  "You are 10 minutes away from the 8 hour stream limit": "Estás a 10 minutos del límite de emisión de 8 horas",
+  "Stream has disconnected, attempting to reconnect.": "La emisión se ha desconectado. Intentado reconectar."
 }

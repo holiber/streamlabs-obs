@@ -4,7 +4,7 @@
   "Price Per Second": "Price Per Second",
   "Min. Amount to Share": "Cantidad mínima para compartir",
   "Max Duration": "Máxima duración",
-  "Buffer Time": "Buffer Time",
+  "Buffer Time": "Tiempo de búfer",
   "Spam Security": "Seguridad de spam",
   "The time between videos the next video has to buffer.": "El tiempo entre vídeos que el siguiente vídeo tiene que guardar en búfer.",
   "Manage Media Settings": "Manage Media Settings"

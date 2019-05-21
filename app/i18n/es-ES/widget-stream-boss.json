@@ -22,10 +22,10 @@
   "Damage Per Bit": "Damage Per Bit",
   "Damage Per Subscriber": "Damage Per Subscriber",
   "Damage Per Dollar Donation": "Damage Per Dollar Donation",
-  "Background Color": "Background Color",
-  "Text Color": "Text Color",
+  "Background Color": "Color de fondo",
+  "Text Color": "Color del texto",
   "Health Text Color": "Health Text Color",
   "Health Bar Color": "Health Bar Color",
-  "Health Bar Background Color": "Health Bar Background Color",
-  "Font": "Font"
+  "Health Bar Background Color": "Color de fondo de la barra de estado",
+  "Font": "Fuente"
 }

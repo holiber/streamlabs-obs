@@ -177,7 +177,7 @@
   "The phrase that will appear after a command is disabled": "The phrase that will appear after a command is disabled",
   "The phrase that will appear when the user requested a banned song": "La frase que se muestra luego de que el usuario solicite una canción vetada",
   "The phrase that will appear when a ticket giveaway is started.": "The phrase that will appear when a ticket giveaway is started.",
-  "The phrase that will appear when the song is not in the music category": "The phrase that will appear when the song is not in the music category",
+  "The phrase that will appear when the song is not in the music category": "La frase se mostrará cuando la canción no esté en la categoría de música",
   "The phrase that will appear if your song queue is currently full": "The phrase that will appear if your song queue is currently full",
   "User Cooldown": "User Cooldown",
   "Edit Primary Command": "Edit Primary Command",

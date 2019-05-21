@@ -34,7 +34,7 @@
   "End Stream": "Terminar emisión",
   "Starting": "Starting",
   "Ending": "Ending",
-  "Reconnecting": "Reconnecting",
+  "Reconnecting": "Reconectando",
   "Go Live": "Emitir en directo",
   "Stop": "Detener",
   "Save Replay": "Guardar repetición",
@@ -51,7 +51,7 @@
   "Set path in Settings > Output.": "Selecciona la ruta en Ajustes > Salida.",
   "Start Replay Buffer": "Comenzar búfer de repetición",
   "Stop Replay Buffer": "Detener búfer de repetición",
-  "Stopping...": "Stopping...",
+  "Stopping...": "Deteniendo...",
   "Your stream has been scheduled for %{time} from now. If you'd like to make another schedule please enter a different time": "Tu emisión ha sido programada para %{time} desde ahora. Si deseas otra programación, introduce una hora diferente",
   "Stop streaming to access these controls:": "Detén la emisión para acceder a estos controles:",
   "Tags": "Etiquetas",
@@ -69,8 +69,8 @@
   "Schedule": "Schedule",
   "No matching game(s) found.": "No matching game(s) found.",
   "Use optimized encoder settings ": "Usar ajustes de codificador optimizados ",
-  "Scheduled Date": "Scheduled Date",
-  "Scheduled Time": "Scheduled Time",
+  "Scheduled Date": "Fecha programada",
+  "Scheduled Time": "Hora programada",
   "You are 10 minutes away from the 8 hour stream limit": "Estás a 10 minutos del límite de emisión de 8 horas",
   "Stream has disconnected, attempting to reconnect.": "La emisión se ha desconectado. Intentado reconectar."
 }

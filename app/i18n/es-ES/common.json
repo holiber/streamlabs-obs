@@ -89,5 +89,5 @@
   "Description": "Descripción",
   "OBSInit.UnknownError": "An unknown error was encountered while initializing OBS.",
   "OBSInit.ModuleNotFoundError": "No se pudo encontrar DirectX en el sistema. Instala la última versión de DirectX en tu máquina en <https://www.microsoft.com/en-us/download/details.aspx?id=35?> e intenta de nuevo.",
-  "OBSInit.NotSupportedError": "Failed to initialize OBS. Your video drivers may be out of date, or Streamlabs OBS may not be supported on your system."
+  "OBSInit.NotSupportedError": "No se pudo inicializar OBS. Tus controladores de vídeo pueden estar desactualizados, o Streamlabs OBS no es compatible con tu sistema."
 }

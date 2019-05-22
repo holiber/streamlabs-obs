@@ -65,12 +65,12 @@
   "Day mode": "Day mode",
   "Coming Soon": "Coming Soon",
   "The field is required": "The field is required",
-  "This field may only contain alphabetic characters or numbers": "This field may only contain alphabetic characters or numbers",
+  "This field may only contain alphabetic characters or numbers": "Dieses Feld enthält eventuell nur Buchstaben oder Zahlen",
   "The field value must be %{value} or larger": "The field value must be %{value} or larger",
   "The field value must be %{value} or less": "The field value must be %{value} or less",
   "The date must be in %{format} format": "The date must be in %{format} format",
-  "This field must be at least %{value} characters.": "This field must be at least %{value} characters.",
-  "This field may not be greater than %{value} characters.": "This field may not be greater than %{value} characters.",
+  "This field must be at least %{value} characters.": "Dieses Feld muss mindestens %{value} Zeichen haben.",
+  "This field may not be greater than %{value} characters.": "Dieses Feld darf nicht größer als %{value} sein.",
   "OBSInit.ErrorTitle": "Initialization Error",
   "Please enter a valid date": "Please enter a valid date",
   "Hr": "Hr",
@@ -87,7 +87,7 @@
   "Whitelist": "Whitelist",
   "Blacklist": "Blacklist",
   "Description": "Description",
-  "OBSInit.UnknownError": "An unknown error was encountered while initializing OBS.",
-  "OBSInit.ModuleNotFoundError": "DirectX could not be found on your system. Please install the latest version of DirectX for your machine here <https://www.microsoft.com/en-us/download/details.aspx?id=35?> and try again.",
-  "OBSInit.NotSupportedError": "Failed to initialize OBS. Your video drivers may be out of date, or Streamlabs OBS may not be supported on your system."
+  "OBSInit.UnknownError": "Bei der Initialisierung von OBS kam es zu einem unbekannten Fehler.",
+  "OBSInit.ModuleNotFoundError": "DirectX konnte nicht im System gefunden werden. Bitte installieren Sie die neueste Version von DirectX für Ihr Maschine hier<https://www.microsoft.com/en-us/download/details.aspx?id=35?> und versuchen Sie es erneut.",
+  "OBSInit.NotSupportedError": "OBS konnte nicht initialisiert werden. Entweder sind Ihre Videotreiber veraltet oder Streamlabs OBS wird eventuell nicht von Ihrem System unterstützt."
 }

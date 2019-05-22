@@ -71,12 +71,12 @@
   "Audio Bitrate": "Audio-Bitrate",
   "Video Bitrate": "Video-Bitrate",
   "Scene item selection mode": "Scene item selection mode",
-  "Single click selects group. Double click selects item": "Single click selects group. Double click selects item",
-  "Double click selects group. Single click selects item": "Double click selects group. Single click selects item",
-  "Open FrankerFaceZ Settings": "Open FrankerFaceZ Settings",
-  "FrankerFaceZ Settings": "FrankerFaceZ Settings",
-  "API Token": "API Token",
+  "Single click selects group. Double click selects item": "Einfacher Klick wählt die Gruppe aus. Doppel-Klick wählt den Artikel aus",
+  "Double click selects group. Single click selects item": "Doppel-Klick wählt die Gruppe aus. Einfacher Klick wählt den Artikel aus",
+  "Open FrankerFaceZ Settings": "FrankerFaceZ-Einstellungen öffnen",
+  "FrankerFaceZ Settings": "FrankerFaceZ-Einstellungen",
+  "API Token": "API-Token",
   "Face Mask Settings": "Face Mask Einstellungen",
-  "Navigate to Live tab when going live": "Navigate to Live tab when going live",
-  "Save Replay": "Save Replay"
+  "Navigate to Live tab when going live": "Zum Live-Tab navigieren wenn auf Live geschaltet wird",
+  "Save Replay": "Wiederholung speichern"
 }

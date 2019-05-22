@@ -1,8 +1,8 @@
 {
-  "Visual Settings": "Visual Settings",
-  "Font Settings": "Font Settings",
-  "Chatter": "Chatter",
-  "Always Show Messages": "Always Show Messages",
+  "Visual Settings": "Optische Einstellungen",
+  "Font Settings": "Schriftart-Einstellungen",
+  "Chatter": "Geplapper",
+  "Always Show Messages": "Nachrichten immer anzeigen",
   "Show Moderator Badges": "Show Moderator Badges",
   "Show Subscriber Badges": "Show Subscriber Badges",
   "Show Turbo Badges": "Show Turbo Badges",
@@ -11,9 +11,9 @@
   "Show Top Coin Holder Badges": "Show Top Coin Holder Badges",
   "Enable BetterTTV Emotes": "Enable BetterTTV Emotes",
   "Enable FrankerFaceZ Emotes": "Enable FrankerFaceZ Emotes",
-  "Text Color": "Text Color",
-  "Font Size": "Font Size",
+  "Text Color": "Textfarbe",
+  "Font Size": "Schriftgröße",
   "Muted Chatters": "Muted Chatters",
   "Hide Commands": "Hide Commands",
-  "Background Color": "Background Color"
+  "Background Color": "Hintergrundfarbe"
 }

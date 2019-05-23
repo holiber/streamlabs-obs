@@ -13,6 +13,6 @@
   "Enable Studio Mode": "Activer le Mode Studio",
   "Disable Studio Mode": "Désactivé le Mode Studio",
   "Transition (Studio Mode)": "Transition (Mode Studio)",
-  "Capture Foreground Window": "Capture Foreground Window",
-  "Deactivate Capture": "Deactivate Capture"
+  "Capture Foreground Window": "Capturer la fenêtre en premier plan",
+  "Deactivate Capture": "Désactiver la capture"
 }

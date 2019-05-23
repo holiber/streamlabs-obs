@@ -61,13 +61,13 @@
   "Text Color Primary": "Birincil Metin Rengi",
   "Text Color Secondary": "İkincil Metin Rengi",
   "Text Color": "Metin Rengi",
-  "Show Message?": "Show Message?",
-  "Allow Twitch Emojis?": "Allow Twitch Emojis?",
-  "Enable TTS?": "Enable TTS?",
-  "Unlimited Alert Moderation Delay": "Unlimited Alert Moderation Delay",
-  "Unlimited Media Sharing Alert Moderation Delay": "Unlimited Media Sharing Alert Moderation Delay",
-  "Image/Video File": "Image/Video File",
-  "Sound File": "Sound File",
-  "Variation Frequency": "Variation Frequency",
-  "Message Template": "Message Template"
+  "Show Message?": "İletiyi Göster?",
+  "Allow Twitch Emojis?": "Twitch Emoji'lerine İzin Verilsin Mi?",
+  "Enable TTS?": "TTS Etkinleştirilsin Mi?",
+  "Unlimited Alert Moderation Delay": "Sınırsız Uyarı Denetim Gecikmesi",
+  "Unlimited Media Sharing Alert Moderation Delay": "Sınırsız Medya Paylaşımı Uyarı Denetim Gecikmesi",
+  "Image/Video File": "Görüntü/Video Dosyası",
+  "Sound File": "Ses Dosyası",
+  "Variation Frequency": "Değişim Sıklığı",
+  "Message Template": "Mesaj Şablonu"
 }

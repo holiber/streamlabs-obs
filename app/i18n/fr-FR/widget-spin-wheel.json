@@ -26,8 +26,8 @@
   "Ticker Size": "Image du ticker",
   "Ticker Tone": "Ton du ticker",
   "Center Image Enabled": "Activation du centrage d'image",
-  "Center Image Size": "Center Image Size",
-  "Center Image Border Enabled": "Center Image Border Enabled",
-  "Center Image Border Color": "Center Image Border Color",
-  "Center Image Border Width": "Center Image Border Width"
+  "Center Image Size": "Taille de l’image au centre",
+  "Center Image Border Enabled": "Centrer la bordure de l'image activée",
+  "Center Image Border Color": "Centrer la couleur de la bordure d’image",
+  "Center Image Border Width": "Largeur de bordure de l’image au centre"
 }

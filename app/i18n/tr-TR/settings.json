@@ -70,13 +70,13 @@
   "Custom Encoder Settings": "Özel Kodlayıcı Ayarları",
   "Audio Bitrate": "Ses Bitrate",
   "Video Bitrate": "Video Bitrate",
-  "Scene item selection mode": "Scene item selection mode",
-  "Single click selects group. Double click selects item": "Single click selects group. Double click selects item",
-  "Double click selects group. Single click selects item": "Double click selects group. Single click selects item",
-  "Open FrankerFaceZ Settings": "Open FrankerFaceZ Settings",
-  "FrankerFaceZ Settings": "FrankerFaceZ Settings",
-  "API Token": "API Token",
-  "Face Mask Settings": "Face Mask Settings",
-  "Navigate to Live tab when going live": "Navigate to Live tab when going live",
-  "Save Replay": "Save Replay"
+  "Scene item selection mode": "Sahne ögesi seçim modu",
+  "Single click selects group. Double click selects item": "Tek tıklama grubu seçer. Çift tıklama ögeyi seçer",
+  "Double click selects group. Single click selects item": "Çift tıklama grubu seçer. Tek tıklama ögeyi seçer",
+  "Open FrankerFaceZ Settings": "FrankerFaceZ Ayarlarını Aç",
+  "FrankerFaceZ Settings": "FrankerFaceZ Ayarları",
+  "API Token": "API Jetonu",
+  "Face Mask Settings": "Yüz Maskesi Ayarları",
+  "Navigate to Live tab when going live": "Yayındayken Canlı sekmesine gidin",
+  "Save Replay": "Tekrarı Kaydet"
 }

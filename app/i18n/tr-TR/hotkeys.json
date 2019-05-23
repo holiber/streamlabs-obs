@@ -13,6 +13,6 @@
   "Enable Studio Mode": "Stüdyo Modunu Etkinleştir",
   "Disable Studio Mode": "Stüdyo Modunu Devre dışı bırak",
   "Transition (Studio Mode)": "Geçiş (Stüdyo Modu)",
-  "Capture Foreground Window": "Capture Foreground Window",
-  "Deactivate Capture": "Deactivate Capture"
+  "Capture Foreground Window": "Önplan Pencere Görüntüsünü Yakala",
+  "Deactivate Capture": "Görüntü Yakalamayı Devre Dışı Bırak"
 }

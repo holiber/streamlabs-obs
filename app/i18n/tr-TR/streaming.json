@@ -69,8 +69,8 @@
   "Schedule": "Plan",
   "No matching game(s) found.": "Eşleşen oyun(lar) bulunamadı.",
   "Use optimized encoder settings ": "Optimize edilmiş kodlayıcı ayarlarını kullan ",
-  "Scheduled Date": "Scheduled Date",
-  "Scheduled Time": "Scheduled Time",
-  "You are 10 minutes away from the 8 hour stream limit": "You are 10 minutes away from the 8 hour stream limit",
-  "Stream has disconnected, attempting to reconnect.": "Stream has disconnected, attempting to reconnect."
+  "Scheduled Date": "Planlanan Tarih",
+  "Scheduled Time": "Planlanan Saat",
+  "You are 10 minutes away from the 8 hour stream limit": "8 saatlik yayın limitinden 10 dakika uzaktasınız",
+  "Stream has disconnected, attempting to reconnect.": "Yayının bağlantısı kesildi, yeniden bağlanmaya çalışılıyor."
 }

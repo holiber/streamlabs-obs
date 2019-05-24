@@ -65,12 +65,12 @@
   "Facebook Page": "Página de Facebook",
   "Description": "Description",
   "Checking optimized setting for": "Verificar as configurações otimizadas para",
-  "You will not be asked again to update your stream info when going live. ": "You will not be asked again to update your stream info when going live. ",
-  "Schedule": "Schedule",
-  "No matching game(s) found.": "No matching game(s) found.",
-  "Use optimized encoder settings ": "Use optimized encoder settings ",
-  "Scheduled Date": "Scheduled Date",
-  "Scheduled Time": "Scheduled Time",
-  "You are 10 minutes away from the 8 hour stream limit": "You are 10 minutes away from the 8 hour stream limit",
-  "Stream has disconnected, attempting to reconnect.": "Stream has disconnected, attempting to reconnect."
+  "You will not be asked again to update your stream info when going live. ": "Não voltaremos a pedir para atualizar as informações da sua stream quando fizer a transmissão ao vivo. ",
+  "Schedule": "Agendar",
+  "No matching game(s) found.": "Não foi possível encontrar jogo(s) correspondente(s).",
+  "Use optimized encoder settings ": "Use as configurações otimizadas do codificador ",
+  "Scheduled Date": "Data agendada",
+  "Scheduled Time": "Hora agendada",
+  "You are 10 minutes away from the 8 hour stream limit": "Faltam 10 minutos para o limite de transmissão de 8 horas",
+  "Stream has disconnected, attempting to reconnect.": "A stream foi desconectada. Tentando reconectar."
 }

@@ -6,13 +6,13 @@
   "Goal": "Meta",
   "Starting Amount": "Valor Inicial",
   "End After": "Terminar depois de",
-  "Include resubs?": "Include resubs?",
+  "Include resubs?": "Incluir reinscritos?",
   "Layout": "Layout",
   "Background Color": "Cor de Fundo",
-  "Bar Color": "Bar Color",
-  "Bar Background Color": "Bar Background Color",
+  "Bar Color": "Cor da Barra",
+  "Bar Background Color": "Cor do Fundo da Barra",
   "Text Color": "Cor do Texto",
-  "Bar Text Color": "Bar Text Color",
-  "Bar Thickness": "Bar Thickness",
-  "Font Family": "Font Family"
+  "Bar Text Color": "Cor do Texto da Barra",
+  "Bar Thickness": "Espessura da Barra",
+  "Font Family": "Família de fontes"
 }

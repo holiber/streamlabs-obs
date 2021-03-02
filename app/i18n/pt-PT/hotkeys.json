@@ -12,5 +12,7 @@
   "Push to Talk": "Pressione para falar",
   "Enable Studio Mode": "Activar modo de estúdio",
   "Disable Studio Mode": "Desactivar modo de estúdio",
-  "Transition (Studio Mode)": "Transição (modo de estúdio)"
+  "Transition (Studio Mode)": "Transição (modo de estúdio)",
+  "Capture Foreground Window": "Capturar Janela em primeiro plano",
+  "Deactivate Capture": "Desativar captura"
 }
